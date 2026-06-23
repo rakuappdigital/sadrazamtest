@@ -7,21 +7,95 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="game">
+
+  <!-- ── GİRİŞ EKRANI ── -->
+  <div id="intro-screen">
+    <div id="intro-bg"></div>
+    <div id="intro-content">
+      <div id="intro-ornament">✦ ✦ ✦</div>
+      <h1 id="intro-title">SADRAZAM</h1>
+      <p id="intro-subtitle">Osmanlı İmparatorluğu'nda denge peşindeki bir vezirin hikayesi</p>
+      <div id="intro-divider"></div>
+      <button id="btn-start" class="intro-btn">OYUNA BAŞLA</button>
+      <button id="btn-howto" class="intro-btn secondary">NASIL OYNANIR?</button>
+    </div>
+    <div id="intro-footer">v1.0 · rakuappdigital</div>
+  </div>
+
+  <!-- ── NASIL OYNANIR ── -->
+  <div id="howto-screen">
+    <div id="howto-content">
+      <div id="howto-ornament">✦</div>
+      <h2 id="howto-title">NASIL OYNANIR?</h2>
+      <div id="howto-divider"></div>
+
+      <div class="howto-section">
+        <p class="howto-body">
+          Osmanlı İmparatorluğu'nun en güçlü makamı Sadrazamlık'ta oturuyorsun.
+          Her gün saraydan, halktan, ordundan ve dinden temsilciler huzuruna çıkar.
+          Kararların dört gücün dengesini belirler — ve dengeyi bozarsan başın gider.
+        </p>
+      </div>
+
+      <div class="howto-stats">
+        <div class="howto-stat">
+          <span class="hstat-icon">👑</span>
+          <div>
+            <strong>Saray</strong>
+            <span>Sultanın sana güveni. Sıfıra düşerse idam, yüze çıkarsa tehdit.</span>
+          </div>
+        </div>
+        <div class="howto-stat">
+          <span class="hstat-icon">⚔️</span>
+          <div>
+            <strong>Ordu</strong>
+            <span>Yeniçerilerin sadakati. Zayıflarsa düşman gelir, güçlenirse isyan.</span>
+          </div>
+        </div>
+        <div class="howto-stat">
+          <span class="hstat-icon">🕌</span>
+          <div>
+            <strong>Ulema</strong>
+            <span>Dini otoritenin desteği. Kaybedersen halk seni linç eder.</span>
+          </div>
+        </div>
+        <div class="howto-stat">
+          <span class="hstat-icon">💰</span>
+          <div>
+            <strong>Hazine</strong>
+            <span>Devletin parası. Biter dağılır, taşarsa zimmetçilik suçlanırsın.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-section">
+        <p class="howto-body">
+          Kartı <strong>sola kaydır</strong> ya da ← tuşuna bas → <em>Hayır</em><br/>
+          Kartı <strong>sağa kaydır</strong> ya da → tuşuna bas → <em>Evet</em><br/>
+          Her 10 kartta bir yıl geçer. Hazine her yıl azalır.
+        </p>
+      </div>
+
+      <button id="btn-play-now" class="intro-btn">ANLADIM, BAŞLAYALIM</button>
+    </div>
+  </div>
+
+  <!-- ── OYUN ── -->
+  <div id="game" class="hidden">
     <div id="stats-bar">
-      <div class="stat" id="stat-saray">
+      <div class="stat">
         <span class="stat-label">Saray</span>
         <div class="stat-track"><div class="stat-fill" id="fill-saray"></div></div>
       </div>
-      <div class="stat" id="stat-yeniceri">
+      <div class="stat">
         <span class="stat-label">Ordu</span>
         <div class="stat-track"><div class="stat-fill" id="fill-yeniceri"></div></div>
       </div>
-      <div class="stat" id="stat-ulema">
+      <div class="stat">
         <span class="stat-label">Ulema</span>
         <div class="stat-track"><div class="stat-fill" id="fill-ulema"></div></div>
       </div>
-      <div class="stat" id="stat-hazine">
+      <div class="stat">
         <span class="stat-label">Hazine</span>
         <div class="stat-track"><div class="stat-fill" id="fill-hazine"></div></div>
       </div>
@@ -30,6 +104,7 @@
     <div id="year-label">1. YIL</div>
 
     <div id="card-area">
+      <div id="swipe-hint-left" class="swipe-hint">← Hayır</div>
       <div id="card">
         <div id="card-overlay-left"></div>
         <div id="card-overlay-right"></div>
@@ -44,9 +119,11 @@
           </div>
         </div>
       </div>
+      <div id="swipe-hint-right" class="swipe-hint">Evet →</div>
     </div>
   </div>
 
+  <!-- ── GAME OVER ── -->
   <div id="gameover-screen">
     <div id="gameover-panel">
       <div id="gameover-title">SADRAZAMLIK SONA ERDİ</div>

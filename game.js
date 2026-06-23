@@ -42,6 +42,26 @@ const gameoverReason = document.getElementById("gameover-reason");
 const gameoverYear   = document.getElementById("gameover-year");
 document.getElementById("restart-btn").addEventListener("click", restartGame);
 
+// ── Ekran geçişleri ───────────────────────────────────────────────────────────
+const introScreen = document.getElementById("intro-screen");
+const howtoScreen = document.getElementById("howto-screen");
+const gameScreen  = document.getElementById("game");
+
+document.getElementById("btn-start").addEventListener("click", () => {
+  introScreen.style.display = "none";
+  gameScreen.classList.remove("hidden");
+});
+
+document.getElementById("btn-howto").addEventListener("click", () => {
+  introScreen.style.display = "none";
+  howtoScreen.classList.add("visible");
+});
+
+document.getElementById("btn-play-now").addEventListener("click", () => {
+  howtoScreen.classList.remove("visible");
+  gameScreen.classList.remove("hidden");
+});
+
 // ── Boot ──────────────────────────────────────────────────────────────────────
 fetch("data/cards.json")
   .then(r => r.json())
@@ -256,6 +276,13 @@ function decide(dir) {
 card.addEventListener("mousedown",  e => onStart(e.clientX, e.clientY));
 window.addEventListener("mousemove", e => { if (isDragging) onMove(e.clientX); });
 window.addEventListener("mouseup",   () => onEnd());
+
+// Keyboard
+window.addEventListener("keydown", e => {
+  if (isAnimating || isGameOver || currentCard === null) return;
+  if (e.key === "ArrowLeft")  flyOff("left");
+  if (e.key === "ArrowRight") flyOff("right");
+});
 
 // Touch
 card.addEventListener("touchstart", e => { const t = e.touches[0]; onStart(t.clientX, t.clientY); }, { passive: true });
