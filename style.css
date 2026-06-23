@@ -1,16 +1,20 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --gold: #D9B83F;
-  --gold-dim: rgba(217,184,63,0.5);
-  --gold-faint: rgba(217,184,63,0.12);
-  --bg: #0D0B14;
-  --card-bg: #14101E;
-  --text: #EBE0CC;
+  --gold: #C9A227;
+  --gold-light: #E8C84A;
+  --gold-dim: rgba(201,162,39,0.45);
+  --gold-faint: rgba(201,162,39,0.1);
+  --bg: #080612;
+  --card-bg: #0E0B1A;
+  --burgundy: #6B1A1A;
+  --text: #F0E6D0;
   --danger: #D91F1F;
   --warn: #E68C0D;
-  --normal: #D1AE25;
+  --normal: #C9A227;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap');
 
 html, body {
   height: 100%;
@@ -18,7 +22,7 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Georgia', serif;
+  font-family: 'IM Fell English', Georgia, serif;
   overflow: hidden;
 }
 
@@ -30,6 +34,7 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .hidden { display: none !important; }
@@ -41,6 +46,18 @@ html, body {
   background: var(--bg);
   flex-direction: column;
   z-index: 10;
+  position: relative;
+}
+
+/* Arabesk arka plan pattern */
+#intro-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-conic-gradient(var(--gold-faint) 0% 25%, transparent 0% 50%);
+  background-size: 40px 40px;
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 #intro-bg {
@@ -49,7 +66,7 @@ html, body {
   background-image: url('assets/intro-bg.jpg');
   background-size: cover;
   background-position: center top;
-  opacity: 0.3;
+  opacity: 0.22;
 }
 
 #intro-content {
@@ -72,16 +89,18 @@ html, body {
 }
 
 #intro-title {
-  font-size: 52px;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 58px;
   color: var(--gold);
-  letter-spacing: 8px;
+  letter-spacing: 12px;
   font-weight: normal;
-  text-shadow: 0 0 40px rgba(217,184,63,0.4);
+  text-shadow: 0 0 40px rgba(201,162,39,0.5), 0 0 80px rgba(201,162,39,0.2);
 }
 
 #intro-subtitle {
+  font-family: 'IM Fell English', serif;
   font-size: 14px;
-  color: rgba(235,224,204,0.65);
+  color: rgba(240,230,208,0.65);
   line-height: 1.6;
   max-width: 280px;
   font-style: italic;
@@ -92,36 +111,57 @@ html, body {
   height: 1px;
   background: var(--gold-dim);
   margin: 8px 0;
+  position: relative;
+}
+#intro-divider::before {
+  content: '· · ·';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: var(--gold-dim);
+  letter-spacing: 4px;
 }
 
 .intro-btn {
   width: 100%;
   max-width: 280px;
-  padding: 16px;
+  padding: 14px 24px;
   background: transparent;
   border: 1px solid var(--gold);
   color: var(--gold);
-  font-size: 15px;
-  font-family: 'Georgia', serif;
-  letter-spacing: 2px;
-  border-radius: 10px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+  text-transform: uppercase;
 }
-.intro-btn:hover { background: var(--gold); color: #000; }
+.intro-btn:hover {
+  background: var(--gold);
+  color: #000;
+  box-shadow: 0 0 20px rgba(201,162,39,0.4);
+}
 .intro-btn.secondary {
   border-color: var(--gold-dim);
-  color: rgba(217,184,63,0.6);
-  font-size: 13px;
+  color: rgba(201,162,39,0.6);
+  font-size: 11px;
 }
-.intro-btn.secondary:hover { background: var(--gold-faint); color: var(--gold); }
+.intro-btn.secondary:hover {
+  background: var(--gold-faint);
+  color: var(--gold);
+  border-color: var(--gold);
+}
 
 #intro-footer {
   position: absolute;
   bottom: 20px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.2);
-  letter-spacing: 1px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: rgba(255,255,255,0.18);
+  letter-spacing: 2px;
 }
 
 /* ════════════════════════════════════════
@@ -151,7 +191,8 @@ html, body {
 #howto-ornament { font-size: 18px; color: var(--gold-dim); }
 
 #howto-title {
-  font-size: 22px;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 20px;
   color: var(--gold);
   letter-spacing: 4px;
   font-weight: normal;
@@ -166,6 +207,7 @@ html, body {
 .howto-section { width: 100%; }
 
 .howto-body {
+  font-family: 'IM Fell English', serif;
   font-size: 14px;
   color: var(--text);
   line-height: 1.75;
@@ -188,12 +230,24 @@ html, body {
   text-align: left;
   background: var(--gold-faint);
   border: 1px solid var(--gold-dim);
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 12px 14px;
 }
 .hstat-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
-.howto-stat strong { display: block; font-size: 14px; color: var(--gold); margin-bottom: 3px; }
-.howto-stat span { font-size: 12px; color: rgba(235,224,204,0.7); line-height: 1.5; }
+.howto-stat strong {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  color: var(--gold);
+  margin-bottom: 3px;
+  letter-spacing: 1px;
+}
+.howto-stat span {
+  font-family: 'IM Fell English', serif;
+  font-size: 12px;
+  color: rgba(240,230,208,0.7);
+  line-height: 1.5;
+}
 
 /* ════════════════════════════════════════
    SEÇİM EKRANLARI (Sultan & Danışman)
@@ -203,9 +257,22 @@ html, body {
   z-index: 11;
   overflow-y: auto;
   align-items: flex-start;
+  position: relative;
+}
+
+.selection-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-conic-gradient(var(--gold-faint) 0% 25%, transparent 0% 50%);
+  background-size: 40px 40px;
+  opacity: 0.2;
+  pointer-events: none;
 }
 
 .selection-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -219,15 +286,17 @@ html, body {
 .sel-ornament { font-size: 16px; color: var(--gold-dim); }
 
 .sel-title {
-  font-size: 20px;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 18px;
   color: var(--gold);
   letter-spacing: 4px;
   font-weight: normal;
 }
 
 .sel-subtitle {
+  font-family: 'IM Fell English', serif;
   font-size: 13px;
-  color: rgba(235,224,204,0.6);
+  color: rgba(240,230,208,0.6);
   line-height: 1.6;
 }
 
@@ -248,28 +317,31 @@ html, body {
 .sultan-card {
   background: var(--gold-faint);
   border: 1px solid var(--gold-dim);
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 16px;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
   text-align: left;
 }
-.sultan-card:hover { background: rgba(217,184,63,0.18); }
+.sultan-card:hover { background: rgba(201,162,39,0.18); }
 .sultan-card.selected {
-  background: rgba(217,184,63,0.22);
+  background: rgba(201,162,39,0.22);
   border-color: var(--gold);
-  box-shadow: 0 0 12px rgba(217,184,63,0.3);
+  box-shadow: 0 0 12px rgba(201,162,39,0.3);
 }
 
 .sc-name {
-  font-size: 15px;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
   color: var(--gold);
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 4px;
+  letter-spacing: 1px;
 }
 .sc-desc {
+  font-family: 'IM Fell English', serif;
   font-size: 12px;
-  color: rgba(235,224,204,0.65);
+  color: rgba(240,230,208,0.65);
   font-style: italic;
   margin-bottom: 10px;
 }
@@ -279,11 +351,12 @@ html, body {
   flex-wrap: wrap;
 }
 .sc-stats span {
-  font-size: 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
   color: var(--text);
   background: rgba(0,0,0,0.3);
   padding: 3px 8px;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 /* Danışman Grid */
@@ -297,7 +370,7 @@ html, body {
 .advisor-card {
   background: var(--gold-faint);
   border: 1px solid var(--gold-dim);
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 14px 16px;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
@@ -306,22 +379,40 @@ html, body {
   gap: 14px;
   align-items: flex-start;
 }
-.advisor-card:hover { background: rgba(217,184,63,0.18); }
+.advisor-card:hover { background: rgba(201,162,39,0.18); }
 .advisor-card.selected {
-  background: rgba(217,184,63,0.22);
+  background: rgba(201,162,39,0.22);
   border-color: var(--gold);
-  box-shadow: 0 0 10px rgba(217,184,63,0.25);
+  box-shadow: 0 0 10px rgba(201,162,39,0.25);
 }
 
 .ac-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
-.ac-name { font-size: 14px; color: var(--gold); font-weight: bold; }
-.ac-title { font-size: 11px; color: rgba(217,184,63,0.6); font-style: italic; margin-bottom: 3px; }
-.ac-desc { font-size: 12px; color: rgba(235,224,204,0.7); line-height: 1.5; }
+.ac-name {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.ac-title {
+  font-family: 'IM Fell English', serif;
+  font-size: 11px;
+  color: rgba(201,162,39,0.6);
+  font-style: italic;
+  margin-bottom: 3px;
+}
+.ac-desc {
+  font-family: 'IM Fell English', serif;
+  font-size: 12px;
+  color: rgba(240,230,208,0.7);
+  line-height: 1.5;
+}
 
 .advisor-count {
-  font-size: 13px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
   color: var(--gold-dim);
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 
 /* ════════════════════════════════════════
@@ -338,6 +429,29 @@ html, body {
   overflow: hidden;
   user-select: none;
   z-index: 1;
+  transition: background 0.6s ease;
+}
+
+/* Gece modu */
+#game.night-mode {
+  background: #040210;
+}
+
+#game.night-mode::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 35%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 20% 85%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.4) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Stats */
@@ -346,34 +460,97 @@ html, body {
   display: flex;
   gap: 10px;
   padding: 18px 16px 10px;
+  position: relative;
+  z-index: 1;
 }
 .stat { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.stat-label { font-size: 10px; color: var(--gold); text-align: center; letter-spacing: 0.5px; text-transform: uppercase; }
-.stat-track { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
-.stat-fill { height: 100%; width: 50%; background: var(--normal); border-radius: 3px; transition: width 0.4s ease, background 0.3s; }
+.stat-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  color: var(--gold);
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.stat-track {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 0;
+  overflow: hidden;
+}
+.stat-fill {
+  height: 100%;
+  width: 50%;
+  background: var(--normal);
+  border-radius: 0;
+  transition: width 0.4s ease, background 0.3s;
+}
 .stat-fill.danger { background: var(--danger); }
 .stat-fill.warn   { background: var(--warn); }
+
+/* Kader İpleri */
+#fate-bar {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+.fate-thread {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--gold-dim);
+  border: 1px solid var(--gold-dim);
+  border-radius: 20px;
+  padding: 2px 10px;
+  letter-spacing: 1px;
+  animation: pulse 2s infinite;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.fate-thread:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
 
 /* Header Row (Title + Year) */
 #header-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  margin: 4px 0 10px;
+  gap: 4px;
+  margin: 2px 0 8px;
+  position: relative;
+  z-index: 1;
 }
 
 #title-label {
-  font-size: 13px;
-  color: rgba(217,184,63,0.5);
-  letter-spacing: 3px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: rgba(201,162,39,0.45);
+  letter-spacing: 4px;
   font-weight: normal;
+  text-transform: uppercase;
 }
 
 #year-label {
-  font-size: 18px;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 16px;
   color: var(--gold);
   letter-spacing: 2px;
+}
+
+#dynamic-subtitle {
+  font-family: 'IM Fell English', serif;
+  font-size: 11px;
+  color: rgba(240,230,208,0.4);
+  font-style: italic;
+  text-align: center;
+  max-width: 280px;
+  line-height: 1.4;
 }
 
 /* Card Area */
@@ -383,12 +560,15 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 8px 24px;
+  padding: 0 8px 20px;
   gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .swipe-hint {
-  font-size: 11px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
   color: var(--gold-dim);
   letter-spacing: 1px;
   writing-mode: initial;
@@ -401,17 +581,37 @@ html, body {
   flex: 1;
   max-width: 360px;
   position: relative;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
   background: var(--card-bg);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px var(--gold-dim);
+  border: 1px solid var(--gold-dim);
+  box-shadow:
+    0 0 0 1px var(--gold-dim),
+    0 8px 48px rgba(0,0,0,0.8),
+    inset 0 0 60px rgba(201,162,39,0.04);
   cursor: grab;
   touch-action: none;
   transform-origin: center bottom;
   display: flex;
   flex-direction: column;
+  transition: box-shadow 0.3s ease;
+}
+#card:hover {
+  box-shadow:
+    0 0 0 1px rgba(201,162,39,0.6),
+    0 8px 56px rgba(0,0,0,0.85),
+    inset 0 0 60px rgba(201,162,39,0.06),
+    0 0 20px rgba(201,162,39,0.08);
 }
 #card.dragging { cursor: grabbing; }
+
+/* Gece modu kart */
+#game.night-mode #card {
+  box-shadow:
+    0 0 0 1px rgba(80,100,200,0.4),
+    0 8px 48px rgba(0,0,20,0.9),
+    inset 0 0 60px rgba(20,20,100,0.06);
+}
 
 #card-overlay-left, #card-overlay-right {
   position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 10; transition: opacity 0.05s;
@@ -419,23 +619,116 @@ html, body {
 #card-overlay-left  { background: rgba(180,30,30,0.45); }
 #card-overlay-right { background: rgba(30,140,50,0.45); }
 
+/* Gece modu overlay renkler */
+#game.night-mode #card-overlay-left  { background: rgba(20,20,180,0.4); }
+#game.night-mode #card-overlay-right { background: rgba(80,20,180,0.4); }
+
 #card-image {
   width: 100%;
   aspect-ratio: 3/4;
   object-fit: cover;
   object-position: top center;
   display: block;
-  background: #1a1625;
-  max-height: 50vh;
+  background: #1a1420;
+  max-height: 46vh;
 }
 
-#card-bottom { padding: 10px 16px 12px; display: flex; flex-direction: column; gap: 7px; }
-#card-char-name { font-size: 17px; color: var(--gold); text-align: center; font-weight: bold; letter-spacing: 1px; }
-#card-divider { height: 1px; background: var(--gold-dim); margin: 0 8px; }
-#card-text { font-size: 13px; color: var(--text); line-height: 1.55; text-align: center; min-height: 44px; }
-#card-choices { display: flex; justify-content: space-between; margin-top: 2px; }
-#choice-left  { font-size: 13px; color: #ff5555; font-weight: bold; opacity: 0; transition: opacity 0.1s; }
-#choice-right { font-size: 13px; color: #55dd66; font-weight: bold; opacity: 0; transition: opacity 0.1s; }
+#card-bottom {
+  padding: 10px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--card-bg);
+}
+
+#card-char-name {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  color: var(--gold);
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+}
+
+/* Ornamental divider */
+#card-divider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 8px;
+}
+#card-divider::before,
+#card-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gold-dim);
+}
+#card-divider::after {
+  content: '· · ·';
+  flex: none;
+  font-size: 8px;
+  color: var(--gold-dim);
+  letter-spacing: 3px;
+}
+
+#card-text {
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+  text-align: center;
+  min-height: 44px;
+}
+
+#card-choices {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+#choice-left  {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: #ff5555;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.1s;
+  letter-spacing: 1px;
+}
+#choice-right {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: #55dd66;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.1s;
+  letter-spacing: 1px;
+}
+
+/* Soruşturma butonu */
+#investigate-btn {
+  position: absolute;
+  bottom: 60px;
+  left: 14px;
+  background: rgba(201,162,39,0.1);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold-dim);
+  font-size: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  z-index: 20;
+}
+#investigate-btn:hover {
+  background: rgba(201,162,39,0.25);
+  color: var(--gold);
+}
+#investigate-btn.hidden { display: none; }
 
 /* ── Müzakere Paneli ── */
 #negotiation-panel {
@@ -451,52 +744,252 @@ html, body {
   background: var(--gold-faint);
   border: 1px solid var(--gold-dim);
   color: var(--text);
+  font-family: 'IM Fell English', serif;
   font-size: 12px;
-  font-family: 'Georgia', serif;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
   text-align: left;
   line-height: 1.45;
   transition: background 0.15s, border-color 0.15s;
 }
 .negot-btn:hover {
-  background: rgba(217,184,63,0.2);
+  background: rgba(201,162,39,0.2);
   border-color: var(--gold);
   color: var(--gold);
+}
+
+/* Letter card */
+.letter-card #card-bottom {
+  background: linear-gradient(180deg, #1a1408, #100d04);
+}
+.letter-card #card-text {
+  font-style: italic;
+  color: rgba(240,230,208,0.9);
+  white-space: pre-line;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.7;
 }
 
 /* ════════════════════════════════════════
    GAME OVER
 ════════════════════════════════════════ */
 #gameover-screen {
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.85);
   z-index: 100;
   display: none;
+  overflow-y: auto;
+  align-items: flex-start;
 }
 #gameover-screen.visible { display: flex; }
 
 #gameover-panel {
   background: var(--card-bg);
   border: 1px solid var(--gold-dim);
-  border-radius: 20px;
-  padding: 36px 28px;
-  max-width: 340px;
+  border-radius: 12px;
+  padding: 32px 24px;
+  max-width: 360px;
   width: 90%;
+  margin: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   text-align: center;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+  box-shadow:
+    0 0 0 1px var(--gold-dim),
+    0 8px 48px rgba(0,0,0,0.9);
 }
-#gameover-title { font-size: 18px; color: var(--gold); letter-spacing: 1px; font-weight: bold; }
+
+#gameover-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 16px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  line-height: 1.4;
+}
 #gameover-divider { height: 1px; background: var(--gold-dim); }
-#gameover-reason { font-size: 15px; color: var(--text); line-height: 1.6; }
-#gameover-year { font-size: 13px; color: rgba(217,184,63,0.6); }
+#gameover-reason {
+  font-family: 'IM Fell English', serif;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.65;
+}
+#gameover-year {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  color: rgba(201,162,39,0.6);
+  letter-spacing: 1px;
+}
+
+/* Yeni rekor banner */
+#new-record-banner {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 14px;
+  color: var(--gold-light);
+  text-shadow: 0 0 16px rgba(201,162,39,0.8);
+  animation: pulse 1s infinite;
+  letter-spacing: 2px;
+}
+
 #restart-btn {
-  margin-top: 4px; padding: 14px;
-  background: transparent; border: 1px solid var(--gold);
-  color: var(--gold); font-size: 15px; font-family: 'Georgia', serif;
-  letter-spacing: 1px; border-radius: 10px; cursor: pointer;
+  margin-top: 4px;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  border-radius: 6px;
+  cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  text-transform: uppercase;
 }
 #restart-btn:hover { background: var(--gold); color: #000; }
+
+/* Ölüm arşivi */
+#death-archive-section {
+  margin-top: 8px;
+  text-align: left;
+}
+.death-archive-title {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: var(--gold-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.death-entry {
+  background: #1a1408;
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'IM Fell English', serif;
+  font-size: 12px;
+  color: rgba(240,230,208,0.65);
+  text-align: left;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+/* Achievement badges */
+#achievements-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 4px;
+}
+.achievement-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  border-radius: 20px;
+  padding: 4px 10px;
+  letter-spacing: 0.5px;
+}
+
+/* Achievement toast */
+.achievement-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card-bg);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: var(--gold);
+  z-index: 300;
+  animation: slideUp 0.4s ease, fadeOut 0.4s ease 2.6s forwards;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(201,162,39,0.3);
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════════
+   ÖZEL OVERLAY'LER
+════════════════════════════════════════ */
+
+/* Lanet overlay */
+#curse-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(180,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+#curse-overlay.hidden { display: none; }
+.curse-text {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 28px;
+  color: #ff2020;
+  text-shadow: 0 0 20px rgba(255,0,0,0.8);
+  animation: cursePulse 1.5s forwards;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Cinematic death overlay */
+#cinematic-death {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#cinematic-death.hidden { display: none; }
+#death-char-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  filter: grayscale(60%) brightness(0.4);
+  position: absolute;
+  inset: 0;
+}
+#death-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(100,0,0,0.6), transparent);
+}
+
+/* ════════════════════════════════════════
+   KEYFRAMES
+════════════════════════════════════════ */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; pointer-events: none; }
+}
+
+@keyframes cursePulse {
+  0%   { opacity: 0; transform: scale(0.8); }
+  20%  { opacity: 1; transform: scale(1.05); }
+  80%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.95); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+@keyframes goldGlow {
+  0%, 100% { text-shadow: 0 0 10px rgba(201,162,39,0.4); }
+  50%       { text-shadow: 0 0 25px rgba(201,162,39,0.9), 0 0 50px rgba(201,162,39,0.4); }
+}

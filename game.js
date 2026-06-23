@@ -1,9 +1,41 @@
 // ═══════════════════════════════════════════════════════════════════
-//  SADRAZAM — game.js
+//  SADRAZAM — game.js  (v3.0)
 // ═══════════════════════════════════════════════════════════════════
 
 const CARDS_PER_YEAR = 10;
 const PASSIVE_HAZINE_DRAIN = 5;
+
+// ── Osmanlı Takvimi ───────────────────────────────────────────────
+const HICRI_MONTHS = [
+  "Muharrem","Safer","Rebiülevvel","Rebiülahir",
+  "Cemaziyelevvel","Cemaziyelahir","Recep","Şaban",
+  "Ramazan","Şevval","Zilkade","Zilhicce"
+];
+const SULTAN_HICRI_START = { kanuni: 927, yavuz: 918, murad3: 982 };
+
+// ── Dinamik başlıklar ─────────────────────────────────────────────
+const DYNAMIC_SUBTITLES = [
+  "Boğaz'da Fırtınanın Başladığı Yıl",
+  "Karanlık Koridorların Saltanatı",
+  "Divan'ın Susmayı Seçtiği Günler",
+  "Topkapı'da Gölgelerin Dansı",
+  "Yıldızların Yanlış Hizalandığı Mevsim",
+  "Rüzgarın Kıble'den Estiği Yıl",
+  "Vezirler Arasındaki Sessiz Savaş",
+  "Hazinenin Ağırlaştığı Günler",
+  "Dua Ile Kılıcın Aynı Kefede Tutulduğu An",
+  "Sarayın Duvarlarının Kulak Kesildiği Yıl",
+  "Altın ve Kan Arasındaki Denge",
+  "Hilal'in Eksildiği Geceler",
+  "Beylerbeyi'nin Unvanının Tartıldığı Devir",
+  "Halkın Susmayı Bıraktığı Sezon",
+  "Celladın Gölgesinin Uzadığı Günler",
+  "Mürekkep ve Kılıcın Yarıştığı Çağ",
+  "Sultanın Gözlerinde Okunan Şüphe",
+  "Kırmızı Tuğranın Titrediği Sabahlar",
+  "Saray Bahçesinde Güller Değil Dikenler",
+  "Osmanlı'nın Nefes Tuttuğu An"
+];
 
 const DEATH_TABLE = {
   saray:      { 0: "Sultan sana idam fermanı gönderdi. Başın gövdenden ayrıldı.", 100: "Sultan gücünden korktu. Kafanı daha önce davranarak aldı." },
@@ -87,6 +119,17 @@ const ARCS = {
   dogu_seferi: ["dogu_1", "dogu_2", "dogu_3"]
 };
 
+// ── Başarımlar ────────────────────────────────────────────────────
+const ACHIEVEMENTS = [
+  { id: "survivor_5",    label: "⚔️ Beş Yıl Ayakta",     check: (s) => s.year >= 5 },
+  { id: "survivor_10",   label: "👑 On Yıl Sadrazam",     check: (s) => s.year >= 10 },
+  { id: "survivor_20",   label: "🏛️ Efsane Sadrazam",    check: (s) => s.year >= 20 },
+  { id: "balanced",      label: "⚖️ Denge Ustası",        check: (s) => Object.values(s.stats).every(v => v >= 40 && v <= 60) },
+  { id: "traitor_found", label: "🕵️ Haini Buldun",       check: (s) => s.traitorInvestigated >= 2 },
+  { id: "no_curse",      label: "🌙 Lanet Yok",           check: (s) => !s.cursedEver },
+  { id: "pasa_mode",     label: "📜 Paşadan Sadrazama",   check: (s) => s.isPasaMode && s.pasaPromoted },
+];
+
 // ── State ─────────────────────────────────────────────────────────
 let allCards = [];
 let stats = { saray: 50, "yeniçeri": 50, ulema: 50, hazine: 50 };
@@ -96,16 +139,36 @@ let activeFlags = {};
 let isGameOver = false;
 let playCounts = {};
 let forcedQueue = [];
-let scheduledCards = [];  // [{cardId, afterCardsPlayed}]
-let characterMemory = {}; // { "char_key": {left:0, right:0, last:null} }
-let activeArcs = {};      // { arcId: nextIndex }
-let triggeredArcs = {};   // { arcId: true }
+let scheduledCards = [];
+let characterMemory = {};
+let activeArcs = {};
+let triggeredArcs = {};
 let sultanSabir = 50;
 let selectedSultan = null;
 let selectedAdvisors = [];
 let isPasaMode = false;
 let pasaPromoted = false;
 let currentTitle = "SADRAZAM";
+
+// Yeni özellik state'leri
+let isNight = false;
+let nightCardCount = 0;
+let consecutiveSameDir = 0;
+let lastDir = null;
+let cursedEver = false;
+let hiddenTraitor = null;
+let traitorInvestigated = 0;
+let traitorRevealed = false;
+let factionFavors = { saray: 0, ordu: 0, din: 0, halk: 0 };
+let factionPressureSent = { saray: false, ordu: false, din: false, halk: false };
+let hicriYear = 927;
+let hicriMonth = 0; // 0-11
+let deathCharacterKey = null;
+let isInvestigating = false;
+let originalCardText = "";
+let dangerPulseActive = false;
+let letterCardsPending = [];
+let currentDeathTitle = "SADRAZAMLIK SONA ERDİ";
 
 // ── DOM ───────────────────────────────────────────────────────────
 const card        = document.getElementById("card");
@@ -122,7 +185,6 @@ const gameoverReason = document.getElementById("gameover-reason");
 const gameoverYear   = document.getElementById("gameover-year");
 const titleLabel     = document.getElementById("title-label");
 
-// Ekran referansları
 const introScreen      = document.getElementById("intro-screen");
 const howtoScreen      = document.getElementById("howto-screen");
 const gameScreen       = document.getElementById("game");
@@ -183,10 +245,7 @@ function showSultanScreen() {
   });
 
   document.getElementById("btn-sultan-confirm").onclick = () => {
-    if (!selectedSultan) {
-      alert("Lütfen bir sultan seçin.");
-      return;
-    }
+    if (!selectedSultan) { alert("Lütfen bir sultan seçin."); return; }
     sultanScreen.classList.add("hidden");
     showAdvisorScreen();
   };
@@ -203,19 +262,18 @@ function showAdvisorScreen() {
     btn.className = "advisor-card";
     btn.innerHTML = `
       <div class="ac-icon">${a.icon}</div>
-      <div class="ac-name">${a.name}</div>
-      <div class="ac-title">${a.title}</div>
-      <div class="ac-desc">${a.desc}</div>
+      <div>
+        <div class="ac-name">${a.name}</div>
+        <div class="ac-title">${a.title}</div>
+        <div class="ac-desc">${a.desc}</div>
+      </div>
     `;
     btn.addEventListener("click", () => {
       if (btn.classList.contains("selected")) {
         btn.classList.remove("selected");
         selectedAdvisors = selectedAdvisors.filter(x => x.id !== a.id);
       } else {
-        if (selectedAdvisors.length >= 2) {
-          alert("En fazla 2 danışman seçebilirsiniz.");
-          return;
-        }
+        if (selectedAdvisors.length >= 2) { alert("En fazla 2 danışman seçebilirsiniz."); return; }
         btn.classList.add("selected");
         selectedAdvisors.push(a);
       }
@@ -225,10 +283,7 @@ function showAdvisorScreen() {
   });
 
   document.getElementById("btn-advisor-confirm").onclick = () => {
-    if (selectedAdvisors.length !== 2) {
-      alert("Lütfen tam olarak 2 danışman seçin.");
-      return;
-    }
+    if (selectedAdvisors.length !== 2) { alert("Lütfen tam olarak 2 danışman seçin."); return; }
     advisorScreen.classList.add("hidden");
     startGame();
   };
@@ -236,18 +291,16 @@ function showAdvisorScreen() {
 
 // ── Oyunu Başlat ──────────────────────────────────────────────────
 function startGame() {
-  // Sultan statlarını uygula
   stats = { ...selectedSultan.stats };
   sultanSabir = selectedSultan.sultanSabir;
 
-  // Paşa modu override
   if (isPasaMode) {
     stats = { saray: 35, "yeniçeri": 35, ulema: 35, hazine: 40 };
     currentTitle = "PAŞA";
     pasaPromoted = false;
   } else {
     currentTitle = "SADRAZAM";
-    pasaPromoted = true; // normal modda zaten sadrazam
+    pasaPromoted = true;
   }
 
   year = 1;
@@ -260,10 +313,43 @@ function startGame() {
   characterMemory = {};
   activeArcs = {};
   triggeredArcs = {};
+  isNight = false;
+  nightCardCount = 0;
+  consecutiveSameDir = 0;
+  lastDir = null;
+  cursedEver = false;
+  factionFavors = { saray: 0, ordu: 0, din: 0, halk: 0 };
+  factionPressureSent = { saray: false, ordu: false, din: false, halk: false };
+  traitorInvestigated = 0;
+  traitorRevealed = false;
+  deathCharacterKey = null;
+  isInvestigating = false;
+  letterCardsPending = [];
+  dangerPulseActive = false;
+
+  // Hicri takvim başlangıcı
+  const sultanId = selectedSultan ? selectedSultan.id : "kanuni";
+  hicriYear = SULTAN_HICRI_START[sultanId] || 927;
+  hicriMonth = 0;
+
+  // Gizli hain seç
+  const characterKeys = ["2-yeniceri", "3-Seyhulislam", "4. Defterdar",
+    "5. Valide Sultan", "6. Kaptan-ı Derya", "7. Yabancı Elçi",
+    "8. Rakip Vezir", "10-hekimbasi", "11-sipahi_agasi",
+    "12-saray_sairi", "13-buyuk_tuccar", "14-casuslar_basi",
+    "15-halk_temsilcisi", "16-saray_agasi", "22-yahudi_bankaci",
+    "24-korsanbasi", "25-deli_dervis", "26-genc_pasa"];
+  hiddenTraitor = characterKeys[Math.floor(Math.random() * characterKeys.length)];
 
   if (titleLabel) titleLabel.textContent = currentTitle;
-  yearLabel.textContent = "1. YIL";
+
+  // Remove night mode
+  gameScreen.classList.remove("night-mode");
+
+  updateYearLabel();
   updateStatUI();
+  updateDynamicSubtitle();
+  ensureFateBar();
 
   gameScreen.classList.remove("hidden");
   dealNext();
@@ -274,15 +360,90 @@ fetch("data/cards.json")
   .then(r => r.json())
   .then(data => { allCards = data.cards; });
 
+// ── Osmanlı Takvimi ───────────────────────────────────────────────
+function updateYearLabel() {
+  if (!yearLabel) return;
+  const monthName = HICRI_MONTHS[hicriMonth % 12];
+  yearLabel.textContent = `${monthName} ${hicriYear}`;
+}
+
+function advanceHicriMonth() {
+  hicriMonth++;
+  if (hicriMonth >= 12) {
+    hicriMonth = 0;
+    hicriYear++;
+  }
+  updateYearLabel();
+}
+
+// ── Dinamik Subtitle ──────────────────────────────────────────────
+function updateDynamicSubtitle() {
+  let subtitle = "";
+
+  if (stats.hazine < 25)      subtitle = "Hazinenin Dibini Gördüğümüz Yıl";
+  else if (stats["yeniçeri"] > 75) subtitle = "Orduların Gözde Sadrazamı";
+  else if (stats.saray < 25)  subtitle = "Gözden Düştüğümüz Günler";
+  else if (stats.ulema > 75)  subtitle = "Dinin Gölgesinde Saltanat";
+  else if (stats.hazine > 75) subtitle = "Bereketin Yılı";
+  else {
+    const idx = (year + cardsPlayed) % DYNAMIC_SUBTITLES.length;
+    subtitle = DYNAMIC_SUBTITLES[idx];
+  }
+
+  let el = document.getElementById("dynamic-subtitle");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "dynamic-subtitle";
+    const headerRow = document.getElementById("header-row");
+    if (headerRow) headerRow.appendChild(el);
+  }
+  el.textContent = subtitle;
+}
+
+// ── Fate Bar (Kader İpleri) ───────────────────────────────────────
+function ensureFateBar() {
+  if (!document.getElementById("fate-bar")) {
+    const fb = document.createElement("div");
+    fb.id = "fate-bar";
+    const statsBar = document.getElementById("stats-bar");
+    if (statsBar && statsBar.parentNode) {
+      statsBar.parentNode.insertBefore(fb, statsBar.nextSibling);
+    }
+  }
+  updateFateBar();
+}
+
+function updateFateBar() {
+  const fb = document.getElementById("fate-bar");
+  if (!fb) return;
+  fb.innerHTML = "";
+  if (!scheduledCards.length) return;
+
+  // Group by cardId
+  const groups = {};
+  scheduledCards.forEach(sc => {
+    const c = allCards.find(x => x.id === sc.cardId);
+    const label = c ? (c.character_name || sc.cardId) : sc.cardId;
+    if (!groups[label]) groups[label] = 0;
+    groups[label]++;
+  });
+
+  Object.entries(groups).forEach(([label, count]) => {
+    const chip = document.createElement("div");
+    chip.className = "fate-thread";
+    chip.textContent = `⚔️ ${label.length > 12 ? label.slice(0,12)+'…' : label} (${count})`;
+    chip.title = `${count} karta kalmış`;
+    fb.appendChild(chip);
+  });
+}
+
 // ── Deck ──────────────────────────────────────────────────────────
 function getEventCards() {
   return allCards.filter(c => c.is_event);
 }
 
 function getNextCard() {
-  // Scheduled cards kontrolü
   checkScheduledCards();
-
   if (forcedQueue.length) return forcedQueue.shift();
 
   // Arc kontrolü
@@ -311,18 +472,22 @@ function checkScheduledCards() {
     const c = allCards.find(x => x.id === sc.cardId);
     if (c) forcedQueue.unshift(c);
   });
+  updateFateBar();
 }
 
 function getEligible() {
   return allCards.filter(c => {
-    // Paşa terfi kartı sadece paşa modunda
     if (c.is_pasa_terfi && (!isPasaMode || pasaPromoted)) return false;
-    // Event kartları normale karışmasın
     if (c.is_event) return false;
-    // Arc kartları sadece arc aktifken
     if (c.arc_id) return false;
-    // weight:1 olan özel kartlar (zincirleme, arc vs) normalde çıkmasın
+    if (c.is_traitor_reveal) return false;
+    if (c.type === "letter") return false;
+    // Faction baskı kartları sadece tetiklenince
+    if (c.required_faction_pressure && !activeFlags["faction_pressure_" + c.required_faction_pressure]) return false;
+    // weight:1 özel kartlar arc dışında çıkmasın
     if (c.weight === 1 && !c.arc_id) return false;
+    // Gece kartları gece önceliği (ama hepsi karışabilir)
+    if (c.time === "night" && !isNight) return false;
     return passesFilters(c);
   }).map(c => {
     const times = playCounts[c.id] || 0;
@@ -343,7 +508,6 @@ function passesFilters(c) {
     if (cond.min !== undefined && val < cond.min) return false;
     if (cond.max !== undefined && val > cond.max) return false;
   }
-  // Karakter hafızası filtresi
   if (c.requires_memory) {
     const mem = characterMemory[c.requires_memory.character];
     if (!mem) return false;
@@ -369,25 +533,56 @@ let currentCard = null;
 
 function dealNext() {
   if (isGameOver) return;
+
+  // Gece modu toggle (her 3 kartta)
+  nightCardCount++;
+  if (nightCardCount % 3 === 0) {
+    isNight = !isNight;
+    if (isNight) {
+      gameScreen.classList.add("night-mode");
+    } else {
+      gameScreen.classList.remove("night-mode");
+    }
+  }
+
   const c = getNextCard();
   if (!c) return;
   currentCard = c;
+  isInvestigating = false;
 
-  // Müzakere kartı mı?
+  // Müzakere kartı
   if (c.type === "negotiation") {
     showNegotiationCard(c);
+    return;
+  }
+
+  // Mektup kartı
+  if (c.type === "letter") {
+    showLetterCard(c);
     return;
   }
 
   hideNegotiationPanel();
 
   const key = c.character || "";
+  deathCharacterKey = key;
+
   const imgName = key + ".jpg";
   cardImage.src = "assets/characters/" + encodeURIComponent(imgName);
   cardImage.onerror = () => { cardImage.src = ""; };
 
+  // Gizli hain hint
+  let displayText = c.text || "";
+  if (key === hiddenTraitor && !traitorRevealed) {
+    const mem = characterMemory[key] || {};
+    const totalMem = (mem.left || 0) + (mem.right || 0);
+    if (totalMem > 0 && totalMem % 7 === 0) {
+      displayText += " — gözleri anlık bir şeye takıldı.";
+    }
+  }
+
   charName.textContent = c.character_name || "";
-  cardText.textContent = c.text || "";
+  cardText.textContent = displayText;
   choiceLeft.textContent  = c.left_text  || "Hayır";
   choiceRight.textContent = c.right_text || "Evet";
 
@@ -396,14 +591,126 @@ function dealNext() {
   overlayL.style.opacity = "0";
   overlayR.style.opacity = "0";
 
+  // Mektup stili kaldır
+  card.classList.remove("letter-card");
+
+  // Soruşturma butonu
+  setupInvestigateBtn(c, displayText);
+
+  // Ses
+  if (isNight || c.time === "night") {
+    if (window.playNightCard) playNightCard();
+  } else {
+    if (window.playCardDraw) playCardDraw();
+  }
+  if (c.sound === "veba" && window.playEvent_veba) playEvent_veba();
+  if (c.sound === "savas" && window.playEvent_savas) playEvent_savas();
+  if (c.sound === "hasat" && window.playEvent_hasat) playEvent_hasat();
+  if (c.character === "14-casuslar_basi" && c.text && c.text.includes("mektup") && window.playLetterArrival) playLetterArrival();
+
+  animateCardIn();
+  updateDynamicSubtitle();
+}
+
+function setupInvestigateBtn(c, displayText) {
+  let btn = document.getElementById("investigate-btn");
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.id = "investigate-btn";
+    btn.textContent = "🔍";
+    btn.title = "Soruştur";
+    card.appendChild(btn);
+  }
+
+  if (c.investigate_text) {
+    btn.classList.remove("hidden");
+    btn.onclick = () => {
+      if (isInvestigating) {
+        // Geri dön
+        cardText.textContent = displayText;
+        btn.textContent = "🔍";
+        isInvestigating = false;
+      } else {
+        // Soruştur
+        cardText.textContent = c.investigate_text;
+        btn.textContent = "↩";
+        isInvestigating = true;
+        // Traitor sayacı
+        if (c.character === hiddenTraitor || c.character_name === hiddenTraitor) {
+          traitorInvestigated++;
+        }
+      }
+    };
+  } else {
+    btn.classList.add("hidden");
+  }
+}
+
+function animateCardIn() {
   card.style.transform = "translateY(40px)";
   card.style.opacity = "0";
-  card.style.transition = "transform 0.3s ease, opacity 0.25s ease";
+  card.style.transition = "transform 0.4s ease, opacity 0.3s ease";
   card.style.pointerEvents = "auto";
   requestAnimationFrame(() => requestAnimationFrame(() => {
     card.style.transform = "translateY(0) rotate(0deg)";
     card.style.opacity = "1";
   }));
+}
+
+// ── Mektup Kartı ─────────────────────────────────────────────────
+function showLetterCard(c) {
+  hideNegotiationPanel();
+
+  const key = c.character || "";
+  cardImage.src = "assets/characters/" + encodeURIComponent(key + ".jpg");
+  cardImage.onerror = () => { cardImage.src = ""; };
+
+  charName.textContent = c.character_name || "Sultan";
+  cardText.textContent = c.text || "";
+  choiceLeft.textContent  = "";
+  choiceRight.textContent = "Devam →";
+  choiceLeft.style.opacity  = "0";
+  choiceRight.style.opacity = "0.8";
+  overlayL.style.opacity = "0";
+  overlayR.style.opacity = "0";
+
+  card.classList.add("letter-card");
+
+  const btn = document.getElementById("investigate-btn");
+  if (btn) btn.classList.add("hidden");
+
+  if (window.playLetterArrival) playLetterArrival();
+
+  animateCardIn();
+  card.style.pointerEvents = "none";
+
+  // Devam butonu
+  let devamBtn = document.getElementById("letter-devam-btn");
+  if (!devamBtn) {
+    devamBtn = document.createElement("button");
+    devamBtn.id = "letter-devam-btn";
+    devamBtn.className = "intro-btn";
+    devamBtn.style.cssText = "margin-top: 8px; font-size: 11px; padding: 10px 20px; max-width: 200px;";
+    devamBtn.textContent = "DEVAM";
+    const cardBottom = document.getElementById("card-bottom");
+    if (cardBottom) cardBottom.appendChild(devamBtn);
+  }
+  devamBtn.style.display = "block";
+  devamBtn.onclick = () => {
+    devamBtn.style.display = "none";
+    card.classList.remove("letter-card");
+    card.style.pointerEvents = "auto";
+
+    // Sultan sabir etkisi
+    if (c.right_effects && c.right_effects.sultanSabir) {
+      sultanSabir = Math.min(100, Math.max(0, sultanSabir + c.right_effects.sultanSabir));
+    }
+    for (const f of (c.right_flags_set || [])) activeFlags[f] = true;
+
+    cardsPlayed++;
+    if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
+    if (!isGameOver) setTimeout(dealNext, 150);
+  };
 }
 
 // ── Müzakere ─────────────────────────────────────────────────────
@@ -418,15 +725,12 @@ function showNegotiationCard(c) {
   overlayL.style.opacity = "0";
   overlayR.style.opacity = "0";
 
-  card.style.transform = "translateY(40px)";
-  card.style.opacity = "0";
-  card.style.transition = "transform 0.3s ease, opacity 0.25s ease";
-  card.style.pointerEvents = "none"; // sürükleme engel
+  card.classList.remove("letter-card");
+  const btn = document.getElementById("investigate-btn");
+  if (btn) btn.classList.add("hidden");
 
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    card.style.transform = "translateY(0) rotate(0deg)";
-    card.style.opacity = "1";
-  }));
+  animateCardIn();
+  card.style.pointerEvents = "none";
 
   const panel = document.getElementById("negotiation-panel");
   const optList = document.getElementById("negotiation-options");
@@ -449,22 +753,39 @@ function showNegotiationCard(c) {
   });
   panel.classList.remove("hidden");
   cardChoices.style.display = "none";
+
+  // Hide devam button if visible
+  const devamBtn = document.getElementById("letter-devam-btn");
+  if (devamBtn) devamBtn.style.display = "none";
 }
 
 function hideNegotiationPanel() {
   if (negotiationPanel) negotiationPanel.classList.add("hidden");
   if (cardChoices) cardChoices.style.display = "";
+  const devamBtn = document.getElementById("letter-devam-btn");
+  if (devamBtn) devamBtn.style.display = "none";
 }
 
 // ── Stats ─────────────────────────────────────────────────────────
 function updateStatUI() {
   const map = { saray: "saray", "yeniçeri": "yeniceri", ulema: "ulema", hazine: "hazine" };
+  let anyDanger = false;
   for (const [key, id] of Object.entries(map)) {
     const val = stats[key];
     const fill = document.getElementById("fill-" + id);
     if (!fill) continue;
     fill.style.width = val + "%";
     fill.className = "stat-fill" + (val <= 20 || val >= 80 ? " danger" : val <= 35 || val >= 65 ? " warn" : "");
+    if (val <= 20 || val >= 80) anyDanger = true;
+  }
+
+  // Danger pulse
+  if (anyDanger && !dangerPulseActive) {
+    dangerPulseActive = true;
+    if (window.startDangerPulse) startDangerPulse();
+  } else if (!anyDanger && dangerPulseActive) {
+    dangerPulseActive = false;
+    if (window.stopDangerPulse) stopDangerPulse();
   }
 }
 
@@ -481,33 +802,28 @@ function amplify(stat, delta) {
 
 function applyEffects(effects) {
   for (let [stat, raw] of Object.entries(effects || {})) {
-    // Danışman: Sokollu — tüm değişimler %15 azalır
-    if (hasAdvisor("sokollu")) {
-      raw = Math.round(raw * 0.85);
+    // sultanSabir özel işlem
+    if (stat === "sultanSabir") {
+      let sc = raw;
+      if (hasAdvisor("semsi")) sc = Math.round(sc * 0.5);
+      sultanSabir = Math.min(100, Math.max(0, sultanSabir + sc));
+      continue;
     }
-    // Danışman: Mimar Sinan — saray ve ulema %20 güçlenir
-    if (hasAdvisor("sinan") && (stat === "saray" || stat === "ulema")) {
-      raw = Math.round(raw * 1.2);
-    }
-    // Danışman: Hürrem — yeniçeri negatif %25 azalır
-    if (hasAdvisor("hurrem") && stat === "yeniçeri" && raw < 0) {
-      raw = Math.round(raw * 0.75);
-    }
+
+    if (hasAdvisor("sokollu")) raw = Math.round(raw * 0.85);
+    if (hasAdvisor("sinan") && (stat === "saray" || stat === "ulema")) raw = Math.round(raw * 1.2);
+    if (hasAdvisor("hurrem") && stat === "yeniçeri" && raw < 0) raw = Math.round(raw * 0.75);
 
     const amp = amplify(stat, raw);
     stats[stat] = Math.min(100, Math.max(0, (stats[stat] ?? 50) + amp));
 
-    // Sultan sabrı: saray değişiminden etkilenir
     if (stat === "saray") {
       let sabirChange = raw < 0 ? -3 : 2;
-      // Danışman: Şemsi Paşa — sultan sabrı %50 yavaşlar
       if (hasAdvisor("semsi")) sabirChange = Math.round(sabirChange * 0.5);
       sultanSabir = Math.min(100, Math.max(0, sultanSabir + sabirChange));
     }
   }
   updateStatUI();
-
-  // Sultan sabrı kontrolü
   checkSultanSabir();
   checkGameOver();
 }
@@ -530,73 +846,63 @@ function checkGameOver() {
   return false;
 }
 
-function triggerGameOver(reason) {
-  if (isGameOver) return;
-  isGameOver = true;
-  saveHighScore();
-  setTimeout(() => {
-    gameoverReason.textContent = reason;
-
-    const best = parseInt(localStorage.getItem("sadrazam_best_year") || "0");
-    let yearText = year + " yıl ayakta kaldın.";
-    if (year >= best) {
-      yearText += " 🏆 YENİ REKOR!";
-    } else {
-      yearText += " (Rekor: " + best + " yıl)";
+// ── Lanet Sistemi ─────────────────────────────────────────────────
+function checkCurse(dir) {
+  if (lastDir === dir) {
+    consecutiveSameDir++;
+    if (consecutiveSameDir >= 3) {
+      consecutiveSameDir = 0;
+      triggerCurse();
     }
-    gameoverYear.textContent = yearText;
-
-    gameoverScreen.classList.add("visible");
-  }, 600);
+  } else {
+    consecutiveSameDir = 1;
+  }
+  lastDir = dir;
 }
 
-function saveHighScore() {
-  const best = parseInt(localStorage.getItem("sadrazam_best_year") || "0");
-  if (year > best) {
-    localStorage.setItem("sadrazam_best_year", String(year));
+function triggerCurse() {
+  cursedEver = true;
+  // Lanet overlay
+  let overlay = document.getElementById("curse-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "curse-overlay";
+    const ct = document.createElement("div");
+    ct.className = "curse-text";
+    ct.textContent = "DENGE BOZULDU";
+    overlay.appendChild(ct);
+    document.body.appendChild(overlay);
   }
-}
-
-function advanceYear() {
-  year++;
-  yearLabel.textContent = year + ". YIL";
-
-  // Danışman: Piri Reis — her yıl hazine +6
-  if (hasAdvisor("piri_reis")) {
-    stats.hazine = Math.min(100, stats.hazine + 6);
-  }
-
-  // Pasif hazine azalması
-  stats.hazine = Math.max(0, stats.hazine - PASSIVE_HAZINE_DRAIN);
+  overlay.classList.remove("hidden");
+  // Tüm statlara -5
+  Object.keys(stats).forEach(s => {
+    stats[s] = Math.max(0, stats[s] - 5);
+  });
   updateStatUI();
-  if (checkGameOver()) return;
-
-  // Paşa terfi kartı (yıl 3'te)
-  if (isPasaMode && !pasaPromoted && year === 3) {
-    const terfiCard = allCards.find(c => c.is_pasa_terfi);
-    if (terfiCard) {
-      forcedQueue.unshift(terfiCard);
-    }
-  }
-
-  // Yıllık event kartı
-  const eventCards = getEventCards();
-  if (eventCards.length > 0) {
-    const ev = eventCards[Math.floor(Math.random() * eventCards.length)];
-    forcedQueue.push(ev);
-  }
+  setTimeout(() => overlay.classList.add("hidden"), 1500);
 }
 
 // ── Karar ─────────────────────────────────────────────────────────
 function decide(dir) {
   if (!currentCard) return;
 
-  // Paşa terfi kartı işlemi
+  // İnvestigating state temizle - sultanSabir cezası
+  if (isInvestigating) {
+    let sabirPenalty = -3;
+    if (hasAdvisor("semsi")) sabirPenalty = Math.round(sabirPenalty * 0.5);
+    sultanSabir = Math.min(100, Math.max(0, sultanSabir + sabirPenalty));
+    isInvestigating = false;
+  }
+
+  // Paşa terfi
   if (currentCard.is_pasa_terfi) {
     pasaPromoted = true;
     currentTitle = "SADRAZAM";
     if (titleLabel) titleLabel.textContent = currentTitle;
   }
+
+  // Lanet kontrolü
+  checkCurse(dir);
 
   // Zincirleme kartlar
   const triggerKey = "triggers_on_" + dir;
@@ -606,6 +912,7 @@ function decide(dir) {
       cardId: currentCard[triggerKey],
       afterCardsPlayed: cardsPlayed + delay
     });
+    updateFateBar();
   }
 
   // Arc tetikleme
@@ -621,27 +928,83 @@ function decide(dir) {
   // Flag'ler
   for (const f of (currentCard[dir + "_flags_set"] || [])) activeFlags[f] = true;
 
-  // Karakter hafızası güncelle
-  const charKey = currentCard.character || currentCard.character_name || "";
-  if (charKey) {
-    if (!characterMemory[charKey]) characterMemory[charKey] = { left: 0, right: 0, last: null };
-    characterMemory[charKey][dir]++;
-    characterMemory[charKey].last = dir;
-    // character_name ile de kaydet
-    const charNameKey = currentCard.character_name || "";
-    if (charNameKey && charNameKey !== charKey) {
-      if (!characterMemory[charNameKey]) characterMemory[charNameKey] = { left: 0, right: 0, last: null };
-      characterMemory[charNameKey][dir]++;
-      characterMemory[charNameKey].last = dir;
+  // Karakter hafızası
+  const charKey = currentCard.character || "";
+  const charNameKey = currentCard.character_name || "";
+  [charKey, charNameKey].filter(Boolean).forEach(k => {
+    if (!characterMemory[k]) characterMemory[k] = { left: 0, right: 0, last: null };
+    characterMemory[k][dir]++;
+    characterMemory[k].last = dir;
+  });
+
+  // Faction favor
+  const faction = currentCard.faction;
+  if (faction) {
+    if (dir === "right") {
+      factionFavors[faction] = (factionFavors[faction] || 0) + 1;
+      checkFactionPressure(faction);
     }
   }
 
   applyEffects(currentCard[dir + "_effects"] || {});
   if (isGameOver) return;
 
+  // Ses
+  if (dir === "right" && window.playSwipeRight) playSwipeRight();
+  if (dir === "left"  && window.playSwipeLeft)  playSwipeLeft();
+
   cardsPlayed++;
+  advanceHicriMonth();
+
   if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
   if (!isGameOver) setTimeout(dealNext, 150);
+
+  // Hain açıklama kontrolü (yıl 6 = 60 kart)
+  if (cardsPlayed >= 60 && !traitorRevealed) {
+    traitorRevealed = true;
+    const revCard = allCards.find(c => c.is_traitor_reveal);
+    if (revCard) {
+      const enriched = { ...revCard };
+      if (window.playTraitorReveal) playTraitorReveal();
+      if (traitorInvestigated >= 2) {
+        enriched.text = `Paşam, yıllardır aramızda bir hain vardı: ${getCharacterDisplayName(hiddenTraitor)}. Ama siz bunu zaten fark etmişsiniz! Sultan'a rapor hazırlandı. Sarayınız güçlendi.`;
+        enriched.right_effects = { saray: 10 };
+      } else {
+        enriched.text = `Paşam, çok geç! ${getCharacterDisplayName(hiddenTraitor)} bu gece sizi Sultan'a şikâyet etti. Belgeler sahte ama Sultan inanıyor...`;
+        enriched.right_effects = { saray: -15 };
+      }
+      forcedQueue.unshift(enriched);
+    }
+  }
+}
+
+function getCharacterDisplayName(key) {
+  if (!key) return "Bilinmeyen";
+  const c = allCards.find(x => x.character === key);
+  return c ? (c.character_name || key) : key;
+}
+
+// ── Faction Pressure ──────────────────────────────────────────────
+const FACTION_RIVALS = { saray: "halk", halk: "saray", ordu: "din", din: "ordu" };
+
+function checkFactionPressure(faction) {
+  const count = factionFavors[faction] || 0;
+  if (count >= 5) {
+    const rival = FACTION_RIVALS[faction];
+    if (rival && !factionPressureSent[rival]) {
+      factionPressureSent[rival] = true;
+      activeFlags["faction_pressure_" + rival] = true;
+      // Baskı kartını kuyruğa ekle
+      const pressureCard = allCards.find(c => c.required_faction_pressure === rival);
+      if (pressureCard) {
+        scheduledCards.push({
+          cardId: pressureCard.id,
+          afterCardsPlayed: cardsPlayed + 2
+        });
+        updateFateBar();
+      }
+    }
+  }
 }
 
 // ── Swipe / Drag ──────────────────────────────────────────────────
@@ -650,7 +1013,7 @@ let startX = 0, startY = 0, curX = 0, isDragging = false, isAnimating = false;
 
 function onStart(x, y) {
   if (isAnimating || isGameOver) return;
-  if (currentCard && currentCard.type === "negotiation") return;
+  if (currentCard && (currentCard.type === "negotiation" || currentCard.type === "letter")) return;
   startX = x; startY = y; curX = x; isDragging = true;
   card.classList.add("dragging");
   card.style.transition = "none";
@@ -718,7 +1081,7 @@ window.addEventListener("mouseup",   () => onEnd());
 // Keyboard
 window.addEventListener("keydown", e => {
   if (isAnimating || isGameOver || currentCard === null) return;
-  if (currentCard && currentCard.type === "negotiation") return;
+  if (currentCard && (currentCard.type === "negotiation" || currentCard.type === "letter")) return;
   if (e.key === "ArrowLeft")  flyOff("left");
   if (e.key === "ArrowRight") flyOff("right");
 });
@@ -733,9 +1096,259 @@ window.addEventListener("touchmove", e => {
 }, { passive: false });
 window.addEventListener("touchend",  () => onEnd());
 
+// ── Yıl Geçişi ───────────────────────────────────────────────────
+function advanceYear() {
+  year++;
+
+  if (window.playYearAdvance) playYearAdvance();
+
+  if (hasAdvisor("piri_reis")) {
+    stats.hazine = Math.min(100, stats.hazine + 6);
+  }
+
+  stats.hazine = Math.max(0, stats.hazine - PASSIVE_HAZINE_DRAIN);
+  updateStatUI();
+  if (checkGameOver()) return;
+
+  // Paşa terfi (yıl 3)
+  if (isPasaMode && !pasaPromoted && year === 3) {
+    const terfiCard = allCards.find(c => c.is_pasa_terfi);
+    if (terfiCard) forcedQueue.unshift(terfiCard);
+  }
+
+  // Sultan mektubu (%30 ihtimal)
+  if (Math.random() < 0.30) {
+    const letterCards = allCards.filter(c => c.type === "letter" && !activeFlags["sultan_mektup_" + c.id + "_okundu"]);
+    if (letterCards.length > 0) {
+      const lc = letterCards[Math.floor(Math.random() * letterCards.length)];
+      forcedQueue.push(lc);
+    }
+  }
+
+  // Yıllık event kartı
+  const eventCards = getEventCards();
+  if (eventCards.length > 0) {
+    const ev = eventCards[Math.floor(Math.random() * eventCards.length)];
+    forcedQueue.push(ev);
+    // Event ses
+    if (ev.sound === "veba" && window.playEvent_veba) playEvent_veba();
+    if (ev.sound === "savas" && window.playEvent_savas) playEvent_savas();
+    if (ev.sound === "hasat" && window.playEvent_hasat) playEvent_hasat();
+  }
+
+  updateDynamicSubtitle();
+}
+
+// ── Game Over ─────────────────────────────────────────────────────
+function triggerGameOver(reason) {
+  if (isGameOver) return;
+  isGameOver = true;
+
+  // Durdur
+  if (window.stopDangerPulse) stopDangerPulse();
+
+  // Sinematik ölüm
+  if (window.playCinematicDeath) playCinematicDeath();
+
+  const cinematicEl = document.getElementById("cinematic-death");
+  const deathImg    = document.getElementById("death-char-img");
+
+  if (cinematicEl && deathCharacterKey) {
+    deathImg.src = "assets/characters/" + encodeURIComponent(deathCharacterKey + ".jpg");
+    deathImg.onerror = () => { deathImg.src = ""; };
+    cinematicEl.classList.remove("hidden");
+    setTimeout(() => {
+      deathImg.style.transition = "opacity 1.5s ease";
+      deathImg.style.opacity = "0";
+    }, 600);
+    setTimeout(() => {
+      cinematicEl.classList.add("hidden");
+      deathImg.style.opacity = "";
+      deathImg.style.transition = "";
+      showGameOver(reason);
+    }, 2200);
+  } else {
+    setTimeout(() => showGameOver(reason), 600);
+  }
+}
+
+function showGameOver(reason) {
+  if (window.playGameOver) playGameOver();
+
+  saveHighScore();
+  saveDeathArchive(reason);
+
+  const newAchievements = checkAchievements();
+  if (newAchievements.length > 0) {
+    newAchievements.forEach((a, i) => {
+      setTimeout(() => showAchievementToast(a), 500 + i * 3200);
+    });
+  }
+
+  const best = parseInt(localStorage.getItem("sadrazam_best_year") || "0");
+  const isNewRecord = year >= best;
+
+  // Dinamik başlık
+  currentDeathTitle = getDynamicDeathTitle(reason);
+  document.getElementById("gameover-title").textContent = currentDeathTitle;
+
+  gameoverReason.textContent = reason;
+
+  let yearText = `${year} yıl, ${HICRI_MONTHS[hicriMonth % 12]} ${hicriYear}`;
+  document.getElementById("gameover-year").textContent = yearText;
+
+  // Yeni rekor banner
+  let recBanner = document.getElementById("new-record-banner");
+  if (!recBanner) {
+    recBanner = document.createElement("div");
+    recBanner.id = "new-record-banner";
+    const divider = document.getElementById("gameover-divider");
+    if (divider) divider.parentNode.insertBefore(recBanner, divider.nextSibling);
+  }
+  if (isNewRecord) {
+    recBanner.textContent = "🏆 YENİ REKOR!";
+    recBanner.style.display = "block";
+  } else {
+    recBanner.style.display = "none";
+    const oldBest = document.getElementById("gameover-year");
+    if (oldBest) oldBest.textContent += ` · Rekor: ${best} yıl`;
+  }
+
+  // Achievement badge'ler
+  renderAchievementBadges();
+
+  // Ölüm arşivi
+  renderDeathArchive();
+
+  gameoverScreen.classList.add("visible");
+}
+
+function getDynamicDeathTitle(reason) {
+  if (reason.includes("idam")) return "İDAM FERMANI GELDİ";
+  if (reason.includes("cellat")) return "GECE YARISI SONU";
+  if (reason.includes("isyan") || reason.includes("Yeniçeri")) return "TAHT DEVRILDI";
+  if (reason.includes("linç") || reason.includes("dinsizlik")) return "HALK AYAKTA";
+  if (reason.includes("düşman") || reason.includes("surlarına")) return "İSTANBUL DÜŞTÜ";
+  if (reason.includes("iflas")) return "HAZİNE BOŞALDI";
+  if (reason.includes("zimmet")) return "SUÇLAMA GELDİ";
+  if (reason.includes("ihanet") || reason.includes("şikâyet")) return "İHANET AÇIĞA ÇIKTI";
+  if (reason.includes("sürgün") || reason.includes("azletti")) return "AZIL FERMANI";
+  return "SADRAZAMLIK SONA ERDİ";
+}
+
+// ── Başarımlar ────────────────────────────────────────────────────
+function checkAchievements() {
+  const state = { year, stats, traitorInvestigated, cursedEver, isPasaMode, pasaPromoted };
+  const saved = JSON.parse(localStorage.getItem("sadrazam_achievements") || "[]");
+  const newlyUnlocked = [];
+
+  ACHIEVEMENTS.forEach(a => {
+    if (!saved.includes(a.id) && a.check(state)) {
+      saved.push(a.id);
+      newlyUnlocked.push(a);
+    }
+  });
+
+  localStorage.setItem("sadrazam_achievements", JSON.stringify(saved));
+  return newlyUnlocked;
+}
+
+function showAchievementToast(achievement) {
+  const toast = document.createElement("div");
+  toast.className = "achievement-toast";
+  toast.textContent = `${achievement.label} kazanıldı!`;
+  document.body.appendChild(toast);
+  if (window.playAchievement) playAchievement();
+  setTimeout(() => {
+    toast.remove();
+  }, 3200);
+}
+
+function renderAchievementBadges() {
+  const saved = JSON.parse(localStorage.getItem("sadrazam_achievements") || "[]");
+  if (!saved.length) return;
+
+  let section = document.getElementById("achievements-section");
+  if (!section) {
+    section = document.createElement("div");
+    section.id = "achievements-section";
+    const panel = document.getElementById("gameover-panel");
+    if (panel) {
+      const restartBtn = document.getElementById("restart-btn");
+      panel.insertBefore(section, restartBtn);
+    }
+  }
+  section.innerHTML = "";
+
+  const title = document.createElement("div");
+  title.style.cssText = "font-family:'Cinzel',serif;font-size:10px;color:rgba(201,162,39,0.5);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;text-align:center;";
+  title.textContent = "KAZANILAN BAŞARIMLAR";
+  section.appendChild(title);
+
+  const badgesDiv = document.createElement("div");
+  badgesDiv.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;justify-content:center;";
+  saved.forEach(id => {
+    const a = ACHIEVEMENTS.find(x => x.id === id);
+    if (a) {
+      const badge = document.createElement("div");
+      badge.className = "achievement-badge";
+      badge.textContent = a.label;
+      badgesDiv.appendChild(badge);
+    }
+  });
+  section.appendChild(badgesDiv);
+}
+
+// ── Ölüm Arşivi ───────────────────────────────────────────────────
+function saveDeathArchive(reason) {
+  const archive = JSON.parse(localStorage.getItem("sadrazam_deaths") || "[]");
+  archive.unshift({
+    year,
+    reason: reason.slice(0, 80),
+    sultan: selectedSultan ? selectedSultan.name : "—",
+    advisors: selectedAdvisors.map(a => a.name).join(", "),
+    date: new Date().toLocaleDateString("tr")
+  });
+  // Max 10
+  if (archive.length > 10) archive.pop();
+  localStorage.setItem("sadrazam_deaths", JSON.stringify(archive));
+}
+
+function renderDeathArchive() {
+  const archive = JSON.parse(localStorage.getItem("sadrazam_deaths") || "[]").slice(1, 4); // son 3 (1 = şimdiki)
+  if (!archive.length) return;
+
+  let section = document.getElementById("death-archive-section");
+  if (!section) {
+    section = document.createElement("div");
+    section.id = "death-archive-section";
+    const panel = document.getElementById("gameover-panel");
+    if (panel) {
+      const restartBtn = document.getElementById("restart-btn");
+      panel.insertBefore(section, restartBtn);
+    }
+  }
+  section.innerHTML = `<div class="death-archive-title">GEÇMİŞ ÖLÜMLER</div>`;
+
+  archive.forEach(d => {
+    const entry = document.createElement("div");
+    entry.className = "death-entry";
+    entry.innerHTML = `<strong>${d.sultan}</strong> · ${d.year} yıl · ${d.date}<br><span>${d.reason}</span>`;
+    section.appendChild(entry);
+  });
+}
+
+function saveHighScore() {
+  const best = parseInt(localStorage.getItem("sadrazam_best_year") || "0");
+  if (year > best) {
+    localStorage.setItem("sadrazam_best_year", String(year));
+  }
+}
+
 // ── Paylaşım ─────────────────────────────────────────────────────
 document.getElementById("share-btn").addEventListener("click", () => {
-  const text = `Sadrazam oyununda ${year} yıl ayakta kalabildim! Sen kaç yıl dayanabilirsin? sadrazam-web.vercel.app`;
+  const sultanName = selectedSultan ? selectedSultan.name : "Sultan";
+  const text = `Sadrazam'da ${sultanName} döneminde ${year} yıl ayakta kalabildim! 🗡️ Sen kaç yıl dayanabilirsin? sadrazam-web.vercel.app`;
   if (navigator.share) {
     navigator.share({ title: "Sadrazam", text }).catch(() => {});
   } else {
@@ -752,14 +1365,24 @@ document.getElementById("share-btn").addEventListener("click", () => {
 function restartGame() {
   gameoverScreen.classList.remove("visible");
   gameScreen.classList.add("hidden");
+  gameScreen.classList.remove("night-mode");
   card.style.opacity = "0";
   currentCard = null;
   selectedSultan = null;
   selectedAdvisors = [];
   hideNegotiationPanel();
 
-  // Intro'ya dön
+  // Clean up extra elements
+  ["new-record-banner","death-archive-section","achievements-section"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.parentNode) { /* keep for next round */ }
+  });
+
+  const cinematicEl = document.getElementById("cinematic-death");
+  if (cinematicEl) cinematicEl.classList.add("hidden");
+
   introScreen.style.display = "";
 }
 
+// ── Init ──────────────────────────────────────────────────────────
 updateStatUI();

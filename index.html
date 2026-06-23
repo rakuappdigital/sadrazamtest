@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Sadrazam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -20,7 +21,7 @@
       <button id="btn-pasa-mode" class="intro-btn secondary">PAŞALIK MODUNDA BAŞLA</button>
       <button id="btn-howto" class="intro-btn secondary">NASIL OYNANIR?</button>
     </div>
-    <div id="intro-footer">v2.0 · rakuappdigital</div>
+    <div id="intro-footer">v3.0 · rakuappdigital</div>
   </div>
 
   <!-- ── NASIL OYNANIR ── -->
@@ -73,6 +74,7 @@
         <p class="howto-body">
           Kartı <strong>sola kaydır</strong> ya da ← tuşuna bas → <em>Hayır</em><br/>
           Kartı <strong>sağa kaydır</strong> ya da → tuşuna bas → <em>Evet</em><br/>
+          Kartı <strong>🔍 soruştur</strong> → Karakteri incele (sultanı sabırsızlatır)<br/>
           Her 10 kartta bir yıl geçer. Hazine her yıl azalır.
         </p>
       </div>
@@ -127,9 +129,13 @@
       </div>
     </div>
 
+    <!-- Kader İpleri -->
+    <div id="fate-bar"></div>
+
     <div id="header-row">
       <div id="title-label">SADRAZAM</div>
-      <div id="year-label">1. YIL</div>
+      <div id="year-label">Muharrem 927</div>
+      <div id="dynamic-subtitle"></div>
     </div>
 
     <div id="card-area">
@@ -168,6 +174,13 @@
     </div>
   </div>
 
+  <!-- ── SİNEMATİK ÖLÜM ── -->
+  <div id="cinematic-death" class="hidden">
+    <img id="death-char-img" src="" alt="" />
+    <div id="death-flash"></div>
+  </div>
+
+  <script src="sounds.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
