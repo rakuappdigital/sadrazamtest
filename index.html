@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sadrazam</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game">
+    <div id="stats-bar">
+      <div class="stat" id="stat-saray">
+        <span class="stat-label">Saray</span>
+        <div class="stat-track"><div class="stat-fill" id="fill-saray"></div></div>
+      </div>
+      <div class="stat" id="stat-yeniceri">
+        <span class="stat-label">Ordu</span>
+        <div class="stat-track"><div class="stat-fill" id="fill-yeniceri"></div></div>
+      </div>
+      <div class="stat" id="stat-ulema">
+        <span class="stat-label">Ulema</span>
+        <div class="stat-track"><div class="stat-fill" id="fill-ulema"></div></div>
+      </div>
+      <div class="stat" id="stat-hazine">
+        <span class="stat-label">Hazine</span>
+        <div class="stat-track"><div class="stat-fill" id="fill-hazine"></div></div>
+      </div>
+    </div>
+
+    <div id="year-label">1. YIL</div>
+
+    <div id="card-area">
+      <div id="card">
+        <div id="card-overlay-left"></div>
+        <div id="card-overlay-right"></div>
+        <img id="card-image" src="" alt="" />
+        <div id="card-bottom">
+          <div id="card-char-name"></div>
+          <div id="card-divider"></div>
+          <div id="card-text"></div>
+          <div id="card-choices">
+            <span id="choice-left"></span>
+            <span id="choice-right"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gameover-screen">
+    <div id="gameover-panel">
+      <div id="gameover-title">SADRAZAMLIK SONA ERDİ</div>
+      <div id="gameover-divider"></div>
+      <div id="gameover-reason"></div>
+      <div id="gameover-year"></div>
+      <button id="restart-btn">YENİDEN BAŞLA</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

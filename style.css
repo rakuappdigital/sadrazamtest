@@ -1,0 +1,241 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #D9B83F;
+  --gold-dim: rgba(217,184,63,0.5);
+  --bg: #0D0B14;
+  --card-bg: #14101E;
+  --text: #EBE0CC;
+  --danger: #D91F1F;
+  --warn: #E68C0D;
+  --normal: #D1AE25;
+}
+
+html, body {
+  height: 100%;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Georgia', serif;
+  overflow: hidden;
+}
+
+#game {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  height: 100dvh;
+  max-height: 900px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── Stats ── */
+#stats-bar {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  padding: 18px 16px 10px;
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--gold);
+  text-align: center;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.stat-track {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  width: 50%;
+  background: var(--normal);
+  border-radius: 3px;
+  transition: width 0.4s ease, background 0.3s;
+}
+
+.stat-fill.danger { background: var(--danger); }
+.stat-fill.warn   { background: var(--warn); }
+
+/* ── Year ── */
+#year-label {
+  font-size: 18px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin: 6px 0 12px;
+}
+
+/* ── Card Area ── */
+#card-area {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px 24px;
+}
+
+#card {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px var(--gold-dim);
+  cursor: grab;
+  touch-action: none;
+  transform-origin: center bottom;
+  transition: box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+
+#card.dragging { cursor: grabbing; }
+
+#card-overlay-left,
+#card-overlay-right {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10;
+  transition: opacity 0.05s;
+}
+#card-overlay-left  { background: rgba(180,30,30,0.45); }
+#card-overlay-right { background: rgba(30,140,50,0.45); }
+
+#card-image {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  background: #1a1625;
+}
+
+#card-bottom {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#card-char-name {
+  font-size: 18px;
+  color: var(--gold);
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+#card-divider {
+  height: 1px;
+  background: var(--gold-dim);
+  margin: 0 8px;
+}
+
+#card-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.55;
+  text-align: center;
+  min-height: 60px;
+}
+
+#card-choices {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+#choice-left  { font-size: 14px; color: #ff5555; font-weight: bold; opacity: 0; transition: opacity 0.1s; }
+#choice-right { font-size: 14px; color: #55dd66; font-weight: bold; opacity: 0; transition: opacity 0.1s; }
+
+/* ── Game Over ── */
+#gameover-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+#gameover-screen.visible { display: flex; }
+
+#gameover-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--gold-dim);
+  border-radius: 20px;
+  padding: 36px 28px;
+  max-width: 340px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+}
+
+#gameover-title {
+  font-size: 20px;
+  color: var(--gold);
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+#gameover-divider {
+  height: 1px;
+  background: var(--gold-dim);
+}
+
+#gameover-reason {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+#gameover-year {
+  font-size: 14px;
+  color: rgba(217,184,63,0.6);
+}
+
+#restart-btn {
+  margin-top: 8px;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 16px;
+  font-family: 'Georgia', serif;
+  letter-spacing: 1px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+#restart-btn:hover {
+  background: var(--gold);
+  color: #000;
+}
