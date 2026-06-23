@@ -182,14 +182,14 @@ function showSultanScreen() {
     grid.appendChild(btn);
   });
 
-  document.getElementById("btn-sultan-confirm").addEventListener("click", () => {
+  document.getElementById("btn-sultan-confirm").onclick = () => {
     if (!selectedSultan) {
       alert("Lütfen bir sultan seçin.");
       return;
     }
     sultanScreen.classList.add("hidden");
     showAdvisorScreen();
-  }, { once: true });
+  };
 }
 
 // ── Danışman Seçim Ekranı ─────────────────────────────────────────
@@ -224,14 +224,14 @@ function showAdvisorScreen() {
     grid.appendChild(btn);
   });
 
-  document.getElementById("btn-advisor-confirm").addEventListener("click", () => {
+  document.getElementById("btn-advisor-confirm").onclick = () => {
     if (selectedAdvisors.length !== 2) {
       alert("Lütfen tam olarak 2 danışman seçin.");
       return;
     }
     advisorScreen.classList.add("hidden");
     startGame();
-  }, { once: true });
+  };
 }
 
 // ── Oyunu Başlat ──────────────────────────────────────────────────
