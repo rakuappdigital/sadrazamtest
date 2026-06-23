@@ -17,9 +17,10 @@
       <p id="intro-subtitle">Osmanlı İmparatorluğu'nda denge peşindeki bir vezirin hikayesi</p>
       <div id="intro-divider"></div>
       <button id="btn-start" class="intro-btn">OYUNA BAŞLA</button>
+      <button id="btn-pasa-mode" class="intro-btn secondary">PAŞALIK MODUNDA BAŞLA</button>
       <button id="btn-howto" class="intro-btn secondary">NASIL OYNANIR?</button>
     </div>
-    <div id="intro-footer">v1.0 · rakuappdigital</div>
+    <div id="intro-footer">v2.0 · rakuappdigital</div>
   </div>
 
   <!-- ── NASIL OYNANIR ── -->
@@ -80,6 +81,31 @@
     </div>
   </div>
 
+  <!-- ── SULTAN SEÇİM EKRANI ── -->
+  <div id="sultan-screen" class="hidden selection-screen">
+    <div class="selection-content">
+      <div class="sel-ornament">✦</div>
+      <h2 class="sel-title">SULTAN SEÇ</h2>
+      <p class="sel-subtitle">Hangi sultan döneminde görev yapıyorsunuz?</p>
+      <div class="sel-divider"></div>
+      <div id="sultan-grid" class="sultan-grid"></div>
+      <button id="btn-sultan-confirm" class="intro-btn" style="margin-top:20px;">DEVAM ET</button>
+    </div>
+  </div>
+
+  <!-- ── DANIŞMAN SEÇİM EKRANI ── -->
+  <div id="advisor-screen" class="hidden selection-screen">
+    <div class="selection-content">
+      <div class="sel-ornament">✦</div>
+      <h2 class="sel-title">DANIŞMANLARINI SEÇ</h2>
+      <p class="sel-subtitle">İki danışman seç. Her birinin farklı pasif etkisi var.</p>
+      <div class="sel-divider"></div>
+      <div id="advisor-count" class="advisor-count">0/2 seçildi</div>
+      <div id="advisor-grid" class="advisor-grid"></div>
+      <button id="btn-advisor-confirm" class="intro-btn" style="margin-top:20px;">OYUNA BAŞLA</button>
+    </div>
+  </div>
+
   <!-- ── OYUN ── -->
   <div id="game" class="hidden">
     <div id="stats-bar">
@@ -101,7 +127,10 @@
       </div>
     </div>
 
-    <div id="year-label">1. YIL</div>
+    <div id="header-row">
+      <div id="title-label">SADRAZAM</div>
+      <div id="year-label">1. YIL</div>
+    </div>
 
     <div id="card-area">
       <div id="swipe-hint-left" class="swipe-hint">← Hayır</div>
@@ -117,6 +146,10 @@
             <span id="choice-left"></span>
             <span id="choice-right"></span>
           </div>
+          <!-- Müzakere paneli -->
+          <div id="negotiation-panel" class="hidden">
+            <div id="negotiation-options"></div>
+          </div>
         </div>
       </div>
       <div id="swipe-hint-right" class="swipe-hint">Evet →</div>
@@ -130,6 +163,7 @@
       <div id="gameover-divider"></div>
       <div id="gameover-reason"></div>
       <div id="gameover-year"></div>
+      <button id="share-btn" class="intro-btn secondary" style="margin-top:4px;">PAYLAŞ</button>
       <button id="restart-btn">YENİDEN BAŞLA</button>
     </div>
   </div>
