@@ -668,9 +668,9 @@ function showLetterCard(c) {
   charName.textContent = c.character_name || "Sultan";
   cardText.textContent = c.text || "";
   choiceLeft.textContent  = "";
-  choiceRight.textContent = "Devam →";
+  choiceRight.textContent = "";
   choiceLeft.style.opacity  = "0";
-  choiceRight.style.opacity = "0.8";
+  choiceRight.style.opacity = "0";
   overlayL.style.opacity = "0";
   overlayR.style.opacity = "0";
 
@@ -696,6 +696,9 @@ function showLetterCard(c) {
     if (cardBottom) cardBottom.appendChild(devamBtn);
   }
   devamBtn.style.display = "block";
+  devamBtn.style.pointerEvents = "auto";
+  devamBtn.style.position = "relative";
+  devamBtn.style.zIndex = "20";
   devamBtn.onclick = () => {
     devamBtn.style.display = "none";
     card.classList.remove("letter-card");
