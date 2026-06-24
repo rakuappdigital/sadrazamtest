@@ -345,7 +345,7 @@
     },
     {
       "id": "fetva_talebi",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "faction": "din",
       "text": "Sadrazam Hazretleri, bir Venedikli tüccarın faaliyetleri konusunda fetva talebi var. Şartlı caiz diyebilirim, ama karar sizin.",
@@ -377,7 +377,7 @@
     },
     {
       "id": "seyhulislam_medrese",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "faction": "din",
       "text": "Üsküdar'da yeni bir medrese için arazi tahsis edilmesini talep ediyorum. İlim yuvası olmadan devlet temelsiz kalır.",
@@ -414,7 +414,7 @@
     },
     {
       "id": "seyhulislam_zındıklık",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "faction": "din",
       "text": "Saraydaki bir kâtip bid'at içerikli yazılar üretiyor. Zındıklıkla suçlayıp soruşturma açmamı onaylayın.",
@@ -447,7 +447,7 @@
     },
     {
       "id": "seyhulislam_hutbe",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "faction": "din",
       "text": "Cuma hutbesine Sultan'ın adının yanına sizin unvanınızın da eklenmesini düşünüyorum. Tarihte emsali var.",
@@ -479,7 +479,7 @@
     },
     {
       "id": "seyhulislam_vakıf",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "faction": "din",
       "text": "Vakıf gelirlerinin bir kısmını doğrudan Ulema denetimine almak istiyorum. Bu hem şeffaflık hem de verimlilik sağlar.",
@@ -511,7 +511,7 @@
     },
     {
       "id": "defterdar_bütçe",
-      "character": "4. Defterdar",
+      "character": "4-defterdar",
       "character_name": "Defterdar",
       "faction": "saray",
       "text": "Efendim, yıl sonu bütçesi açık veriyor. Ya sefere ayrılan payı kısacağız ya da vergi artırımına gideceğiz.",
@@ -543,7 +543,7 @@
     },
     {
       "id": "defterdar_vergi_tahsil",
-      "character": "4. Defterdar",
+      "character": "4-defterdar",
       "character_name": "Defterdar",
       "faction": "saray",
       "text": "Anadolu tahsildarları geri döndü. Getiri öngörülenin çok altında. Köylüler ödeyemiyor mu yoksa tahsildarlar zimmetleyip mi geliyor?",
@@ -575,7 +575,7 @@
     },
     {
       "id": "defterdar_borç_teklifi",
-      "character": "4. Defterdar",
+      "character": "4-defterdar",
       "character_name": "Defterdar",
       "faction": "saray",
       "text": "Cenevizli bankacılar hazineye uygun faizle borç teklif ediyor. Kısa vadede nefes alırız, uzun vadede borcumuz artar.",
@@ -608,7 +608,7 @@
     },
     {
       "id": "defterdar_pazar_ruhsatı",
-      "character": "4. Defterdar",
+      "character": "4-defterdar",
       "character_name": "Defterdar",
       "faction": "saray",
       "text": "Galata'da yeni bir pazar kurulması için ruhsat talebi var. Hem esnaf hem hazine kazanır. Ama eski esnaf loncaları itiraz ediyor.",
@@ -640,7 +640,7 @@
     },
     {
       "id": "defterdar_gümrük",
-      "character": "4. Defterdar",
+      "character": "4-defterdar",
       "character_name": "Defterdar",
       "faction": "saray",
       "text": "Boğaz'dan geçen yabancı gemilere uygulanan gümrük vergisi on yıldır değişmedi. İki katına çıkarmayı öneriyorum.",
@@ -672,7 +672,7 @@
     },
     {
       "id": "valide_evlilik",
-      "character": "5. Valide Sultan",
+      "character": "5-valide-sultan",
       "character_name": "Valide Sultan",
       "faction": "saray",
       "text": "Şehzadem için uygun bir gelin adayı buldum. Kırım Hanı'nın kızı. İttifak açısından da değerli. Onayınızı bekliyorum.",
@@ -704,7 +704,7 @@
     },
     {
       "id": "valide_harem_harcaması",
-      "character": "5. Valide Sultan",
+      "character": "5-valide-sultan",
       "character_name": "Valide Sultan",
       "faction": "saray",
       "text": "Harem'in yıllık ödeneği yetersiz kalıyor. Kıyafetler, tamirat, hizmetkarların maaşları... Artırım şart.",
@@ -734,7 +734,7 @@
     },
     {
       "id": "valide_hoca_seçimi",
-      "character": "5. Valide Sultan",
+      "character": "5-valide-sultan",
       "character_name": "Valide Sultan",
       "faction": "saray",
       "text": "Küçük şehzadenin eğitimi için iki hoca adayı var. Biri Ulema kökenli, biri Acem sarayından gelmiş. Kim uygun?",
@@ -764,7 +764,7 @@
     },
     {
       "id": "valide_cariyer_şüphesi",
-      "character": "5. Valide Sultan",
+      "character": "5-valide-sultan",
       "character_name": "Valide Sultan",
       "faction": "saray",
       "text": "Haremdeki bir cariye hakkında duyumlar var. Yabancı devletle ilişkili olduğu söyleniyor. Araştıralım mı?",
@@ -797,7 +797,7 @@
     },
     {
       "id": "valide_vasiyet",
-      "character": "5. Valide Sultan",
+      "character": "5-valide-sultan",
       "character_name": "Valide Sultan",
       "faction": "saray",
       "text": "Eski sultanın mühürlü bir vasiyet mektubu ortaya çıktı. Valide Sultan size getirdi. Açılsın mı?",
@@ -829,7 +829,7 @@
     },
     {
       "id": "kaptan_korsan",
-      "character": "6. Kaptan-ı Derya",
+      "character": "6-kaptan-i-derya",
       "character_name": "Kaptan-ı Derya",
       "faction": "ordu",
       "text": "Akdeniz'de Cenevizli korsanlar Osmanlı ticaret gemilerimizi vuruyor. Bir müfreze göndereyim mi?",
@@ -866,7 +866,7 @@
     },
     {
       "id": "kaptan_tersane",
-      "character": "6. Kaptan-ı Derya",
+      "character": "6-kaptan-i-derya",
       "character_name": "Kaptan-ı Derya",
       "faction": "ordu",
       "text": "Tersanemiz eskidi. Altı yeni kadırga inşa edebiliriz ama büyük bir yatırım gerekiyor.",
@@ -903,7 +903,7 @@
     },
     {
       "id": "kaptan_gizli_harekât",
-      "character": "6. Kaptan-ı Derya",
+      "character": "6-kaptan-i-derya",
       "character_name": "Kaptan-ı Derya",
       "faction": "ordu",
       "text": "Venedik'in Girit'teki limanına gece baskını düzenleyebiliriz. Resmî savaş ilanı olmadan. Risk var ama kazanç büyük.",
@@ -935,7 +935,7 @@
     },
     {
       "id": "kaptan_fırtına_hasarı",
-      "character": "6. Kaptan-ı Derya",
+      "character": "6-kaptan-i-derya",
       "character_name": "Kaptan-ı Derya",
       "faction": "ordu",
       "text": "Büyük fırtınada üç gemimiz hasar gördü, biri battı. Acil tamir ödeneği gerekiyor.",
@@ -970,7 +970,7 @@
     },
     {
       "id": "kaptan_malta_ittifak",
-      "character": "6. Kaptan-ı Derya",
+      "character": "6-kaptan-i-derya",
       "character_name": "Kaptan-ı Derya",
       "faction": "ordu",
       "text": "Malta Şövalyeleri'ne karşı Napoli'den ortak harekât teklifi geldi. Osmanlı'ya alışılmadık bir müttefik.",
@@ -1002,7 +1002,7 @@
     },
     {
       "id": "elci_ticaret_imtiyazı",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Yabancı Elçi",
       "faction": "halk",
       "text": "Venedik Cumhuriyeti adına İstanbul'da depo ve temsilcilik hakkı talep ediyorum. Karşılığında ipek ve cam eşya.",
@@ -1034,7 +1034,7 @@
     },
     {
       "id": "elci_sınır_müzakere",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Yabancı Elçi",
       "faction": "halk",
       "text": "Habsburglu elçi olarak Macaristan sınırındaki köy anlaşmazlığını çözmek için arabuluculuk öneriyorum.",
@@ -1066,7 +1066,7 @@
     },
     {
       "id": "elci_fransız_ittifak",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Yabancı Elçi",
       "faction": "halk",
       "text": "Fransa Kralı ortak düşman Habsburglar'a karşı gizli bir savunma anlaşması öneriyor. Kimse bilmeyecek.",
@@ -1098,7 +1098,7 @@
     },
     {
       "id": "elci_esir_takası",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Yabancı Elçi",
       "faction": "halk",
       "text": "Esir takası teklifindeyim. On Osmanlı askerine karşılık beş Avrupalı soylu. Üstelik onurlu bir törenle.",
@@ -1130,7 +1130,7 @@
     },
     {
       "id": "elci_portekiz",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Portekizli Elçi",
       "faction": "halk",
       "text": "Hint Okyanusu'ndaki baharat ticareti için garip bir teklif: Portekiz gemileri Osmanlı bayrağıyla seyreder, kâr paylaşılır.",
@@ -1162,7 +1162,7 @@
     },
     {
       "id": "rakip_şikayeti",
-      "character": "8. Rakip Vezir",
+      "character": "8-rakip-vezir",
       "character_name": "Rakip Vezir",
       "faction": "saray",
       "text": "Divanda duyuldu: rakibiniz Sultan'a sizi şikâyet etmiş. 'Hazineyi harcıyor' demiş. Karşı hamle yapacak mısınız?",
@@ -1194,7 +1194,7 @@
     },
     {
       "id": "rakip_sır",
-      "character": "8. Rakip Vezir",
+      "character": "8-rakip-vezir",
       "character_name": "Rakip Vezir",
       "faction": "saray",
       "text": "Rakibiniz kulağınıza yaklaşıp bir sırrı fısıldadı: Şeyhülislam'ın yolsuzluk yaptığını iddia ediyor. Güvenilir mi bu adam?",
@@ -1227,7 +1227,7 @@
     },
     {
       "id": "rakip_yeni_unvan",
-      "character": "8. Rakip Vezir",
+      "character": "8-rakip-vezir",
       "character_name": "Rakip Vezir",
       "faction": "saray",
       "text": "Rakibiniz Sultan'dan yeni bir unvan aldı: 'Müşavir-i Hâs'. Divan'daki ağırlığı arttı. Sessiz mi kalıyorsunuz?",
@@ -1259,7 +1259,7 @@
     },
     {
       "id": "rakip_ittifak_teklifi",
-      "character": "8. Rakip Vezir",
+      "character": "8-rakip-vezir",
       "character_name": "Rakip Vezir",
       "faction": "saray",
       "text": "'Birbirimizi yıkmak yerine Sultan'ı birlikte yönetelim' diyor. Ama şartları ağır ve güveni yok.",
@@ -1291,7 +1291,7 @@
     },
     {
       "id": "rakip_hakaret",
-      "character": "8. Rakip Vezir",
+      "character": "8-rakip-vezir",
       "character_name": "Rakip Vezir",
       "faction": "saray",
       "text": "Divan toplantısında Sultan'ın önünde sizi küçük düşüren bir konuşma yaptı. Herkes bekledi. Ne yapacaksınız?",
@@ -4266,7 +4266,7 @@
     },
     {
       "id": "venedik_1",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Venedik Elçisi",
       "text": "İttifak görüşmeleri başladı, Paşam. Venedik, Akdeniz'deki ticaret yollarını paylaşmak istiyor.",
       "left_text": "Sınırlı Tut",
@@ -4300,7 +4300,7 @@
     },
     {
       "id": "venedik_2",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Venedik Elçisi",
       "text": "Elçi tekrar geldi. Bu kez ortak bir donanma operasyonu teklif ediyorlar. Hem kazanç hem risk var.",
       "left_text": "Çok riskli, vazgeçin",
@@ -4339,7 +4339,7 @@
     },
     {
       "id": "venedik_3",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Venedik Elçisi",
       "text": "Venedik ittifakının son halkası: kalıcı bir büyükelçilik. Kabul ederseniz her yıl hediyeler geliyor.",
       "left_text": "Kalıcı bağı reddediyorum",
@@ -4487,7 +4487,7 @@
     },
     {
       "id": "elci_muzakere",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Yabancı Elçi",
       "text": "Paşam, ticaret antlaşması için üç farklı teklif getirdim. Hangisini kabul edersiniz?",
       "left_text": "Düşük teklif — 5.000 akçe",
@@ -4546,7 +4546,7 @@
     },
     {
       "id": "vergi_muzakere",
-      "character": "4. Defterdar",
+      "character": "4-defterdar",
       "character_name": "Defterdar",
       "text": "Paşam, vergi sistemini yeniden düzenlemeliyiz. Hangi grubu öncelikli tutacaksınız?",
       "left_text": "Esnafı koru",
@@ -4805,7 +4805,7 @@
     },
     {
       "id": "faction_din_baskisi",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "text": "Paşam, ordu ileri gidiyor. Savaş gelirleri halkı mahvediyor. Ulema olarak size uyarıyoruz: Ya dinleyin ya da halkı biz yönlendiririz.",
       "left_text": "Ordunu destekle",
@@ -4838,7 +4838,7 @@
     },
     {
       "id": "faction_saray_baskisi",
-      "character": "5. Valide Sultan",
+      "character": "5-valide-sultan",
       "character_name": "Valide Sultan",
       "text": "Valide Sultan sert konuşuyor: Paşam, halkı dinlemeyi bırakın. Saray mı yönetiyor bu ülkeyi yoksa sokaklardaki halk mı?",
       "left_text": "Halkı dinle",
@@ -5071,7 +5071,7 @@
     },
     {
       "id": "kader_zar_2",
-      "character": "8. Rakip Vezir",
+      "character": "8-rakip-vezir",
       "character_name": "Rakip Vezir",
       "type": "chance",
       "faction": "saray",
@@ -5129,7 +5129,7 @@
     },
     {
       "id": "kader_zar_4",
-      "character": "6. Kaptan-ı Derya",
+      "character": "6-kaptan-i-derya",
       "character_name": "Kaptan-ı Derya",
       "type": "chance",
       "faction": "ordu",
@@ -5221,7 +5221,7 @@
     },
     {
       "id": "savaş_barış",
-      "character": "7. Yabancı Elçi",
+      "character": "7-yabanci-elci",
       "character_name": "Yabancı Elçi",
       "faction": "halk",
       "text": "Paşam, barış kararınızın ardından karşı taraf müzakere masasına oturdu. Şartlar ağır değil, ama vazgeçilen şeyler var. Antlaşmayı imzalayalım mı?",
@@ -5469,7 +5469,7 @@
     },
     {
       "id": "medrese_etkisi",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "faction": "din",
       "text": "Üsküdar medresesinden ilk mezunlar çıktı. Genç ulema artık her mahallede. Onlara devlet görevi verilsin mi, yoksa serbest mi bıraksın?",
@@ -5535,7 +5535,7 @@
     },
     {
       "id": "barış_temettüsü",
-      "character": "4. Defterdar",
+      "character": "4-defterdar",
       "character_name": "Defterdar",
       "faction": "saray",
       "text": "Barış döneminde savaş harcamaları azaldı. Bu tasarrufu nereye yönlendireceğiz? Hazine mi dolsun, yoksa bayındırlık mı?",
@@ -5603,7 +5603,7 @@
     },
     {
       "id": "valide_teşekkür",
-      "character": "5. Valide Sultan",
+      "character": "5-valide-sultan",
       "character_name": "Valide Sultan",
       "faction": "saray",
       "text": "Geçen sefer ricamı kırmadınız. Bunu unutmadım. Size küçük bir karşılık yapmak istiyorum — Harem'in desteği sizin.",
@@ -5673,7 +5673,7 @@
     },
     {
       "id": "şehzade_ittifak_etkisi",
-      "character": "5. Valide Sultan",
+      "character": "5-valide-sultan",
       "character_name": "Valide Sultan",
       "faction": "saray",
       "text": "Şehzadenin evliliğinin ardından Kırım Hanı ile ilişkilerimiz güçlendi. Ama Şehzade artık kendi çıkarlarını düşünmeye başladı.",
@@ -5705,7 +5705,7 @@
     },
     {
       "id": "event_vergi_reformu",
-      "character": "4. Defterdar",
+      "character": "4-defterdar",
       "character_name": "Defterdar",
       "faction": "saray",
       "is_event": true,
@@ -5803,7 +5803,7 @@
     },
     {
       "id": "kanuni_kanunname",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "faction": "din",
       "sultan_specific": "kanuni",
@@ -5838,7 +5838,7 @@
     },
     {
       "id": "yavuz_misir_seferi",
-      "character": "6. Kaptan-ı Derya",
+      "character": "6-kaptan-i-derya",
       "character_name": "Kaptan-ı Derya",
       "faction": "ordu",
       "sultan_specific": "yavuz",
@@ -5872,7 +5872,7 @@
     },
     {
       "id": "yavuz_şii_meselesi",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "faction": "din",
       "sultan_specific": "yavuz",
@@ -5906,7 +5906,7 @@
     },
     {
       "id": "murad_harem_entrikası",
-      "character": "5. Valide Sultan",
+      "character": "5-valide-sultan",
       "character_name": "Valide Sultan",
       "faction": "saray",
       "sultan_specific": "murad3",
@@ -5974,7 +5974,7 @@
     },
     {
       "id": "ilişki_rakip_valide",
-      "character": "8. Rakip Vezir",
+      "character": "8-rakip-vezir",
       "character_name": "Rakip Vezir",
       "faction": "saray",
       "text": "Haber aldım: Rakip Vezir ile Valide Sultan gizlice görüştü. İkisi birlikte size karşı plan yapıyor olabilir. Ne yapacaksınız?",
@@ -6006,7 +6006,7 @@
     },
     {
       "id": "ilişki_seyhulislam_hekim",
-      "character": "3-Seyhulislam",
+      "character": "3-seyhulislam",
       "character_name": "Şeyhülislam",
       "faction": "din",
       "text": "Şeyhülislam, Hekimbaşı'nın 'bid'at ilaçları' kullandığını iddia ediyor. İkisi arasında açık çatışma var. Taraf mı tutacaksınız?",
@@ -6038,7 +6038,7 @@
     },
     {
       "id": "ilişki_yeniceri_kaptan",
-      "character": "6. Kaptan-ı Derya",
+      "character": "6-kaptan-i-derya",
       "character_name": "Kaptan-ı Derya",
       "faction": "ordu",
       "text": "Kaptan-ı Derya ile Yeniçeri Ağası arasında kaynak çatışması var. İkisi de sizden daha fazla pay istiyor ve birbirini şikayet ediyor.",
@@ -6169,7 +6169,7 @@
     },
     {
       "id": "tarih_misir_hazinesi",
-      "character": "4. Defterdar",
+      "character": "4-defterdar",
       "character_name": "Defterdar",
       "faction": "saray",
       "sultan_specific": "yavuz",
