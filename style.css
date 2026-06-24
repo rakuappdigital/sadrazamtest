@@ -1,5 +1,34 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* iOS buton default stilini tamamen sıfırla */
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+/* iOS safe area — Dynamic Island ve Home Bar için */
+#stats-bar {
+  padding-top: max(18px, env(safe-area-inset-top));
+}
+#item-bar {
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+}
+/* Giriş ve diğer tam ekran sayfalar */
+#intro-content {
+  padding-top: max(40px, env(safe-area-inset-top));
+}
+.selection-content {
+  padding-top: max(36px, env(safe-area-inset-top));
+}
+
 :root {
   --gold: #C9A227;
   --gold-light: #E8C84A;

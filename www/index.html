@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Sadrazam</title>
   <link rel="stylesheet" href="assets/fonts/fonts.css">
   <link rel="stylesheet" href="style.css" />
@@ -184,20 +184,6 @@
 
   <!-- ── OYUN ── -->
   <div id="game" class="hidden">
-    <div id="mission-bar">
-      <div class="mission-slot" id="mission-slot-0">
-        <span class="mission-check">?</span>
-        <span class="mission-label">Gizli Görev</span>
-      </div>
-      <div class="mission-slot" id="mission-slot-1">
-        <span class="mission-check">?</span>
-        <span class="mission-label">Gizli Görev</span>
-      </div>
-      <div class="mission-slot" id="mission-slot-2">
-        <span class="mission-check">?</span>
-        <span class="mission-label">Gizli Görev</span>
-      </div>
-    </div>
     <div id="stats-bar">
       <div class="stat" data-stat="saray">
         <span class="stat-label">Saray</span>
@@ -214,6 +200,22 @@
       <div class="stat" data-stat="hazine">
         <span class="stat-label">Hazine</span>
         <div class="stat-track"><div class="stat-fill" id="fill-hazine"></div></div>
+      </div>
+    </div>
+
+    <!-- Gizli Görevler — stats'ın hemen altında, safe area içinde -->
+    <div id="mission-bar">
+      <div class="mission-slot" id="mission-slot-0">
+        <span class="mission-check">?</span>
+        <span class="mission-label">Gizli Görev</span>
+      </div>
+      <div class="mission-slot" id="mission-slot-1">
+        <span class="mission-check">?</span>
+        <span class="mission-label">Gizli Görev</span>
+      </div>
+      <div class="mission-slot" id="mission-slot-2">
+        <span class="mission-check">?</span>
+        <span class="mission-label">Gizli Görev</span>
       </div>
     </div>
 
