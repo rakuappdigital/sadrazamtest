@@ -1967,8 +1967,91 @@ function advanceYear() {
     forcedQueue.push(histCards[Math.floor(Math.random() * histCards.length)]);
   }
 
+  // ── ÖZELLİK 1: MÜTTEFİK FLAG'LERİNİ GÜNCELLE ───────────────────
+  updateAllyFlags();
+
+  // ── ÖZELLİK 2: SADAKAT / İNTİKAM MATEMATİĞİ ─────────────────
+  checkRelationshipEffects();
+
   updateDynamicSubtitle();
   checkMissions();
+}
+
+// ── Müttefik Flag Sistemi ─────────────────────────────────────────
+// Karakterle net pozitif ilişki kurulduysa ally flag'ini set et
+const ALLY_THRESHOLDS = {
+  "2-yeniceri":      { flag: "yeniceri_ally_ready",   threshold: 3 },
+  "3-seyhulislam":   { flag: "ulema_ally_ready",       threshold: 3 },
+  "4-defterdar":     { flag: "defterdar_ally_ready",   threshold: 3 },
+  "5-valide-sultan": { flag: "valide_ally_ready",      threshold: 3 },
+  "6-kaptan-i-derya":{ flag: "kaptan_ally_ready",      threshold: 3 },
+};
+
+function updateAllyFlags() {
+  for (const [charKey, cfg] of Object.entries(ALLY_THRESHOLDS)) {
+    const mem = characterMemory[charKey];
+    if (!mem) continue;
+    const netScore = (mem.right || 0) - (mem.left || 0);
+    if (netScore >= cfg.threshold) {
+      activeFlags[cfg.flag] = true;
+    } else if (activeFlags[cfg.flag] && netScore < 1) {
+      // İlişki bozulduysa flag'i kaldır
+      delete activeFlags[cfg.flag];
+    }
+  }
+}
+
+// ── Sadakat / İntikam Matematiği ─────────────────────────────────
+const CHAR_FACTION_MAP = {
+  "2-yeniceri":       "yeniçeri",
+  "18-yeniceri_isyancisi": "yeniçeri",
+  "11-sipahi_agasi":  "yeniçeri",
+  "3-seyhulislam":    "ulema",
+  "10-hekimbasi":     "ulema",
+  "25-deli_dervis":   "ulema",
+  "1-sultan":         "saray",
+  "5-valide-sultan":  "saray",
+  "8-rakip-vezir":    "saray",
+  "16-saray_agasi":   "saray",
+  "4-defterdar":      "hazine",
+  "13-buyuk_tuccar":  "hazine",
+  "22-yahudi_bankaci":"hazine",
+};
+
+const LOYALTY_THRESHOLD = 4;
+const REVENGE_THRESHOLD = -4;
+
+function checkRelationshipEffects() {
+  for (const [charKey, mem] of Object.entries(characterMemory)) {
+    const netScore = (mem.right || 0) - (mem.left || 0);
+    const loyaltyFlagKey = `loyalty_${charKey}`;
+    const revengeFlagKey = `revenge_${charKey}`;
+
+    // Sadakat flag'i — kart sistemini tetikler
+    if (netScore >= LOYALTY_THRESHOLD && !activeFlags[loyaltyFlagKey]) {
+      activeFlags[loyaltyFlagKey] = true;
+    }
+
+    // İntikam flag'i
+    if (netScore <= REVENGE_THRESHOLD && !activeFlags[revengeFlagKey]) {
+      activeFlags[revengeFlagKey] = true;
+    }
+
+    // Pasif etki: çok güçlü ilişkilerde küçük bonus/ceza
+    const faction = CHAR_FACTION_MAP[charKey];
+    if (faction && stats[faction] !== undefined) {
+      if (netScore >= 7) {
+        // Sadık dost: her yıl +2 ilgili stat
+        stats[faction] = Math.min(100, stats[faction] + 2);
+      } else if (netScore <= -7) {
+        // Açık düşman: her yıl -2 ilgili stat
+        stats[faction] = Math.max(0, stats[faction] - 2);
+      }
+    }
+  }
+
+  // Stat değişimi olduysa UI güncelle
+  updateStatUI();
 }
 
 // ── Game Over ─────────────────────────────────────────────────────

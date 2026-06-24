@@ -6317,6 +6317,594 @@
       "category": "social",
       "speech_left": "Ölüm Allah'tandır.",
       "speech_right": "Devlet korur, Paşam."
+    },
+    {
+      "id": "kriz_savas",
+      "character": "1-sultan",
+      "character_name": "Sultan",
+      "faction": "saray",
+      "is_crisis": true,
+      "crisis_type": "savas",
+      "text": "Paşam, doğudan büyük bir düşman ordusu geliyor. Sınır kuvvetlerimiz yetersiz. Savaşa mı gireceğiz yoksa anlaşma mı arayacağız? Vakit dar.",
+      "left_text": "Anlaşma masasına oturun",
+      "right_text": "Savaşa girin",
+      "left_effects": {
+        "saray": -8,
+        "yeniçeri": -5,
+        "ulema": 3,
+        "hazine": 5
+      },
+      "right_effects": {
+        "saray": 6,
+        "yeniçeri": -22,
+        "ulema": -4,
+        "hazine": -18
+      },
+      "left_flags_set": [
+        "kriz_savas_anlaşma"
+      ],
+      "right_flags_set": [
+        "kriz_savas_savaş"
+      ],
+      "required_flags": [],
+      "excluded_flags": [
+        "yeniceri_ally_ready"
+      ],
+      "weight": 1,
+      "min_year": 4,
+      "category": "military",
+      "speech_left": "Kan dökmeden çözüm.",
+      "speech_right": "Ya zafer ya şehadet!"
+    },
+    {
+      "id": "kriz_savas_ally",
+      "character": "2-yeniceri",
+      "character_name": "Yeniçeri Ağası",
+      "faction": "ordu",
+      "is_crisis": true,
+      "crisis_type": "savas",
+      "text": "Paşam, düşman geliyor. Ama Yeniçeri ocağı sizin yanında — ilişkimiz güçlü, askerler güveniyor size. Emir verin, savaşalım mı?",
+      "left_text": "Anlaşma arayın",
+      "right_text": "Yeniçeri ile savaşın",
+      "left_effects": {
+        "saray": -5,
+        "yeniçeri": -3,
+        "ulema": 2,
+        "hazine": 4
+      },
+      "right_effects": {
+        "saray": 12,
+        "yeniçeri": 14,
+        "ulema": 3,
+        "hazine": -14
+      },
+      "left_flags_set": [
+        "kriz_savas_anlaşma"
+      ],
+      "right_flags_set": [
+        "kriz_savas_zafer"
+      ],
+      "required_flags": [
+        "yeniceri_ally_ready"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 4,
+      "category": "military",
+      "speech_left": "Ocak buyruğunuzu bekliyor.",
+      "speech_right": "Bismillah Paşam, ocak hazır!"
+    },
+    {
+      "id": "kriz_veba",
+      "character": "17-veba_habercisi",
+      "character_name": "Veba Habercisi",
+      "faction": "halk",
+      "is_crisis": true,
+      "crisis_type": "veba",
+      "text": "Paşam, veba şehri sardı. Her gün yüzlerce kişi ölüyor. Karantina mı uygulayalım — ticaret duracak ama yayılma yavaşlayabilir.",
+      "left_text": "Şehir açık kalsın",
+      "right_text": "Sert karantina uygulayın",
+      "left_effects": {
+        "saray": -4,
+        "yeniçeri": -12,
+        "ulema": -8,
+        "hazine": 5
+      },
+      "right_effects": {
+        "saray": 3,
+        "yeniçeri": -6,
+        "ulema": 2,
+        "hazine": -14
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "kriz_veba_karantina"
+      ],
+      "required_flags": [],
+      "excluded_flags": [
+        "ulema_ally_ready"
+      ],
+      "weight": 1,
+      "min_year": 3,
+      "category": "social",
+      "speech_left": "Allah kerim, kader ne derse.",
+      "speech_right": "Bu şehri korumak şart."
+    },
+    {
+      "id": "kriz_veba_ally",
+      "character": "3-seyhulislam",
+      "character_name": "Şeyhülislam",
+      "faction": "din",
+      "is_crisis": true,
+      "crisis_type": "veba",
+      "text": "Paşam, veba büyük. Ama Ulema ve hekimler birlikte çalışmaya hazır — ilişkimiz güçlü. Camileri karantina noktası yapabiliriz, halk sizi dinler.",
+      "left_text": "Kendi haline bırakın",
+      "right_text": "Ulema öncülüğünde karantina",
+      "left_effects": {
+        "saray": -3,
+        "yeniçeri": -8,
+        "ulema": -5,
+        "hazine": 3
+      },
+      "right_effects": {
+        "saray": 8,
+        "yeniçeri": -2,
+        "ulema": 15,
+        "hazine": -10
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "kriz_veba_ulema_önlem"
+      ],
+      "required_flags": [
+        "ulema_ally_ready"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 3,
+      "category": "social",
+      "speech_left": "Ulema emre amade.",
+      "speech_right": "Allah'ın rahmeti bizimle."
+    },
+    {
+      "id": "kriz_kitlik",
+      "character": "15-halk_temsilcisi",
+      "character_name": "Halk Temsilcisi",
+      "faction": "halk",
+      "is_crisis": true,
+      "crisis_type": "kitlik",
+      "text": "Paşam, üç ilçede kıtlık baş gösterdi. Halk açlıktan ölüyor. Ambarları açmadan olmuyor — ama bu yıl hazine zaten dar.",
+      "left_text": "Halk kendi çözüm bulur",
+      "right_text": "Ambarları açın",
+      "left_effects": {
+        "saray": -6,
+        "yeniçeri": -8,
+        "ulema": -10,
+        "hazine": 3
+      },
+      "right_effects": {
+        "saray": 5,
+        "yeniçeri": 5,
+        "ulema": 6,
+        "hazine": -18
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "kriz_kitlik_cozuldu"
+      ],
+      "required_flags": [],
+      "excluded_flags": [
+        "defterdar_ally_ready"
+      ],
+      "weight": 1,
+      "min_year": 2,
+      "category": "social",
+      "speech_left": "Hazine her şeyi karşılayamaz.",
+      "speech_right": "Halk ölürken devlet duramaZ."
+    },
+    {
+      "id": "kriz_kitlik_ally",
+      "character": "4-defterdar",
+      "character_name": "Defterdar",
+      "faction": "saray",
+      "is_crisis": true,
+      "crisis_type": "kitlik",
+      "text": "Paşam, kıtlık var ama hazineye çözüm yolu buldum — ilişkimiz iyi, size destek vereyim. Gizli rezervlerden bir miktar çekebiliriz, halk sevinir.",
+      "left_text": "Riski almayın",
+      "right_text": "Defterdar'ın planını uygulayın",
+      "left_effects": {
+        "saray": -4,
+        "yeniçeri": -5,
+        "ulema": -7,
+        "hazine": 2
+      },
+      "right_effects": {
+        "saray": 8,
+        "yeniçeri": 6,
+        "ulema": 7,
+        "hazine": -10
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "kriz_kitlik_cozuldu"
+      ],
+      "required_flags": [
+        "defterdar_ally_ready"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 2,
+      "category": "economic",
+      "speech_left": "Temkinli olun Paşam.",
+      "speech_right": "Güvenin bana, bu işi bilirim."
+    },
+    {
+      "id": "sadakat_yeniceri",
+      "character": "2-yeniceri",
+      "character_name": "Yeniçeri Ağası",
+      "faction": "ordu",
+      "text": "Paşam, ocak olarak size olan güvenimizi belirtmek istedik. Kararlarınız bizi her zaman destekledi. Bugün size bir armağanımız var.",
+      "left_text": "Teşekkür, gerek yok",
+      "right_text": "Ocağın sadakatini takdirle karşılıyorum",
+      "left_effects": {
+        "saray": 0,
+        "yeniçeri": 5,
+        "ulema": 0,
+        "hazine": 0
+      },
+      "right_effects": {
+        "saray": 4,
+        "yeniçeri": 12,
+        "ulema": 0,
+        "hazine": 3
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "yeniceri_sadakat_ödülü"
+      ],
+      "required_flags": [
+        "loyalty_2-yeniceri"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 3,
+      "category": "military",
+      "speech_left": "Sadakat karşılık ister, Paşam.",
+      "speech_right": "Bu ocak sizin için her şey!"
+    },
+    {
+      "id": "sadakat_valide",
+      "character": "5-valide-sultan",
+      "character_name": "Valide Sultan",
+      "faction": "saray",
+      "text": "Sadrazam, yıllar içinde bize her zaman saygılı davrandınız. Bu güveni takdirle karşılıyorum. Saray sizin yanında.",
+      "left_text": "Minnetinizi kabul ediyorum",
+      "right_text": "Saray desteği çok değerli",
+      "left_effects": {
+        "saray": 8,
+        "yeniçeri": 0,
+        "ulema": 3,
+        "hazine": 0
+      },
+      "right_effects": {
+        "saray": 14,
+        "yeniçeri": 0,
+        "ulema": 4,
+        "hazine": 5
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "valide_destek"
+      ],
+      "required_flags": [
+        "loyalty_5-valide-sultan"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 4,
+      "category": "political",
+      "speech_left": "İyilik asla unutulmaz.",
+      "speech_right": "Saray kapıları size açık."
+    },
+    {
+      "id": "sadakat_defterdar",
+      "character": "4-defterdar",
+      "character_name": "Defterdar",
+      "faction": "saray",
+      "text": "Efendim, hesaplarımı her zaman desteklediniz. Bu yıl hazineye gizli bir tasarruf kaynağı buldum — size özel bildiriyorum.",
+      "left_text": "Takdir ederim, devam edin",
+      "right_text": "Bu kaynağı derhal kullanın",
+      "left_effects": {
+        "saray": 2,
+        "yeniçeri": 0,
+        "ulema": 0,
+        "hazine": 8
+      },
+      "right_effects": {
+        "saray": 3,
+        "yeniçeri": 0,
+        "ulema": 0,
+        "hazine": 16
+      },
+      "left_flags_set": [],
+      "right_flags_set": [],
+      "required_flags": [
+        "loyalty_4-defterdar"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 3,
+      "category": "economic",
+      "speech_left": "Hesap doğru yerde.",
+      "speech_right": "Hazine şimdi daha güçlü!"
+    },
+    {
+      "id": "intikam_rakip_vezir",
+      "character": "8-rakip-vezir",
+      "character_name": "Rakip Vezir",
+      "faction": "saray",
+      "text": "Sadrazam, yıllardır beni görmezden geldiniz, tekliflerimi reddettiniz. Bugün Sultan'a şikayetimi resmi olarak sundum. Hazırlıklı mısınız?",
+      "left_text": "Suçlamaları kabul edin",
+      "right_text": "Sultan'a kendinizi savunun",
+      "left_effects": {
+        "saray": -12,
+        "yeniçeri": 0,
+        "ulema": -3,
+        "hazine": 0
+      },
+      "right_effects": {
+        "saray": -5,
+        "yeniçeri": 0,
+        "ulema": 0,
+        "hazine": -5
+      },
+      "left_flags_set": [
+        "rakip_galip"
+      ],
+      "right_flags_set": [],
+      "required_flags": [
+        "revenge_8-rakip-vezir"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 3,
+      "category": "intrigue",
+      "speech_left": "Pişman olacaksınız Paşam.",
+      "speech_right": "Hesap ödeme vakti geldi!"
+    },
+    {
+      "id": "intikam_seyhulislam",
+      "character": "3-seyhulislam",
+      "character_name": "Şeyhülislam",
+      "faction": "din",
+      "text": "Sadrazam Hazretleri, dine verdiğiniz zararı halk bilmeli. Bugün dini toplantıda adınızı anmak zorundayım. Etkisini göreceksiniz.",
+      "left_text": "Sessiz kalın, geçer",
+      "right_text": "Şeyhülislam'a itiraz edin",
+      "left_effects": {
+        "saray": -6,
+        "yeniçeri": -3,
+        "ulema": -15,
+        "hazine": 0
+      },
+      "right_effects": {
+        "saray": -3,
+        "yeniçeri": 2,
+        "ulema": -8,
+        "hazine": -3
+      },
+      "left_flags_set": [],
+      "right_flags_set": [],
+      "required_flags": [
+        "revenge_3-seyhulislam"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 3,
+      "category": "religious",
+      "speech_left": "Allah adalet eder.",
+      "speech_right": "Haksızlığa boyun eğmem!"
+    },
+    {
+      "id": "intikam_yeniceri_isyancisi",
+      "character": "18-yeniceri_isyancisi",
+      "character_name": "Yeniçeri İsyancısı",
+      "faction": "ordu",
+      "text": "Yeniçeriler kızgın, Paşam. Yıllardır ocağa sırt çevirdiniz. Bugün gece kışlalar aydınlandı — kazan kaldırılıyor.",
+      "left_text": "Hazine ile yatıştırın",
+      "right_text": "Güçle bastırın",
+      "left_effects": {
+        "saray": -4,
+        "yeniçeri": -8,
+        "ulema": 0,
+        "hazine": -14
+      },
+      "right_effects": {
+        "saray": 5,
+        "yeniçeri": -18,
+        "ulema": -3,
+        "hazine": -8
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "yeniceri_isyan_bastırıldı"
+      ],
+      "required_flags": [
+        "revenge_2-yeniceri"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 4,
+      "category": "military",
+      "speech_left": "Altın sesi keser, Paşam.",
+      "speech_right": "Ateş söndürülmeli!"
+    },
+    {
+      "id": "sehzade_avcisi_1",
+      "character": "27-sehzade-avcisi",
+      "character_name": "Şehzade Avcısı",
+      "faction": "saray",
+      "text": "Paşam... Sultan'ın fermanı var. Bir şehzade tehlike oluşturuyor. Bu iş sessizce halledilmeli. Emir mi veriyorsunuz?",
+      "left_text": "Bu işe karışmam",
+      "right_text": "Fermanı uygulayın",
+      "left_effects": {
+        "saray": -8,
+        "yeniçeri": 0,
+        "ulema": 4,
+        "hazine": 0
+      },
+      "right_effects": {
+        "saray": 14,
+        "yeniçeri": 0,
+        "ulema": -8,
+        "hazine": 0
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "şehzade_tasfiye"
+      ],
+      "required_flags": [],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 5,
+      "category": "intrigue",
+      "investigate_text": "Bu emir doğrudan Sultan'dan mı geliyor, yoksa saray entrikasının parçası mı?",
+      "speech_left": "Pişman olursunuz Paşam.",
+      "speech_right": "Devlet böyle ayakta durur."
+    },
+    {
+      "id": "osmanlı_kadisi_1",
+      "character": "28-kadi",
+      "character_name": "Osmanlı Kadısı",
+      "faction": "din",
+      "text": "Paşam, mahkemede çözüme kavuşturulamayan bir dava var. İki taraf da güçlü, baskı altındayım. Sizden yönlendirme bekliyorum.",
+      "left_text": "Mahkeme bağımsız karar versin",
+      "right_text": "Gizlice yönlendirin",
+      "left_effects": {
+        "saray": -2,
+        "yeniçeri": 0,
+        "ulema": 10,
+        "hazine": 0
+      },
+      "right_effects": {
+        "saray": 8,
+        "yeniçeri": 0,
+        "ulema": -6,
+        "hazine": 4
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "kadi_yönlendirildi"
+      ],
+      "required_flags": [],
+      "excluded_flags": [],
+      "weight": 2,
+      "min_year": 2,
+      "category": "political",
+      "speech_left": "Adalet kör olmalı.",
+      "speech_right": "Devlet her zaman kazanmalı."
+    },
+    {
+      "id": "kendi_ajan_1",
+      "character": "29-ajan",
+      "character_name": "Kendi Ajanın",
+      "faction": "saray",
+      "text": "Efendim, beni sarayın içine yerleştirdiniz. Bugün çok önemli bir bilgi elde ettim — ama kamuoyuna çıkmadan önce sizin onayınız gerekiyor.",
+      "left_text": "Bilgiyi gizleyin",
+      "right_text": "Bana iletip harekete geçin",
+      "left_effects": {
+        "saray": 2,
+        "yeniçeri": 0,
+        "ulema": 0,
+        "hazine": 0
+      },
+      "right_effects": {
+        "saray": 6,
+        "yeniçeri": 3,
+        "ulema": -2,
+        "hazine": -4
+      },
+      "left_flags_set": [
+        "ajan_bilgi_gizlendi"
+      ],
+      "right_flags_set": [
+        "ajan_aktif"
+      ],
+      "required_flags": [
+        "casuslar_ağı_genişledi"
+      ],
+      "excluded_flags": [],
+      "weight": 1,
+      "min_year": 3,
+      "category": "intrigue",
+      "speech_left": "Bilgi güçtür, zamanı gelir.",
+      "speech_right": "Bu fırsatı kaçırmayın!"
+    },
+    {
+      "id": "halk_onderi_1",
+      "character": "30-halk-onderi",
+      "character_name": "Halk Önderi",
+      "faction": "halk",
+      "text": "Paşam, halkın içinden biri var — onu herkes dinliyor. Sizi eleştiriyor ama aynı zamanda sizinle konuşmak istiyor. Ne yapacağız?",
+      "left_text": "Onu susturun",
+      "right_text": "Görüşme ayarlayın",
+      "left_effects": {
+        "saray": 4,
+        "yeniçeri": 0,
+        "ulema": -3,
+        "hazine": 0
+      },
+      "right_effects": {
+        "saray": -4,
+        "yeniçeri": 5,
+        "ulema": 3,
+        "hazine": -3
+      },
+      "left_flags_set": [
+        "halk_onderi_susturuldu"
+      ],
+      "right_flags_set": [
+        "halk_onderi_dost"
+      ],
+      "required_flags": [],
+      "excluded_flags": [],
+      "weight": 2,
+      "min_year": 3,
+      "category": "social",
+      "speech_left": "Halk sabrının sınırı var.",
+      "speech_right": "Halk bizi dinledi, biz de halkı."
+    },
+    {
+      "id": "dogu_alim_1",
+      "character": "31-dogu-alim",
+      "character_name": "Doğu'dan Alim",
+      "faction": "din",
+      "text": "Sadrazam Hazretleri, Bağdat'tan geldim. Osmanlı'nın geleceğine dair bir kehanet değil, bir matematik taşıyorum. Dinlemek ister misiniz?",
+      "left_text": "Zamanım yok, gidin",
+      "right_text": "Dinleyin",
+      "left_effects": {
+        "saray": 0,
+        "yeniçeri": 0,
+        "ulema": -3,
+        "hazine": 0
+      },
+      "right_effects": {
+        "saray": 2,
+        "yeniçeri": 2,
+        "ulema": 5,
+        "hazine": 2
+      },
+      "left_flags_set": [],
+      "right_flags_set": [
+        "dogu_alim_bilgisi"
+      ],
+      "required_flags": [],
+      "excluded_flags": [],
+      "weight": 2,
+      "min_year": 2,
+      "category": "cultural",
+      "investigate_text": "Alim gerçekten Bağdat'tan mı, yoksa Safevi ajanı mı? Casuslar başı araştırabilir.",
+      "speech_left": "Bilge kapısı kapatılmaz.",
+      "speech_right": "Doğu'nun sırrı Osmanlı'dadır."
     }
   ]
 }
