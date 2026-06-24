@@ -476,13 +476,275 @@ function startGame() {
   initMissions();
 
   gameScreen.classList.remove("hidden");
-  dealNext();
+
+  // Tutorial — ilk oyunda göster
+  if (!localStorage.getItem('sadrazam_tutorial_done')) {
+    showTutorial(() => { dealNext(); });
+  } else {
+    dealNext();
+  }
+
+  startAmbientMusic();
+}
+
+// ── TUTORIAL ──────────────────────────────────────────────────────
+const TUTORIAL_STEPS = [
+  {
+    stat: "saray",
+    icon: "assets/icons/icon-saray.png",
+    title: "Saray",
+    desc: "Sultanın sana güveni. Sıfırlanırsa idam, yüze çıkarsa tehdit."
+  },
+  {
+    stat: "yeniceri",
+    icon: "assets/icons/icon-ordu.png",
+    title: "Ordu",
+    desc: "Yeniçerilerin sadakati. Zayıflarsa düşman, güçlenirse isyan."
+  },
+  {
+    stat: "ulema",
+    icon: "assets/icons/icon-ulema.png",
+    title: "Ulema",
+    desc: "Dini otoritenin desteği. Yitirirsen linç, çok güçlenirse bağımsızlaşır."
+  },
+  {
+    stat: "hazine",
+    icon: "assets/icons/icon-hazine.png",
+    title: "Hazine",
+    desc: "Devlet kasası. Boşalırsa iflas, taşarsa zimmet suçlaması."
+  },
+  {
+    stat: null,
+    icon: null,
+    title: "Nasıl Oynanır?",
+    desc: "Kartları sola kaydır → Hayır. Sağa kaydır → Evet.\nYa da klavyede ← → tuşlarını kullan.\nDört gücü dengede tut — ne kadar uzun kalabilirsin?"
+  }
+];
+
+function showTutorial(onDone) {
+  let step = 0;
+  const overlay = document.createElement('div');
+  overlay.id = 'tutorial-overlay';
+
+  function renderStep() {
+    const s = TUTORIAL_STEPS[step];
+    const isLast = step === TUTORIAL_STEPS.length - 1;
+    overlay.innerHTML = `
+      <div id="tutorial-box">
+        ${s.icon ? `<img src="${s.icon}" id="tutorial-icon" alt="${s.title}">` : '<div id="tutorial-icon-placeholder">✦</div>'}
+        <div id="tutorial-title">${s.title}</div>
+        <div id="tutorial-desc">${s.desc.replace(/\n/g,'<br>')}</div>
+        <div id="tutorial-progress">${TUTORIAL_STEPS.map((_,i) => `<span class="${i===step?'active':''}"></span>`).join('')}</div>
+        <button id="tutorial-next">${isLast ? 'BAŞLA' : 'İLERİ →'}</button>
+        ${s.stat ? `<div id="tutorial-stat-highlight" data-stat="${s.stat}"></div>` : ''}
+      </div>`;
+
+    // Stat barını highlight et
+    if (s.stat) {
+      const fill = document.querySelector(`.stat[data-stat="${s.stat}"]`);
+      if (fill) fill.classList.add('tutorial-highlight');
+    }
+
+    overlay.querySelector('#tutorial-next').onclick = () => {
+      if (s.stat) {
+        const fill = document.querySelector(`.stat[data-stat="${s.stat}"]`);
+        if (fill) fill.classList.remove('tutorial-highlight');
+      }
+      step++;
+      if (step >= TUTORIAL_STEPS.length) {
+        overlay.remove();
+        localStorage.setItem('sadrazam_tutorial_done', '1');
+        onDone();
+      } else {
+        renderStep();
+      }
+    };
+  }
+
+  document.body.appendChild(overlay);
+  renderStep();
+}
+
+// ── AMBIENT MÜZİK ─────────────────────────────────────────────────
+let ambientCtx = null;
+let ambientNodes = [];
+let ambientRunning = false;
+
+function startAmbientMusic() {
+  if (ambientRunning) return;
+  try {
+    ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
+    ambientRunning = true;
+    playAmbientLayer();
+  } catch(e) {}
+}
+
+function playAmbientLayer() {
+  if (!ambientCtx || !ambientRunning) return;
+
+  // Düşük ney benzeri drone
+  const osc1 = ambientCtx.createOscillator();
+  const gain1 = ambientCtx.createGain();
+  const filter1 = ambientCtx.createBiquadFilter();
+  osc1.type = 'sine';
+  osc1.frequency.value = isNight ? 138 : 146; // gece biraz daha alçak
+  filter1.type = 'lowpass';
+  filter1.frequency.value = 400;
+  gain1.gain.value = 0.04;
+  osc1.connect(filter1);
+  filter1.connect(gain1);
+  gain1.connect(ambientCtx.destination);
+  osc1.start();
+
+  // Tremolo harmonik
+  const osc2 = ambientCtx.createOscillator();
+  const gain2 = ambientCtx.createGain();
+  const lfo = ambientCtx.createOscillator();
+  const lfoGain = ambientCtx.createGain();
+  osc2.type = 'triangle';
+  osc2.frequency.value = isNight ? 220 : 233;
+  lfo.frequency.value = 0.4;
+  lfoGain.gain.value = 0.015;
+  gain2.gain.value = 0.018;
+  lfo.connect(lfoGain);
+  lfoGain.connect(gain2.gain);
+  osc2.connect(gain2);
+  gain2.connect(ambientCtx.destination);
+  osc2.start();
+  lfo.start();
+
+  ambientNodes = [osc1, osc2, lfo];
+
+  // Her 8 saniyede yenile (gece/gündüz değişimini yakala)
+  setTimeout(() => {
+    ambientNodes.forEach(n => { try { n.stop(); } catch(e) {} });
+    ambientNodes = [];
+    if (ambientRunning && !isGameOver) playAmbientLayer();
+  }, 8000);
+}
+
+function stopAmbientMusic() {
+  ambientRunning = false;
+  ambientNodes.forEach(n => { try { n.stop(); } catch(e) {} });
+  ambientNodes = [];
 }
 
 // ── Boot ──────────────────────────────────────────────────────────
 fetch("data/cards.json")
   .then(r => r.json())
-  .then(data => { allCards = data.cards; });
+  .then(data => {
+    allCards = data.cards;
+    checkResumeAvailable();
+  });
+
+// ── SAVE / RESUME ─────────────────────────────────────────────────
+function saveGameState() {
+  if (!selectedSultan || isGameOver) return;
+  try {
+    const state = {
+      stats, year, cardsPlayed, hicriYear, hicriMonth,
+      activeFlags: Object.keys(activeFlags),
+      isNight, sultanSabir, currentTitle, isPasaMode, pasaPromoted,
+      playerItems, selectedSultanId: selectedSultan?.id,
+      selectedAdvisorIds: selectedAdvisors.map(a => a.id),
+      characterMemory, factionFavors, factionPressureSent,
+      playCounts, cursedEver, traitorInvestigated, hiddenTraitor,
+      scheduledCards, forcedQueueIds: forcedQueue.map(c => c.id),
+      activeMissions: activeMissions.map(m => ({...m, check: undefined})),
+      completedMissionIds: completedMissions.map(m => m.id),
+      v: 2
+    };
+    localStorage.setItem('sadrazam_save', JSON.stringify(state));
+  } catch(e) {}
+}
+
+function clearSave() {
+  localStorage.removeItem('sadrazam_save');
+}
+
+function checkResumeAvailable() {
+  const raw = localStorage.getItem('sadrazam_save');
+  if (!raw) return;
+  try {
+    const s = JSON.parse(raw);
+    if (!s.v || s.v < 2) { clearSave(); return; }
+    // Resume banner göster
+    const banner = document.createElement('div');
+    banner.id = 'resume-banner';
+    banner.innerHTML = `
+      <div id="resume-content">
+        <div id="resume-text">Kayıtlı oyun: <strong>${s.year}. Yıl · ${HICRI_MONTHS[s.hicriMonth % 12]} ${s.hicriYear}</strong></div>
+        <div id="resume-btns">
+          <button id="resume-btn">DEVAM ET</button>
+          <button id="resume-discard">Yeni Oyun</button>
+        </div>
+      </div>`;
+    document.body.appendChild(banner);
+    document.getElementById('resume-btn').onclick = () => {
+      banner.remove();
+      loadGameState(s);
+    };
+    document.getElementById('resume-discard').onclick = () => {
+      clearSave();
+      banner.remove();
+    };
+  } catch(e) { clearSave(); }
+}
+
+function loadGameState(s) {
+  // Sultan ve danışmanları geri yükle
+  selectedSultan = SULTANS.find(su => su.id === s.selectedSultanId) || SULTANS[0];
+  selectedAdvisors = (s.selectedAdvisorIds || []).map(id => ADVISORS.find(a => a.id === id)).filter(Boolean);
+
+  stats = s.stats;
+  year = s.year;
+  cardsPlayed = s.cardsPlayed;
+  hicriYear = s.hicriYear;
+  hicriMonth = s.hicriMonth;
+  activeFlags = {};
+  (s.activeFlags || []).forEach(f => activeFlags[f] = true);
+  isNight = s.isNight;
+  sultanSabir = s.sultanSabir;
+  currentTitle = s.currentTitle || "SADRAZAM";
+  isPasaMode = s.isPasaMode;
+  pasaPromoted = s.pasaPromoted;
+  playerItems = s.playerItems || [null,null,null];
+  characterMemory = s.characterMemory || {};
+  factionFavors = s.factionFavors || {saray:0,ordu:0,din:0,halk:0};
+  factionPressureSent = s.factionPressureSent || {saray:false,ordu:false,din:false,halk:false};
+  playCounts = s.playCounts || {};
+  cursedEver = s.cursedEver;
+  traitorInvestigated = s.traitorInvestigated;
+  hiddenTraitor = s.hiddenTraitor;
+  scheduledCards = s.scheduledCards || [];
+  forcedQueue = (s.forcedQueueIds || []).map(id => allCards.find(c => c.id === id)).filter(Boolean);
+  isGameOver = false;
+  activeArcs = {};
+  triggeredArcs = {};
+  deathCharacterKey = null;
+  isInvestigating = false;
+  dangerPulseActive = false;
+
+  // Missions
+  activeMissions = (s.activeMissions || []).map(m => {
+    const poolItem = MISSION_POOL.find(p => p.id === m.id);
+    return poolItem ? { ...poolItem, completed: m.completed } : null;
+  }).filter(Boolean);
+  completedMissions = activeMissions.filter(m => m.completed);
+
+  if (titleLabel) titleLabel.textContent = currentTitle;
+  if (isNight) gameScreen.classList.add("night-mode");
+  else gameScreen.classList.remove("night-mode");
+
+  updateItemBar();
+  updateYearLabel();
+  updateStatUI();
+  updateDynamicSubtitle();
+  ensureFateBar();
+  updateMissionBar();
+  gameScreen.classList.remove("hidden");
+  dealNext();
+}
 
 // ── Osmanlı Takvimi ───────────────────────────────────────────────
 function updateYearLabel() {
@@ -552,13 +814,28 @@ function updateFateBar() {
     groups[label]++;
   });
 
-  Object.entries(groups).forEach(([label, count]) => {
+  scheduledCards.forEach(sc => {
+    const c = allCards.find(x => x.id === sc.cardId);
+    const remaining = Math.max(0, sc.afterCardsPlayed - cardsPlayed);
     const chip = document.createElement("div");
     chip.className = "fate-thread";
-    chip.textContent = `⚔️ ${label.length > 12 ? label.slice(0,12)+'…' : label} (${count})`;
-    chip.title = `${count} karta kalmış`;
+    chip.textContent = `⧖ ${remaining} kart`;
+    // Bilinmezlik korunuyor — karakter adı gösterilmez
+    chip.title = `Bir kararının yankısı ${remaining} kart içinde gelecek…`;
+    chip.setAttribute('data-tooltip', `Bir kararının yankısı ${remaining} kart içinde gelecek…`);
+    chip.addEventListener('click', () => showFateTooltip(chip));
     fb.appendChild(chip);
   });
+}
+
+function showFateTooltip(chip) {
+  const existing = document.getElementById('fate-tooltip');
+  if (existing) { existing.remove(); return; }
+  const tip = document.createElement('div');
+  tip.id = 'fate-tooltip';
+  tip.textContent = chip.getAttribute('data-tooltip');
+  chip.appendChild(tip);
+  setTimeout(() => tip.remove(), 2500);
 }
 
 // ── Deck ──────────────────────────────────────────────────────────
@@ -713,8 +990,12 @@ function dealNext() {
   deathCharacterKey = key;
 
   const imgName = key + ".jpg";
-  cardImage.src = "assets/characters/" + encodeURIComponent(imgName);
-  cardImage.onerror = () => { cardImage.src = ""; };
+  const imgPath = "assets/characters/" + encodeURIComponent(imgName);
+  // Preload ile flash önle
+  const preload = new Image();
+  preload.onload = () => { cardImage.src = imgPath; };
+  preload.onerror = () => { cardImage.src = ""; };
+  preload.src = imgPath;
 
   // Gizli hain hint
   let displayText = c.text || "";
@@ -1290,7 +1571,10 @@ function decide(dir) {
   advanceHicriMonth();
 
   if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
-  if (!isGameOver) setTimeout(dealNext, 150);
+  if (!isGameOver) {
+    saveGameState();
+    setTimeout(dealNext, 200);
+  }
 
   // Hain açıklama kontrolü (yıl 6 = 60 kart)
   if (cardsPlayed >= 60 && !traitorRevealed) {
@@ -1411,14 +1695,24 @@ function flyOff(dir) {
   if (bubble) bubble.style.opacity = "0";
   if (isAnimating) return;
   isAnimating = true;
-  const tx = dir === "left" ? -600 : 600;
-  card.style.transition = "transform 0.25s ease-in, opacity 0.2s ease-in";
-  card.style.transform = `translateX(${tx}px) rotate(${dir === "left" ? -20 : 20}deg)`;
+  const tx = dir === "left" ? -680 : 680;
+  card.style.transition = "transform 0.28s ease-in, opacity 0.22s ease-in";
+  card.style.transform = `translateX(${tx}px) rotate(${dir === "left" ? -22 : 22}deg)`;
   card.style.opacity = "0";
   setTimeout(() => {
+    // Kartı sıfırla — içerik temizle
+    card.style.transition = "none";
+    card.style.transform = "translateX(0) rotate(0deg)";
+    cardImage.src = "";
+    charName.textContent = "";
+    cardText.textContent = "";
+    choiceLeft.style.opacity = "0";
+    choiceRight.style.opacity = "0";
+    overlayL.style.opacity = "0";
+    overlayR.style.opacity = "0";
     isAnimating = false;
     decide(dir);
-  }, 280);
+  }, 300);
 }
 
 function snapBack() {
@@ -1487,10 +1781,41 @@ function advanceYear() {
   if (eventCards.length > 0) {
     const ev = eventCards[Math.floor(Math.random() * eventCards.length)];
     forcedQueue.push(ev);
-    // Event ses
     if (ev.sound === "veba" && window.playEvent_veba) playEvent_veba();
     if (ev.sound === "savas" && window.playEvent_savas) playEvent_savas();
     if (ev.sound === "hasat" && window.playEvent_hasat) playEvent_hasat();
+  }
+
+  // Sultan'a özgü kartlar (yılda 1 kez, %40 ihtimalle)
+  if (selectedSultan && Math.random() < 0.40) {
+    const sultanId = selectedSultan.id;
+    const sultanSpecific = allCards.filter(c =>
+      c.sultan_specific === sultanId &&
+      (c.min_year || 1) <= year &&
+      (c.max_year || 999) >= year &&
+      !(playCounts[c.id] && playCounts[c.id] > 1)
+    );
+    if (sultanSpecific.length > 0) {
+      const pick = sultanSpecific[Math.floor(Math.random() * sultanSpecific.length)];
+      forcedQueue.push(pick);
+    }
+  }
+
+  // 5 yılda bir vergi ödülü event'i
+  if (year % 5 === 0) {
+    const vergiEvent = allCards.find(c => c.id === 'event_vergi_reformu');
+    if (vergiEvent) forcedQueue.unshift(vergiEvent);
+  }
+
+  // Tarihsel olaylar (sultan_specific olmayan, genel)
+  const histCards = allCards.filter(c =>
+    c.category === 'historical' && !c.sultan_specific &&
+    (c.min_year || 1) <= year &&
+    (c.max_year || 999) >= year &&
+    !playCounts[c.id]
+  );
+  if (histCards.length > 0 && Math.random() < 0.25) {
+    forcedQueue.push(histCards[Math.floor(Math.random() * histCards.length)]);
   }
 
   updateDynamicSubtitle();
@@ -1501,8 +1826,8 @@ function advanceYear() {
 function triggerGameOver(reason) {
   if (isGameOver) return;
   isGameOver = true;
-
-  // Durdur
+  clearSave();
+  stopAmbientMusic();
   if (window.stopDangerPulse) stopDangerPulse();
 
   // Sinematik ölüm
@@ -1730,6 +2055,7 @@ document.getElementById("share-btn").addEventListener("click", () => {
 
 // ── Restart ───────────────────────────────────────────────────────
 function restartGame() {
+  clearSave();
   gameoverScreen.classList.remove("visible");
   gameScreen.classList.add("hidden");
   gameScreen.classList.remove("night-mode");

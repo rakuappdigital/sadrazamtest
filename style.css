@@ -1307,3 +1307,147 @@ html, body {
   0%,100% { box-shadow: none; }
   50% { box-shadow: 0 0 16px rgba(85,221,102,0.5); }
 }
+
+/* ════════════════════════════════════════
+   TUTORIAL OVERLAY
+════════════════════════════════════════ */
+#tutorial-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(5,3,16,0.88);
+  display: flex; align-items: center; justify-content: center;
+  animation: introFadeIn 0.4s ease;
+}
+#tutorial-box {
+  background: var(--card-bg);
+  border: 1px solid var(--gold-dim);
+  border-radius: 20px;
+  padding: 32px 28px 28px;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+}
+#tutorial-icon { width: 72px; height: 72px; object-fit: contain; }
+#tutorial-icon-placeholder { font-size: 40px; color: var(--gold); }
+#tutorial-title {
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+#tutorial-desc {
+  font-family: 'IM Fell English', serif;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+  opacity: 0.85;
+}
+#tutorial-progress {
+  display: flex; gap: 6px; justify-content: center;
+}
+#tutorial-progress span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+}
+#tutorial-progress span.active { background: var(--gold); }
+#tutorial-next {
+  padding: 12px 28px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+#tutorial-next:hover { background: var(--gold); color: #000; }
+.tutorial-highlight {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+  transition: outline 0.3s;
+}
+
+/* ════════════════════════════════════════
+   RESUME BANNER
+════════════════════════════════════════ */
+#resume-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 600;
+  background: var(--card-bg);
+  border: 1px solid var(--gold);
+  border-radius: 14px;
+  padding: 14px 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 0 12px rgba(201,162,39,0.2);
+  animation: slideUp 0.4s ease;
+  max-width: 340px;
+  width: 92%;
+}
+#resume-content { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+#resume-text {
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  color: var(--text);
+  text-align: center;
+}
+#resume-text strong { color: var(--gold); }
+#resume-btns { display: flex; gap: 10px; width: 100%; }
+#resume-btn {
+  flex: 2;
+  padding: 11px;
+  background: var(--gold);
+  border: none;
+  color: #000;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#resume-discard {
+  flex: 1;
+  padding: 11px;
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold-dim);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+#resume-discard:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ════════════════════════════════════════
+   KADER İPİ TOOLTIP
+════════════════════════════════════════ */
+.fate-thread { position: relative; cursor: pointer; }
+#fate-tooltip {
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card-bg);
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-family: 'IM Fell English', serif;
+  color: var(--text);
+  white-space: nowrap;
+  z-index: 50;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  pointer-events: none;
+  animation: introFadeIn 0.2s ease;
+}
