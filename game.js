@@ -150,7 +150,8 @@ const ACHIEVEMENTS = [
   { id: "all_deaths",     tier:"gold",   icon:"💀", name:"Her Şeyi Gördüm",      desc:"8 farklı ölüm sebebini yaşa.",               check: s => (s.deathsSeen||[]).length >= 6 },
   { id: "curse_master",   tier:"gold",   icon:"🔥", name:"Lanet Ustası",          desc:"Toplamda 3 kez lanet tetikle.",               check: s => s.totalCurses >= 3 },
   { id: "chance_streak",  tier:"gold",   icon:"🎰", name:"Şans Tanrısı",          desc:"Arka arkaya 3 şans kartı kazan.",             check: s => s.chanceStreak >= 3 },
-  { id: "no_curse",       tier:"gold",   icon:"🕊️", name:"Lanet Yok",            desc:"15 yıl boyunca lanetle karşılaşma.",         check: s => !s.cursedEver && s.year>=15 },
+  { id: "no_curse",       tier:"silver", icon:"🕊️", name:"Lanet Yok",            desc:"Bir oyunu lanet tetiklemeden bitir.",         check: s => !s.cursedEver },
+  { id: "sabir_imtihani",tier:"platinum",icon:"⏳", name:"Sabır İmtihanı",       desc:"15 yıl boyunca lanet tetiklemeden hayatta kal.", check: s => !s.cursedEver && s.year>=15 },
 
   // ── PLATİN ──
   { id: "legend",         tier:"platinum", icon:"✨", name:"Efsane Sadrazam",     desc:"20 yıl hayatta kal.",                         check: s => s.year >= 20 },
