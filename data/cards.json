@@ -29,7 +29,9 @@
       "weight": 5,
       "min_year": 1,
       "category": "royal",
-      "investigate_text": "Defterdar'ın dosyasına baktın — suçlamaların büyük kısmı Rakip Vezir'den geliyor. Belki siyasi bir tasfiye bu."
+      "investigate_text": "Defterdar'ın dosyasına baktın — suçlamaların büyük kısmı Rakip Vezir'den geliyor. Belki siyasi bir tasfiye bu.",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
     },
     {
       "id": "sultan_tımar_ödülü",
@@ -59,7 +61,10 @@
       "excluded_flags": [],
       "weight": 5,
       "min_year": 2,
-      "category": "royal"
+      "category": "royal",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun.",
+      "grants_item_on_right": "sultan_ferman"
     },
     {
       "id": "sultan_rüya_yorumu",
@@ -89,7 +94,9 @@
       "excluded_flags": [],
       "weight": 5,
       "min_year": 1,
-      "category": "royal"
+      "category": "royal",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
     },
     {
       "id": "sultan_sefer_emri",
@@ -121,7 +128,9 @@
       "excluded_flags": [],
       "weight": 5,
       "min_year": 3,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
     },
     {
       "id": "sultan_rakip_şikayeti",
@@ -151,7 +160,9 @@
       "excluded_flags": [],
       "weight": 5,
       "min_year": 2,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
     },
     {
       "id": "yeni_kışla",
@@ -181,7 +192,9 @@
       "excluded_flags": [],
       "weight": 12,
       "min_year": 1,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Asker aç kalırsa silah ağlar.",
+      "speech_right": "Sultanınıza bildirin, memnunuz."
     },
     {
       "id": "yeniceri_maaş_gecikmesi",
@@ -211,7 +224,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Asker aç kalırsa silah ağlar.",
+      "speech_right": "Sultanınıza bildirin, memnunuz."
     },
     {
       "id": "yeniceri_tüfek_talebi",
@@ -241,7 +256,10 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Asker aç kalırsa silah ağlar.",
+      "speech_right": "Sultanınıza bildirin, memnunuz.",
+      "grants_item_on_right": "yeniceri_nisan"
     },
     {
       "id": "yeniceri_disiplin",
@@ -271,7 +289,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Asker aç kalırsa silah ağlar.",
+      "speech_right": "Sultanınıza bildirin, memnunuz."
     },
     {
       "id": "yeniceri_yaşlı_birlik",
@@ -299,7 +319,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 3,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Asker aç kalırsa silah ağlar.",
+      "speech_right": "Sultanınıza bildirin, memnunuz."
     },
     {
       "id": "fetva_talebi",
@@ -329,7 +351,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Allah'ın yolu bu değil, Paşam.",
+      "speech_right": "Şeriat böyle emreder, isabetli."
     },
     {
       "id": "seyhulislam_medrese",
@@ -359,7 +383,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Allah'ın yolu bu değil, Paşam.",
+      "speech_right": "Şeriat böyle emreder, isabetli."
     },
     {
       "id": "seyhulislam_zındıklık",
@@ -390,7 +416,9 @@
       "weight": 10,
       "min_year": 2,
       "category": "religious",
-      "investigate_text": "Kâtibin yazıları incelendiğinde bid'atten çok hiciv içerdiği görülüyor. Asıl hedef Şeyhülislam'ın rakibi olabilir."
+      "investigate_text": "Kâtibin yazıları incelendiğinde bid'atten çok hiciv içerdiği görülüyor. Asıl hedef Şeyhülislam'ın rakibi olabilir.",
+      "speech_left": "Allah'ın yolu bu değil, Paşam.",
+      "speech_right": "Şeriat böyle emreder, isabetli."
     },
     {
       "id": "seyhulislam_hutbe",
@@ -420,7 +448,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 3,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Allah'ın yolu bu değil, Paşam.",
+      "speech_right": "Şeriat böyle emreder, isabetli."
     },
     {
       "id": "seyhulislam_vakıf",
@@ -450,7 +480,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Allah'ın yolu bu değil, Paşam.",
+      "speech_right": "Şeriat böyle emreder, isabetli."
     },
     {
       "id": "defterdar_bütçe",
@@ -480,7 +512,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Pişman olursunuz efendim.",
+      "speech_right": "Devlet selamete kavuştu."
     },
     {
       "id": "defterdar_vergi_tahsil",
@@ -510,7 +544,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Pişman olursunuz efendim.",
+      "speech_right": "Devlet selamete kavuştu."
     },
     {
       "id": "defterdar_borç_teklifi",
@@ -540,7 +576,10 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Pişman olursunuz efendim.",
+      "speech_right": "Devlet selamete kavuştu.",
+      "grants_item_on_right": "altin_muhur"
     },
     {
       "id": "defterdar_pazar_ruhsatı",
@@ -570,7 +609,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Pişman olursunuz efendim.",
+      "speech_right": "Devlet selamete kavuştu."
     },
     {
       "id": "defterdar_gümrük",
@@ -600,7 +641,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Pişman olursunuz efendim.",
+      "speech_right": "Devlet selamete kavuştu."
     },
     {
       "id": "valide_evlilik",
@@ -630,7 +673,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Annenizi dinlemek lazım, Paşam.",
+      "speech_right": "Bilge bir karar, Allah razı olsun."
     },
     {
       "id": "valide_harem_harcaması",
@@ -658,7 +703,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Annenizi dinlemek lazım, Paşam.",
+      "speech_right": "Bilge bir karar, Allah razı olsun."
     },
     {
       "id": "valide_hoca_seçimi",
@@ -686,7 +733,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Annenizi dinlemek lazım, Paşam.",
+      "speech_right": "Bilge bir karar, Allah razı olsun."
     },
     {
       "id": "valide_cariyer_şüphesi",
@@ -717,7 +766,9 @@
       "weight": 8,
       "min_year": 2,
       "category": "intrigue",
-      "investigate_text": "Casuslardan edinilen bilgiye göre cariyer değil, ona yakın bir saray görevlisi şüpheli konumda."
+      "investigate_text": "Casuslardan edinilen bilgiye göre cariyer değil, ona yakın bir saray görevlisi şüpheli konumda.",
+      "speech_left": "Annenizi dinlemek lazım, Paşam.",
+      "speech_right": "Bilge bir karar, Allah razı olsun."
     },
     {
       "id": "valide_vasiyet",
@@ -747,7 +798,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Annenizi dinlemek lazım, Paşam.",
+      "speech_right": "Bilge bir karar, Allah razı olsun."
     },
     {
       "id": "kaptan_korsan",
@@ -777,7 +830,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Denizler bağışlamaz, Sadrazam.",
+      "speech_right": "Filo hazır, emirleriniz bekler."
     },
     {
       "id": "kaptan_tersane",
@@ -807,7 +862,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Denizler bağışlamaz, Sadrazam.",
+      "speech_right": "Filo hazır, emirleriniz bekler."
     },
     {
       "id": "kaptan_gizli_harekât",
@@ -837,7 +894,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 3,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Denizler bağışlamaz, Sadrazam.",
+      "speech_right": "Filo hazır, emirleriniz bekler."
     },
     {
       "id": "kaptan_fırtına_hasarı",
@@ -865,7 +924,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Denizler bağışlamaz, Sadrazam.",
+      "speech_right": "Filo hazır, emirleriniz bekler."
     },
     {
       "id": "kaptan_malta_ittifak",
@@ -895,7 +956,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 4,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Denizler bağışlamaz, Sadrazam.",
+      "speech_right": "Filo hazır, emirleriniz bekler."
     },
     {
       "id": "elci_ticaret_imtiyazı",
@@ -925,7 +988,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Bu red savaş demek, Paşam.",
+      "speech_right": "Memleketim teşekkür eder."
     },
     {
       "id": "elci_sınır_müzakere",
@@ -955,7 +1020,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Bu red savaş demek, Paşam.",
+      "speech_right": "Memleketim teşekkür eder."
     },
     {
       "id": "elci_fransız_ittifak",
@@ -985,7 +1052,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Bu red savaş demek, Paşam.",
+      "speech_right": "Memleketim teşekkür eder."
     },
     {
       "id": "elci_esir_takası",
@@ -1015,7 +1084,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Bu red savaş demek, Paşam.",
+      "speech_right": "Memleketim teşekkür eder."
     },
     {
       "id": "elci_portekiz",
@@ -1045,7 +1116,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Bu red savaş demek, Paşam.",
+      "speech_right": "Memleketim teşekkür eder."
     },
     {
       "id": "rakip_şikayeti",
@@ -1075,7 +1148,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Hata ettiniz, hatırlayacaksınız.",
+      "speech_right": "Beklenmedik bir anlayış, Paşam."
     },
     {
       "id": "rakip_sır",
@@ -1106,7 +1181,9 @@
       "weight": 8,
       "min_year": 2,
       "category": "intrigue",
-      "investigate_text": "Rakip Vezir'in bu bilgiyi neden size verdiği şüpheli. Şeyhülislam'ı zayıflatmak onun çıkarına."
+      "investigate_text": "Rakip Vezir'in bu bilgiyi neden size verdiği şüpheli. Şeyhülislam'ı zayıflatmak onun çıkarına.",
+      "speech_left": "Hata ettiniz, hatırlayacaksınız.",
+      "speech_right": "Beklenmedik bir anlayış, Paşam."
     },
     {
       "id": "rakip_yeni_unvan",
@@ -1136,7 +1213,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Hata ettiniz, hatırlayacaksınız.",
+      "speech_right": "Beklenmedik bir anlayış, Paşam."
     },
     {
       "id": "rakip_ittifak_teklifi",
@@ -1166,7 +1245,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Hata ettiniz, hatırlayacaksınız.",
+      "speech_right": "Beklenmedik bir anlayış, Paşam."
     },
     {
       "id": "rakip_hakaret",
@@ -1194,7 +1275,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Hata ettiniz, hatırlayacaksınız.",
+      "speech_right": "Beklenmedik bir anlayış, Paşam."
     },
     {
       "id": "cellat_masumiyet",
@@ -1224,7 +1307,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Merhamet mi? Nadir görülür.",
+      "speech_right": "Emriniz oldu, efendim."
     },
     {
       "id": "cellat_iş_yükü",
@@ -1252,7 +1337,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Merhamet mi? Nadir görülür.",
+      "speech_right": "Emriniz oldu, efendim."
     },
     {
       "id": "cellat_rüşvet",
@@ -1282,7 +1369,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Merhamet mi? Nadir görülür.",
+      "speech_right": "Emriniz oldu, efendim."
     },
     {
       "id": "cellat_çocuk",
@@ -1312,7 +1401,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Merhamet mi? Nadir görülür.",
+      "speech_right": "Emriniz oldu, efendim."
     },
     {
       "id": "cellat_casus",
@@ -1344,7 +1435,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Merhamet mi? Nadir görülür.",
+      "speech_right": "Emriniz oldu, efendim."
     },
     {
       "id": "hekimbasi_humma",
@@ -1374,7 +1467,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Bedeni ihmal etmek pahalıya mal.",
+      "speech_right": "Sağlıklı devlet, güçlü devlet."
     },
     {
       "id": "hekimbasi_karantina",
@@ -1404,7 +1499,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Bedeni ihmal etmek pahalıya mal.",
+      "speech_right": "Sağlıklı devlet, güçlü devlet."
     },
     {
       "id": "hekimbasi_darüşşifa",
@@ -1434,7 +1531,10 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Bedeni ihmal etmek pahalıya mal.",
+      "speech_right": "Sağlıklı devlet, güçlü devlet.",
+      "grants_item_on_right": "sifa_otu"
     },
     {
       "id": "hekimbasi_sultan_sağlık",
@@ -1465,7 +1565,9 @@
       "weight": 6,
       "min_year": 3,
       "category": "political",
-      "investigate_text": "Bu bilgi doğruysa ciddi bir veraset meselesi baş gösterebilir. Şehzadeler hazır mı?"
+      "investigate_text": "Bu bilgi doğruysa ciddi bir veraset meselesi baş gösterebilir. Şehzadeler hazır mı?",
+      "speech_left": "Bedeni ihmal etmek pahalıya mal.",
+      "speech_right": "Sağlıklı devlet, güçlü devlet."
     },
     {
       "id": "hekimbasi_avrupa_ilaç",
@@ -1493,7 +1595,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Bedeni ihmal etmek pahalıya mal.",
+      "speech_right": "Sağlıklı devlet, güçlü devlet."
     },
     {
       "id": "sipahi_tımar_dağıtımı",
@@ -1521,7 +1625,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Sipahi sabır taşımaz, Paşam.",
+      "speech_right": "Ordunuz hazır ve istekli."
     },
     {
       "id": "sipahi_erzak_yokluğu",
@@ -1549,7 +1655,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Sipahi sabır taşımaz, Paşam.",
+      "speech_right": "Ordunuz hazır ve istekli."
     },
     {
       "id": "sipahi_emeklilik",
@@ -1577,7 +1685,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Sipahi sabır taşımaz, Paşam.",
+      "speech_right": "Ordunuz hazır ve istekli."
     },
     {
       "id": "sipahi_rüşvet",
@@ -1607,7 +1717,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Sipahi sabır taşımaz, Paşam.",
+      "speech_right": "Ordunuz hazır ve istekli."
     },
     {
       "id": "sipahi_talim",
@@ -1635,7 +1747,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Sipahi sabır taşımaz, Paşam.",
+      "speech_right": "Ordunuz hazır ve istekli."
     },
     {
       "id": "saray_sairi_kaside",
@@ -1663,7 +1777,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "cultural"
+      "category": "cultural",
+      "speech_left": "Şiir de bir silah, unutmayın.",
+      "speech_right": "İlhama vesile oldunuz, Paşam."
     },
     {
       "id": "saray_sairi_hiciv",
@@ -1693,7 +1809,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "cultural"
+      "category": "cultural",
+      "speech_left": "Şiir de bir silah, unutmayın.",
+      "speech_right": "İlhama vesile oldunuz, Paşam."
     },
     {
       "id": "saray_sairi_divan",
@@ -1721,7 +1839,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "cultural"
+      "category": "cultural",
+      "speech_left": "Şiir de bir silah, unutmayın.",
+      "speech_right": "İlhama vesile oldunuz, Paşam."
     },
     {
       "id": "saray_sairi_dil",
@@ -1749,7 +1869,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "cultural"
+      "category": "cultural",
+      "speech_left": "Şiir de bir silah, unutmayın.",
+      "speech_right": "İlhama vesile oldunuz, Paşam."
     },
     {
       "id": "saray_sairi_kehanet",
@@ -1779,7 +1901,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "cultural"
+      "category": "cultural",
+      "speech_left": "Şiir de bir silah, unutmayın.",
+      "speech_right": "İlhama vesile oldunuz, Paşam."
     },
     {
       "id": "tüccar_ipek_tekel",
@@ -1809,7 +1933,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Ticaret durur, devlet acıkır.",
+      "speech_right": "İstanbul zenginleşecek, Paşam."
     },
     {
       "id": "tüccar_gümrük_sorunu",
@@ -1839,7 +1965,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Ticaret durur, devlet acıkır.",
+      "speech_right": "İstanbul zenginleşecek, Paşam."
     },
     {
       "id": "tüccar_kervan_saldırı",
@@ -1867,7 +1995,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Ticaret durur, devlet acıkır.",
+      "speech_right": "İstanbul zenginleşecek, Paşam."
     },
     {
       "id": "tüccar_baharat",
@@ -1897,7 +2027,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Ticaret durur, devlet acıkır.",
+      "speech_right": "İstanbul zenginleşecek, Paşam."
     },
     {
       "id": "tüccar_ihbar",
@@ -1927,7 +2059,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Ticaret durur, devlet acıkır.",
+      "speech_right": "İstanbul zenginleşecek, Paşam."
     },
     {
       "id": "casuslar_sızdırma",
@@ -1957,7 +2091,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Gölgeler sessizce konuşur.",
+      "speech_right": "Doğru karar, bilgi güçtür."
     },
     {
       "id": "casuslar_tutuklama",
@@ -1987,7 +2123,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Gölgeler sessizce konuşur.",
+      "speech_right": "Doğru karar, bilgi güçtür."
     },
     {
       "id": "casuslar_rakip_yazışma",
@@ -2018,7 +2156,9 @@
       "weight": 8,
       "min_year": 2,
       "category": "intrigue",
-      "investigate_text": "Casuslar Başı'nın kendisi de bu yazışmalardan yararlanmış olabilir. Size getirmesi tesadüf değil."
+      "investigate_text": "Casuslar Başı'nın kendisi de bu yazışmalardan yararlanmış olabilir. Size getirmesi tesadüf değil.",
+      "speech_left": "Gölgeler sessizce konuşur.",
+      "speech_right": "Doğru karar, bilgi güçtür."
     },
     {
       "id": "casuslar_avrupa_ajan",
@@ -2048,7 +2188,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 3,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Gölgeler sessizce konuşur.",
+      "speech_right": "Doğru karar, bilgi güçtür."
     },
     {
       "id": "casuslar_çifte_ajan",
@@ -2078,7 +2220,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Gölgeler sessizce konuşur.",
+      "speech_right": "Doğru karar, bilgi güçtür."
     },
     {
       "id": "isyan_uyarısı",
@@ -2106,7 +2250,9 @@
       "excluded_flags": [],
       "weight": 12,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Halk sabır tükeniyor, Paşam.",
+      "speech_right": "Halk duacı, Allah razı olsun."
     },
     {
       "id": "halk_ekmek_fiyatı",
@@ -2136,7 +2282,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Halk sabır tükeniyor, Paşam.",
+      "speech_right": "Halk duacı, Allah razı olsun."
     },
     {
       "id": "halk_kıtlık",
@@ -2166,7 +2314,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Halk sabır tükeniyor, Paşam.",
+      "speech_right": "Halk duacı, Allah razı olsun."
     },
     {
       "id": "halk_lonca_muafiyet",
@@ -2196,7 +2346,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Halk sabır tükeniyor, Paşam.",
+      "speech_right": "Halk duacı, Allah razı olsun."
     },
     {
       "id": "halk_kalabalık",
@@ -2226,7 +2378,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Halk sabır tükeniyor, Paşam.",
+      "speech_right": "Halk duacı, Allah razı olsun."
     },
     {
       "id": "saray_yetkisiz_kişi",
@@ -2258,7 +2412,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Saray dedikodu ile yaşar.",
+      "speech_right": "Sarayı korudunuz, Paşam."
     },
     {
       "id": "saray_elçi_protokol",
@@ -2286,7 +2442,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Saray dedikodu ile yaşar.",
+      "speech_right": "Sarayı korudunuz, Paşam."
     },
     {
       "id": "saray_sır_ifşası",
@@ -2316,7 +2474,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Saray dedikodu ile yaşar.",
+      "speech_right": "Sarayı korudunuz, Paşam."
     },
     {
       "id": "saray_yeni_hizmetkar",
@@ -2344,7 +2504,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Saray dedikodu ile yaşar.",
+      "speech_right": "Sarayı korudunuz, Paşam."
     },
     {
       "id": "saray_sultan_görüşme",
@@ -2374,7 +2536,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Saray dedikodu ile yaşar.",
+      "speech_right": "Sarayı korudunuz, Paşam."
     },
     {
       "id": "veba_haber",
@@ -2404,7 +2568,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Vebayı durdurmak zor olacak.",
+      "speech_right": "Tedbir alındı, Allah korusun."
     },
     {
       "id": "veba_köy_boşaltma",
@@ -2436,7 +2602,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Vebayı durdurmak zor olacak.",
+      "speech_right": "Tedbir alındı, Allah korusun."
     },
     {
       "id": "veba_şehir_kapıları",
@@ -2466,7 +2634,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Vebayı durdurmak zor olacak.",
+      "speech_right": "Tedbir alındı, Allah korusun."
     },
     {
       "id": "veba_mülk",
@@ -2494,7 +2664,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Vebayı durdurmak zor olacak.",
+      "speech_right": "Tedbir alındı, Allah korusun."
     },
     {
       "id": "veba_köy_hoca",
@@ -2522,7 +2694,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Vebayı durdurmak zor olacak.",
+      "speech_right": "Tedbir alındı, Allah korusun."
     },
     {
       "id": "isyan_baş_gösteriyor",
@@ -2554,7 +2728,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 3,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Kazan kalktı, geri dönmez.",
+      "speech_right": "İsyan söndürüldü, şimdilik."
     },
     {
       "id": "isyan_lider_mesaj",
@@ -2584,7 +2760,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Kazan kalktı, geri dönmez.",
+      "speech_right": "İsyan söndürüldü, şimdilik."
     },
     {
       "id": "isyan_elebaşı_af",
@@ -2616,7 +2794,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Kazan kalktı, geri dönmez.",
+      "speech_right": "İsyan söndürüldü, şimdilik."
     },
     {
       "id": "isyan_cami_geçit",
@@ -2644,7 +2824,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Kazan kalktı, geri dönmez.",
+      "speech_right": "İsyan söndürüldü, şimdilik."
     },
     {
       "id": "isyan_tövbeli",
@@ -2672,7 +2854,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Kazan kalktı, geri dönmez.",
+      "speech_right": "İsyan söndürüldü, şimdilik."
     },
     {
       "id": "köylü_toprak",
@@ -2702,7 +2886,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Köylü ağlar, kimse duymaz.",
+      "speech_right": "Devlet unutmadı bizi, şükür."
     },
     {
       "id": "köylü_eşkıya",
@@ -2732,7 +2918,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Köylü ağlar, kimse duymaz.",
+      "speech_right": "Devlet unutmadı bizi, şükür."
     },
     {
       "id": "köylü_vergi_erteleme",
@@ -2762,7 +2950,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Köylü ağlar, kimse duymaz.",
+      "speech_right": "Devlet unutmadı bizi, şükür."
     },
     {
       "id": "köylü_su_kanalı",
@@ -2792,7 +2982,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Köylü ağlar, kimse duymaz.",
+      "speech_right": "Devlet unutmadı bizi, şükür."
     },
     {
       "id": "köylü_göç",
@@ -2822,7 +3014,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Köylü ağlar, kimse duymaz.",
+      "speech_right": "Devlet unutmadı bizi, şükür."
     },
     {
       "id": "rum_kilise_onarım",
@@ -2852,7 +3046,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Kilisemiz baskı altında, Paşam.",
+      "speech_right": "Hoşgörünüz tarihe geçecek."
     },
     {
       "id": "rum_vergi_şikayeti",
@@ -2882,7 +3078,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Kilisemiz baskı altında, Paşam.",
+      "speech_right": "Hoşgörünüz tarihe geçecek."
     },
     {
       "id": "rum_din_baskı",
@@ -2912,7 +3110,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Kilisemiz baskı altında, Paşam.",
+      "speech_right": "Hoşgörünüz tarihe geçecek."
     },
     {
       "id": "rum_patrik_seçimi",
@@ -2942,7 +3142,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Kilisemiz baskı altında, Paşam.",
+      "speech_right": "Hoşgörünüz tarihe geçecek."
     },
     {
       "id": "rum_türkçe_eğitim",
@@ -2970,7 +3172,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Kilisemiz baskı altında, Paşam.",
+      "speech_right": "Hoşgörünüz tarihe geçecek."
     },
     {
       "id": "ermeni_lonca",
@@ -3000,7 +3204,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Ticaret yolu kapanırsa hepimiz.",
+      "speech_right": "İstanbul'a hizmetimiz sürer."
     },
     {
       "id": "ermeni_istihbarat",
@@ -3030,7 +3236,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Ticaret yolu kapanırsa hepimiz.",
+      "speech_right": "İstanbul'a hizmetimiz sürer."
     },
     {
       "id": "ermeni_vergi_cezası",
@@ -3058,7 +3266,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Ticaret yolu kapanırsa hepimiz.",
+      "speech_right": "İstanbul'a hizmetimiz sürer."
     },
     {
       "id": "ermeni_kilise_bağış",
@@ -3088,7 +3298,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 1,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Ticaret yolu kapanırsa hepimiz.",
+      "speech_right": "İstanbul'a hizmetimiz sürer."
     },
     {
       "id": "ermeni_anlaşmazlık",
@@ -3116,7 +3328,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Ticaret yolu kapanırsa hepimiz.",
+      "speech_right": "İstanbul'a hizmetimiz sürer."
     },
     {
       "id": "yahudi_bankacı_borç",
@@ -3146,7 +3360,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 1,
-      "category": "economic"
+      "category": "economic",
+      "speech_left": "Para korkudan büyük faiz ister.",
+      "speech_right": "Hazineniz büyüyecek, Paşam."
     },
     {
       "id": "yahudi_cemaat_hak",
@@ -3176,7 +3392,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Para korkudan büyük faiz ister.",
+      "speech_right": "Hazineniz büyüyecek, Paşam."
     },
     {
       "id": "yahudi_zimmet_bilgisi",
@@ -3207,7 +3425,9 @@
       "weight": 8,
       "min_year": 2,
       "category": "intrigue",
-      "investigate_text": "Bankacının bu bilgiyi neden getirdiğini düşünmek lazım. Belki söz konusu paşa onun rakibi."
+      "investigate_text": "Bankacının bu bilgiyi neden getirdiğini düşünmek lazım. Belki söz konusu paşa onun rakibi.",
+      "speech_left": "Para korkudan büyük faiz ister.",
+      "speech_right": "Hazineniz büyüyecek, Paşam."
     },
     {
       "id": "yahudi_avrupa_haber",
@@ -3237,7 +3457,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Para korkudan büyük faiz ister.",
+      "speech_right": "Hazineniz büyüyecek, Paşam."
     },
     {
       "id": "yahudi_müsadere_korkusu",
@@ -3267,7 +3489,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "social"
+      "category": "social",
+      "speech_left": "Para korkudan büyük faiz ister.",
+      "speech_right": "Hazineniz büyüyecek, Paşam."
     },
     {
       "id": "safevi_sınır",
@@ -3297,7 +3521,9 @@
       "excluded_flags": [],
       "weight": 10,
       "min_year": 2,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Şah bunu affetmeyecek, Paşam.",
+      "speech_right": "Barış iki tarafa da yarar."
     },
     {
       "id": "safevi_alevi_güvence",
@@ -3327,7 +3553,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Şah bunu affetmeyecek, Paşam.",
+      "speech_right": "Barış iki tarafa da yarar."
     },
     {
       "id": "safevi_gizli_ateşkes",
@@ -3358,7 +3586,9 @@
       "weight": 6,
       "min_year": 3,
       "category": "diplomatic",
-      "investigate_text": "Bu teklifin Sultan'dan önce size gelmesi tesadüf değil. Şah sizi Sultan'dan bağımsız bir güç olarak test ediyor."
+      "investigate_text": "Bu teklifin Sultan'dan önce size gelmesi tesadüf değil. Şah sizi Sultan'dan bağımsız bir güç olarak test ediyor.",
+      "speech_left": "Şah bunu affetmeyecek, Paşam.",
+      "speech_right": "Barış iki tarafa da yarar."
     },
     {
       "id": "safevi_esir_teklifi",
@@ -3388,7 +3618,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Şah bunu affetmeyecek, Paşam.",
+      "speech_right": "Barış iki tarafa da yarar."
     },
     {
       "id": "safevi_şifreli_mektup",
@@ -3418,7 +3650,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Şah bunu affetmeyecek, Paşam.",
+      "speech_right": "Barış iki tarafa da yarar."
     },
     {
       "id": "korsan_hizmet",
@@ -3448,7 +3682,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Denizde kural benim koyarım.",
+      "speech_right": "Osmanlı sancağı dalgalanır."
     },
     {
       "id": "korsan_ganimet",
@@ -3478,7 +3714,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Denizde kural benim koyarım.",
+      "speech_right": "Osmanlı sancağı dalgalanır."
     },
     {
       "id": "korsan_şikayet",
@@ -3506,7 +3744,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Denizde kural benim koyarım.",
+      "speech_right": "Osmanlı sancağı dalgalanır."
     },
     {
       "id": "korsan_liman",
@@ -3536,7 +3776,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 3,
-      "category": "military"
+      "category": "military",
+      "speech_left": "Denizde kural benim koyarım.",
+      "speech_right": "Osmanlı sancağı dalgalanır."
     },
     {
       "id": "korsan_esir",
@@ -3566,7 +3808,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "diplomatic"
+      "category": "diplomatic",
+      "speech_left": "Denizde kural benim koyarım.",
+      "speech_right": "Osmanlı sancağı dalgalanır."
     },
     {
       "id": "derviş_kıyamet",
@@ -3596,7 +3840,10 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Rüzgar tersine döner, dikkat.",
+      "speech_right": "Kalp temizse yol açılır.",
+      "grants_item_on_left": "dervis_muska"
     },
     {
       "id": "derviş_mektup",
@@ -3626,7 +3873,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Rüzgar tersine döner, dikkat.",
+      "speech_right": "Kalp temizse yol açılır."
     },
     {
       "id": "derviş_kalabalık",
@@ -3656,7 +3905,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 1,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Rüzgar tersine döner, dikkat.",
+      "speech_right": "Kalp temizse yol açılır."
     },
     {
       "id": "derviş_zındıklık",
@@ -3686,7 +3937,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "religious"
+      "category": "religious",
+      "speech_left": "Rüzgar tersine döner, dikkat.",
+      "speech_right": "Kalp temizse yol açılır."
     },
     {
       "id": "derviş_ihanet_uyarısı",
@@ -3716,7 +3969,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "intrigue"
+      "category": "intrigue",
+      "speech_left": "Rüzgar tersine döner, dikkat.",
+      "speech_right": "Kalp temizse yol açılır."
     },
     {
       "id": "genç_eyalet_talebi",
@@ -3746,7 +4001,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Gençlik aceledir, biliyorum.",
+      "speech_right": "Devlet için canımı veririm."
     },
     {
       "id": "genç_büyük_hata",
@@ -3774,7 +4031,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Gençlik aceledir, biliyorum.",
+      "speech_right": "Devlet için canımı veririm."
     },
     {
       "id": "genç_akıl_hocalığı",
@@ -3804,7 +4063,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 1,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Gençlik aceledir, biliyorum.",
+      "speech_right": "Devlet için canımı veririm."
     },
     {
       "id": "genç_kavga",
@@ -3832,7 +4093,9 @@
       "excluded_flags": [],
       "weight": 8,
       "min_year": 2,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Gençlik aceledir, biliyorum.",
+      "speech_right": "Devlet için canımı veririm."
     },
     {
       "id": "genç_sultan_bypass",
@@ -3862,7 +4125,9 @@
       "excluded_flags": [],
       "weight": 6,
       "min_year": 2,
-      "category": "political"
+      "category": "political",
+      "speech_left": "Gençlik aceledir, biliyorum.",
+      "speech_right": "Devlet için canımı veririm."
     },
     {
       "id": "savaş_teklifi",
@@ -3895,7 +4160,9 @@
       "faction": "saray",
       "triggers_on_right": "savaş_zafer",
       "triggers_on_left": "savaş_barış",
-      "trigger_delay": 4
+      "trigger_delay": 4,
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
     },
     {
       "id": "casuslar_operasyonu",
@@ -3928,7 +4195,9 @@
       "faction": "saray",
       "triggers_on_right": "operasyon_başarı",
       "trigger_delay": 3,
-      "investigate_text": "Casuslar Başı bu operasyon için üç aydır hazırlık yapmış. Ama hedef saray değil — belgeler size çok yakın birini işaret ediyor. Kim olduğunu bilmeden karar vermek tehlikeli."
+      "investigate_text": "Casuslar Başı bu operasyon için üç aydır hazırlık yapmış. Ama hedef saray değil — belgeler size çok yakın birini işaret ediyor. Kim olduğunu bilmeden karar vermek tehlikeli.",
+      "speech_left": "Gölgeler sessizce konuşur.",
+      "speech_right": "Doğru karar, bilgi güçtür."
     },
     {
       "id": "venedik_1",
@@ -3960,7 +4229,9 @@
       "category": "diplomacy",
       "faction": "halk",
       "arc_id": "venedik",
-      "arc_order": 1
+      "arc_order": 1,
+      "speech_left": "Bu red savaş demek, Paşam.",
+      "speech_right": "Memleketim teşekkür eder."
     },
     {
       "id": "venedik_2",
@@ -3992,7 +4263,9 @@
       "category": "diplomacy",
       "faction": "halk",
       "arc_id": "venedik",
-      "arc_order": 2
+      "arc_order": 2,
+      "speech_left": "Bu red savaş demek, Paşam.",
+      "speech_right": "Memleketim teşekkür eder."
     },
     {
       "id": "venedik_3",
@@ -4026,7 +4299,9 @@
       "category": "diplomacy",
       "faction": "halk",
       "arc_id": "venedik",
-      "arc_order": 3
+      "arc_order": 3,
+      "speech_left": "Bu red savaş demek, Paşam.",
+      "speech_right": "Memleketim teşekkür eder."
     },
     {
       "id": "dogu_1",
@@ -4058,7 +4333,9 @@
       "category": "military",
       "faction": "ordu",
       "arc_id": "dogu_seferi",
-      "arc_order": 1
+      "arc_order": 1,
+      "speech_left": "Şah bunu affetmeyecek, Paşam.",
+      "speech_right": "Barış iki tarafa da yarar."
     },
     {
       "id": "dogu_2",
@@ -4090,7 +4367,9 @@
       "category": "military",
       "faction": "ordu",
       "arc_id": "dogu_seferi",
-      "arc_order": 2
+      "arc_order": 2,
+      "speech_left": "Şah bunu affetmeyecek, Paşam.",
+      "speech_right": "Barış iki tarafa da yarar."
     },
     {
       "id": "dogu_3",
@@ -4122,7 +4401,9 @@
       "category": "military",
       "faction": "ordu",
       "arc_id": "dogu_seferi",
-      "arc_order": 3
+      "arc_order": 3,
+      "speech_left": "Şah bunu affetmeyecek, Paşam.",
+      "speech_right": "Barış iki tarafa da yarar."
     },
     {
       "id": "elci_muzakere",
@@ -4179,7 +4460,9 @@
             "elci_yüksek_anlaşma"
           ]
         }
-      ]
+      ],
+      "speech_left": "Bu red savaş demek, Paşam.",
+      "speech_right": "Memleketim teşekkür eder."
     },
     {
       "id": "vergi_muzakere",
@@ -4236,7 +4519,9 @@
             "vergi_genel_artış"
           ]
         }
-      ]
+      ],
+      "speech_left": "Pişman olursunuz efendim.",
+      "speech_right": "Devlet selamete kavuştu."
     },
     {
       "id": "event_veba",
@@ -4268,7 +4553,9 @@
       "category": "crisis",
       "faction": "halk",
       "is_event": true,
-      "sound": "veba"
+      "sound": "veba",
+      "speech_left": "Vebayı durdurmak zor olacak.",
+      "speech_right": "Tedbir alındı, Allah korusun."
     },
     {
       "id": "event_kuraklık",
@@ -4299,7 +4586,9 @@
       "min_year": 1,
       "category": "crisis",
       "faction": "halk",
-      "is_event": true
+      "is_event": true,
+      "speech_left": "Halk sabır tükeniyor, Paşam.",
+      "speech_right": "Halk duacı, Allah razı olsun."
     },
     {
       "id": "event_yangın",
@@ -4329,7 +4618,9 @@
       "category": "crisis",
       "faction": "halk",
       "is_event": true,
-      "sound": "veba"
+      "sound": "veba",
+      "speech_left": "Saray dedikodu ile yaşar.",
+      "speech_right": "Sarayı korudunuz, Paşam."
     },
     {
       "id": "event_bol_hasat",
@@ -4359,7 +4650,9 @@
       "category": "people",
       "faction": "halk",
       "is_event": true,
-      "sound": "hasat"
+      "sound": "hasat",
+      "speech_left": "Halk sabır tükeniyor, Paşam.",
+      "speech_right": "Halk duacı, Allah razı olsun."
     },
     {
       "id": "event_dis_tehdit",
@@ -4393,7 +4686,9 @@
       "category": "military",
       "faction": "ordu",
       "is_event": true,
-      "sound": "savas"
+      "sound": "savas",
+      "speech_left": "Sipahi sabır taşımaz, Paşam.",
+      "speech_right": "Ordunuz hazır ve istekli."
     },
     {
       "id": "faction_ordu_baskisi",
@@ -4424,7 +4719,9 @@
       "min_year": 3,
       "category": "crisis",
       "faction": "ordu",
-      "required_faction_pressure": "ordu"
+      "required_faction_pressure": "ordu",
+      "speech_left": "Sipahi sabır taşımaz, Paşam.",
+      "speech_right": "Ordunuz hazır ve istekli."
     },
     {
       "id": "faction_din_baskisi",
@@ -4455,7 +4752,9 @@
       "min_year": 3,
       "category": "crisis",
       "faction": "din",
-      "required_faction_pressure": "din"
+      "required_faction_pressure": "din",
+      "speech_left": "Allah'ın yolu bu değil, Paşam.",
+      "speech_right": "Şeriat böyle emreder, isabetli."
     },
     {
       "id": "faction_saray_baskisi",
@@ -4488,7 +4787,9 @@
       "min_year": 3,
       "category": "intrigue",
       "faction": "saray",
-      "required_faction_pressure": "saray"
+      "required_faction_pressure": "saray",
+      "speech_left": "Annenizi dinlemek lazım, Paşam.",
+      "speech_right": "Bilge bir karar, Allah razı olsun."
     },
     {
       "id": "faction_halk_baskisi",
@@ -4521,7 +4822,9 @@
       "min_year": 3,
       "category": "crisis",
       "faction": "halk",
-      "required_faction_pressure": "halk"
+      "required_faction_pressure": "halk",
+      "speech_left": "Halk sabır tükeniyor, Paşam.",
+      "speech_right": "Halk duacı, Allah razı olsun."
     },
     {
       "id": "traitor_reveal",
@@ -4554,7 +4857,9 @@
       "min_year": 1,
       "category": "intrigue",
       "faction": "saray",
-      "is_traitor_reveal": true
+      "is_traitor_reveal": true,
+      "speech_left": "Gölgeler sessizce konuşur.",
+      "speech_right": "Doğru karar, bilgi güçtür."
     },
     {
       "id": "sultan_mektup_1",
@@ -4575,7 +4880,9 @@
       "min_year": 1,
       "category": "royal",
       "faction": "saray",
-      "type": "letter"
+      "type": "letter",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
     },
     {
       "id": "sultan_mektup_2",
@@ -4598,7 +4905,9 @@
       "min_year": 2,
       "category": "royal",
       "faction": "saray",
-      "type": "letter"
+      "type": "letter",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
     },
     {
       "id": "sultan_mektup_3",
@@ -4621,7 +4930,9 @@
       "min_year": 1,
       "category": "royal",
       "faction": "saray",
-      "type": "letter"
+      "type": "letter",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
     },
     {
       "id": "sultan_mektup_4",
@@ -4643,7 +4954,152 @@
       "min_year": 3,
       "category": "royal",
       "faction": "saray",
-      "type": "letter"
+      "type": "letter",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
+    },
+    {
+      "id": "kader_zar_1",
+      "character": "25-deli_dervis",
+      "character_name": "Deli Derviş",
+      "type": "chance",
+      "faction": "din",
+      "text": "Derviş önünüze altın bir sikke koydu. 'Baş gelirse zafer, yazı gelirse ders' dedi ve gitti.",
+      "chance_win_effects": {
+        "saray": 12,
+        "yeniçeri": 8,
+        "ulema": 10,
+        "hazine": 8
+      },
+      "chance_lose_effects": {
+        "saray": -10,
+        "yeniçeri": -8,
+        "ulema": -8,
+        "hazine": -10
+      },
+      "chance_win_flags": [],
+      "chance_lose_flags": [
+        "kader_kaybı"
+      ],
+      "weight": 4,
+      "min_year": 2,
+      "category": "intrigue",
+      "speech_left": "Kader kapı çalmaz, girer.",
+      "speech_right": "Şans güler, ama bazen ağlar."
+    },
+    {
+      "id": "kader_zar_2",
+      "character": "8. Rakip Vezir",
+      "character_name": "Rakip Vezir",
+      "type": "chance",
+      "faction": "saray",
+      "text": "Rakibiniz bir bahis öneriyor: 'İki kişiden biri haklı — şans belirlesin.' Ret sayılmaz, ya katılırsınız ya kaçarsınız.",
+      "chance_win_effects": {
+        "saray": 15,
+        "yeniçeri": 0,
+        "ulema": 0,
+        "hazine": 5
+      },
+      "chance_lose_effects": {
+        "saray": -15,
+        "yeniçeri": 0,
+        "ulema": -5,
+        "hazine": 0
+      },
+      "chance_win_flags": [
+        "rakip_yenildi"
+      ],
+      "chance_lose_flags": [],
+      "weight": 4,
+      "min_year": 3,
+      "category": "intrigue",
+      "speech_left": "Hata ettiniz, hatırlayacaksınız.",
+      "speech_right": "Beklenmedik bir anlayış, Paşam."
+    },
+    {
+      "id": "kader_zar_3",
+      "character": "22-yahudi_bankaci",
+      "character_name": "Yahudi Bankacı",
+      "type": "chance",
+      "faction": "halk",
+      "text": "Bankacı riskli bir yatırım öneriyor. 'Yarı ihtimalle iki katı, yarı ihtimalle hepsi gider.' Hazineyle oynamak ne kadar akıllıca?",
+      "chance_win_effects": {
+        "saray": 0,
+        "yeniçeri": 0,
+        "ulema": 0,
+        "hazine": 20
+      },
+      "chance_lose_effects": {
+        "saray": -5,
+        "yeniçeri": 0,
+        "ulema": -5,
+        "hazine": -18
+      },
+      "chance_win_flags": [],
+      "chance_lose_flags": [],
+      "weight": 4,
+      "min_year": 2,
+      "category": "economic",
+      "speech_left": "Para korkudan büyük faiz ister.",
+      "speech_right": "Hazineniz büyüyecek, Paşam."
+    },
+    {
+      "id": "kader_zar_4",
+      "character": "6. Kaptan-ı Derya",
+      "character_name": "Kaptan-ı Derya",
+      "type": "chance",
+      "faction": "ordu",
+      "text": "Deniz savaşı kaçınılmaz oldu. Karşı rüzgar ya da lehimize — Allah'a bıraktık.",
+      "chance_win_effects": {
+        "saray": 8,
+        "yeniçeri": 15,
+        "ulema": 5,
+        "hazine": -5
+      },
+      "chance_lose_effects": {
+        "saray": -8,
+        "yeniçeri": -18,
+        "ulema": -5,
+        "hazine": -10
+      },
+      "chance_win_flags": [
+        "deniz_zaferi"
+      ],
+      "chance_lose_flags": [
+        "deniz_yenilgisi"
+      ],
+      "weight": 4,
+      "min_year": 3,
+      "category": "military",
+      "speech_left": "Denizler bağışlamaz, Sadrazam.",
+      "speech_right": "Filo hazır, emirleriniz bekler."
+    },
+    {
+      "id": "kader_zar_5",
+      "character": "1-sultan",
+      "character_name": "Sultan",
+      "type": "chance",
+      "faction": "saray",
+      "text": "Sultan bir sürpriz sınav yapıyor. Sadrazamın şansı ne kadar yaver gider? 'Bugün kader gününüz' dedi.",
+      "chance_win_effects": {
+        "saray": 18,
+        "yeniçeri": 5,
+        "ulema": 5,
+        "hazine": 5
+      },
+      "chance_lose_effects": {
+        "saray": -20,
+        "yeniçeri": -5,
+        "ulema": -5,
+        "hazine": -5
+      },
+      "chance_win_flags": [],
+      "chance_lose_flags": [],
+      "weight": 3,
+      "min_year": 4,
+      "category": "royal",
+      "speech_left": "Sadrazam, bu beni memnun etmez.",
+      "speech_right": "Bilge bir karar, hayırlı olsun."
     }
   ]
 }

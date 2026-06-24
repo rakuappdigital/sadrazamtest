@@ -110,20 +110,34 @@
 
   <!-- ── OYUN ── -->
   <div id="game" class="hidden">
+    <div id="mission-bar">
+      <div class="mission-slot" id="mission-slot-0">
+        <span class="mission-check">?</span>
+        <span class="mission-label">Gizli Görev</span>
+      </div>
+      <div class="mission-slot" id="mission-slot-1">
+        <span class="mission-check">?</span>
+        <span class="mission-label">Gizli Görev</span>
+      </div>
+      <div class="mission-slot" id="mission-slot-2">
+        <span class="mission-check">?</span>
+        <span class="mission-label">Gizli Görev</span>
+      </div>
+    </div>
     <div id="stats-bar">
-      <div class="stat">
+      <div class="stat" data-stat="saray">
         <span class="stat-label">Saray</span>
         <div class="stat-track"><div class="stat-fill" id="fill-saray"></div></div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat="yeniceri">
         <span class="stat-label">Ordu</span>
         <div class="stat-track"><div class="stat-fill" id="fill-yeniceri"></div></div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat="ulema">
         <span class="stat-label">Ulema</span>
         <div class="stat-track"><div class="stat-fill" id="fill-ulema"></div></div>
       </div>
-      <div class="stat">
+      <div class="stat" data-stat="hazine">
         <span class="stat-label">Hazine</span>
         <div class="stat-track"><div class="stat-fill" id="fill-hazine"></div></div>
       </div>
@@ -143,6 +157,9 @@
       <div id="card">
         <div id="card-overlay-left"></div>
         <div id="card-overlay-right"></div>
+        <div id="speech-bubble" class="hidden">
+          <span id="speech-text"></span>
+        </div>
         <img id="card-image" src="" alt="" />
         <div id="card-bottom">
           <div id="card-char-name"></div>
@@ -156,9 +173,30 @@
           <div id="negotiation-panel" class="hidden">
             <div id="negotiation-options"></div>
           </div>
+          <div id="chance-panel" class="hidden">
+            <div id="chance-coin" class="coin">
+              <div class="coin-face front">☽</div>
+              <div class="coin-face back">✦</div>
+            </div>
+            <p id="chance-desc">Kaderin elinde...</p>
+          </div>
         </div>
       </div>
       <div id="swipe-hint-right" class="swipe-hint">Evet →</div>
+    </div>
+    <div id="item-bar">
+      <div class="item-slot" id="item-slot-0" onclick="activateItem(0)">
+        <span class="item-icon">—</span>
+        <span class="item-name"></span>
+      </div>
+      <div class="item-slot" id="item-slot-1" onclick="activateItem(1)">
+        <span class="item-icon">—</span>
+        <span class="item-name"></span>
+      </div>
+      <div class="item-slot" id="item-slot-2" onclick="activateItem(2)">
+        <span class="item-icon">—</span>
+        <span class="item-name"></span>
+      </div>
     </div>
   </div>
 
@@ -169,6 +207,8 @@
       <div id="gameover-divider"></div>
       <div id="gameover-reason"></div>
       <div id="gameover-year"></div>
+      <div id="mission-summary" style="font-size:12px; color: rgba(201,162,39,0.6); font-family:'Cinzel'"></div>
+      <div id="mission-details" style="display:flex; flex-direction:column; gap:4px; margin-top:4px;"></div>
       <button id="share-btn" class="intro-btn secondary" style="margin-top:4px;">PAYLAŞ</button>
       <button id="restart-btn">YENİDEN BAŞLA</button>
     </div>

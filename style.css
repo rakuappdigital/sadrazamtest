@@ -631,6 +631,7 @@ html, body {
   display: block;
   background: #1a1420;
   max-height: 46vh;
+  animation: breathe 4s ease-in-out infinite;
 }
 
 #card-bottom {
@@ -992,4 +993,214 @@ html, body {
 @keyframes goldGlow {
   0%, 100% { text-shadow: 0 0 10px rgba(201,162,39,0.4); }
   50%       { text-shadow: 0 0 25px rgba(201,162,39,0.9), 0 0 50px rgba(201,162,39,0.4); }
+}
+
+/* ════════════════════════════════════════
+   FEATURE 1: SPEECH BUBBLES
+════════════════════════════════════════ */
+#speech-bubble {
+  position: absolute;
+  top: 12px;
+  background: rgba(10,8,18,0.92);
+  border: 1px solid var(--gold-dim);
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text);
+  max-width: 65%;
+  z-index: 20;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+#speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 24px;
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--gold-dim);
+}
+#speech-bubble.left-dir  { left: 12px; }
+#speech-bubble.right-dir { right: 12px; left: auto; }
+#speech-bubble.right-dir::after { left: auto; right: 24px; }
+
+/* ════════════════════════════════════════
+   FEATURE 2: STAT DELTAS
+════════════════════════════════════════ */
+.stat { position: relative; }
+.stat-delta {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: bold;
+  pointer-events: none;
+  animation: deltaFloat 1.2s ease-out forwards;
+}
+.stat-delta.positive { color: #55dd66; }
+.stat-delta.negative { color: #ff4444; }
+@keyframes deltaFloat {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-28px); }
+}
+
+/* ════════════════════════════════════════
+   FEATURE 3: CHANCE CARD (COIN)
+════════════════════════════════════════ */
+#chance-panel { text-align: center; padding: 12px 0 4px; }
+#chance-desc { font-size: 12px; color: var(--gold-dim); font-style: italic; margin-top: 8px; font-family: 'IM Fell English'; }
+.coin {
+  width: 64px; height: 64px;
+  margin: 0 auto;
+  cursor: pointer;
+  perspective: 300px;
+  transform-style: preserve-3d;
+  transition: transform 0s;
+  position: relative;
+}
+.coin:hover { filter: brightness(1.2); }
+.coin-face {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  font-size: 28px;
+  border: 2px solid var(--gold);
+  backface-visibility: hidden;
+}
+.coin-face.front { background: radial-gradient(circle, #2a1f00, #1a1200); color: var(--gold); }
+.coin-face.back  { background: radial-gradient(circle, #1a0000, #0a0000); color: #ff4444; transform: rotateY(180deg); }
+.coin.spinning { animation: coinSpin 1.0s ease-in-out forwards; }
+@keyframes coinSpin {
+  0%   { transform: rotateY(0deg); }
+  40%  { transform: rotateY(900deg); }
+  70%  { transform: rotateY(1620deg); }
+  100% { transform: rotateY(var(--coin-end, 1800deg)); }
+}
+
+/* ════════════════════════════════════════
+   FEATURE 4: ITEM SYSTEM
+════════════════════════════════════════ */
+#item-bar {
+  display: flex;
+  gap: 10px;
+  padding: 6px 16px 10px;
+  justify-content: center;
+  width: 100%;
+}
+.item-slot {
+  flex: 1;
+  max-width: 100px;
+  height: 48px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 10px;
+  background: var(--gold-faint);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  position: relative;
+}
+.item-slot:hover { background: rgba(201,162,39,0.2); }
+.item-slot.active { border-color: var(--gold); background: rgba(201,162,39,0.25); transform: scale(1.05); box-shadow: 0 0 12px rgba(201,162,39,0.4); }
+.item-slot.empty { opacity: 0.35; cursor: default; }
+.item-slot .item-icon { font-size: 20px; }
+.item-slot .item-name { font-size: 9px; color: var(--gold); font-family: 'Cinzel'; letter-spacing: 0.5px; }
+.item-toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card-bg);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-family: 'Cinzel';
+  font-size: 12px;
+  color: var(--gold);
+  z-index: 400;
+  animation: slideUp 0.3s ease, fadeOut 0.3s ease 2.2s forwards;
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════════
+   FEATURE 5: BREATHE + FILTER STATES
+════════════════════════════════════════ */
+@keyframes breathe {
+  0%, 100% { transform: scale(1.0); }
+  50%       { transform: scale(1.018); }
+}
+#card.dragging #card-image { animation: none; }
+
+#card-image.state-danger {
+  filter: contrast(1.15) saturate(0.7) brightness(0.9);
+  animation: breatheFast 2s ease-in-out infinite;
+}
+#card-image.state-excess {
+  filter: contrast(1.1) saturate(1.3) brightness(1.05) sepia(0.15);
+}
+#card-image.state-blessed {
+  filter: brightness(1.08) saturate(1.15);
+}
+#card-image.state-normal { filter: none; }
+
+@keyframes breatheFast {
+  0%, 100% { transform: scale(1.0); }
+  50%       { transform: scale(1.022); }
+}
+
+/* ════════════════════════════════════════
+   FEATURE 6: HIDDEN MISSION SYSTEM
+════════════════════════════════════════ */
+#mission-bar {
+  width: 100%;
+  display: flex;
+  gap: 6px;
+  padding: 4px 16px 2px;
+}
+.mission-slot {
+  flex: 1;
+  height: 28px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  background: var(--gold-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  overflow: hidden;
+}
+.mission-check {
+  font-size: 13px;
+  color: var(--gold-dim);
+  font-family: 'Cinzel';
+}
+.mission-slot.completed .mission-check {
+  color: #55dd66;
+  font-size: 14px;
+}
+.mission-slot.completed {
+  border-color: rgba(85,221,102,0.5);
+  background: rgba(85,221,102,0.08);
+  animation: missionGlow 1s ease;
+}
+.mission-label {
+  font-size: 9px;
+  color: var(--gold-dim);
+  font-family: 'Cinzel';
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+@keyframes missionGlow {
+  0%,100% { box-shadow: none; }
+  50% { box-shadow: 0 0 16px rgba(85,221,102,0.5); }
 }

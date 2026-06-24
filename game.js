@@ -130,6 +130,111 @@ const ACHIEVEMENTS = [
   { id: "pasa_mode",     label: "📜 Paşadan Sadrazama",   check: (s) => s.isPasaMode && s.pasaPromoted },
 ];
 
+// ── Görev Havuzu ──────────────────────────────────────────────────
+const MISSION_POOL = [
+  {
+    id: "denge_ustasi",
+    name: "Denge Ustası",
+    desc: "Tüm statların aynı anda 40-65 arasında olması",
+    check: () => Object.values(stats).every(v => v >= 40 && v <= 65)
+  },
+  {
+    id: "yeniceri_dostu",
+    name: "Yeniçeri Dostu",
+    desc: "Yeniçeri kartlarına 3 kez sağ cevap ver",
+    check: () => (characterMemory["2-yeniceri"] || {right:0}).right >= 3
+  },
+  {
+    id: "hazine_bekci",
+    name: "Hazine Bekçisi",
+    desc: "Hazineyi 5 yıl boyunca 40+ tutmak",
+    check: () => year >= 5 && stats.hazine >= 40
+  },
+  {
+    id: "sultanin_gozu",
+    name: "Sultanın Gözü",
+    desc: "Sultan kartlarına 3 kez evet de",
+    check: () => (characterMemory["1-sultan"] || {right:0}).right >= 3
+  },
+  {
+    id: "halkin_sesi",
+    name: "Halkın Sesi",
+    desc: "Halk fraksiyonu kartlarına 4 kez sağ cevap ver",
+    check: () => (factionFavors.halk || 0) >= 4
+  },
+  {
+    id: "dini_lider",
+    name: "Dini Lider",
+    desc: "Ulema'yı 60+ tutmak",
+    check: () => stats.ulema >= 60
+  },
+  {
+    id: "baris_elcisi",
+    name: "Barış Elçisi",
+    desc: "Lanet sistemini hiç tetiklememek",
+    check: () => !cursedEver
+  },
+  {
+    id: "bilge_sadrazam",
+    name: "Bilge Sadrazam",
+    desc: "Soruştur butonunu 3 kez kullan",
+    check: () => traitorInvestigated >= 3
+  }
+];
+
+let activeMissions = [];
+let completedMissions = [];
+
+function initMissions() {
+  const pool = [...MISSION_POOL];
+  activeMissions = [];
+  for (let i = 0; i < 3; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    activeMissions.push({ ...pool[idx], completed: false });
+    pool.splice(idx, 1);
+  }
+  completedMissions = [];
+  updateMissionBar();
+}
+
+function checkMissions() {
+  activeMissions.forEach((m, i) => {
+    if (!m.completed && m.check()) {
+      m.completed = true;
+      completedMissions.push(m);
+      updateMissionSlot(i, true);
+      if (window.playAchievement) setTimeout(playAchievement, 200);
+    }
+  });
+}
+
+function updateMissionBar() {
+  activeMissions.forEach((m, i) => updateMissionSlot(i, m.completed));
+}
+
+function updateMissionSlot(i, completed) {
+  const slot = document.getElementById("mission-slot-" + i);
+  if (!slot) return;
+  const check = slot.querySelector(".mission-check");
+  if (completed) {
+    slot.classList.add("completed");
+    if (check) check.textContent = "✓";
+  } else {
+    if (check) check.textContent = "?";
+  }
+}
+
+function getMissionSummary() {
+  return completedMissions.length + "/" + activeMissions.length + " gizli görev tamamlandı";
+}
+
+function getMissionDetails() {
+  return activeMissions.map(m => ({
+    name: m.name,
+    completed: m.completed
+  }));
+}
+
 // ── State ─────────────────────────────────────────────────────────
 let allCards = [];
 let stats = { saray: 50, "yeniçeri": 50, ulema: 50, hazine: 50 };
@@ -169,6 +274,20 @@ let originalCardText = "";
 let dangerPulseActive = false;
 let letterCardsPending = [];
 let currentDeathTitle = "SADRAZAMLIK SONA ERDİ";
+
+// ── Item Sistemi ──────────────────────────────────────────────────
+const ITEMS = {
+  altin_muhur:    { icon: "🪙", name: "Altın Mühür",    desc: "Sonraki hazine cezasını sıfırla",   effect: "block_hazine" },
+  sultan_ferman:  { icon: "📜", name: "Sultan Fermanı",  desc: "Sonraki saray cezasını sıfırla",    effect: "block_saray" },
+  yeniceri_nisan: { icon: "⚔️", name: "Yeniçeri Nişanı", desc: "Sonraki ordu cezasını sıfırla",    effect: "block_yeniceri" },
+  sifa_otu:       { icon: "🌿", name: "Şifa Otu",        desc: "Herhangi 1 stat +20",              effect: "heal_20" },
+  casus_maskesi:  { icon: "🎭", name: "Casus Maskesi",   desc: "Bir sonraki kartı atla",           effect: "skip_card" },
+  dervis_muska:   { icon: "🔮", name: "Derviş Muskası",  desc: "Sultan sabrı değişmez (1 kart)",   effect: "block_sabir" },
+};
+
+let playerItems = [null, null, null];
+let activeItemIndex = null;
+let pendingItemEffect = null;
 
 // ── DOM ───────────────────────────────────────────────────────────
 const card        = document.getElementById("card");
@@ -326,6 +445,10 @@ function startGame() {
   isInvestigating = false;
   letterCardsPending = [];
   dangerPulseActive = false;
+  playerItems = [null, null, null];
+  activeItemIndex = null;
+  pendingItemEffect = null;
+  updateItemBar();
 
   // Hicri takvim başlangıcı
   const sultanId = selectedSultan ? selectedSultan.id : "kanuni";
@@ -350,6 +473,7 @@ function startGame() {
   updateStatUI();
   updateDynamicSubtitle();
   ensureFateBar();
+  initMissions();
 
   gameScreen.classList.remove("hidden");
   dealNext();
@@ -562,6 +686,27 @@ function dealNext() {
     return;
   }
 
+  // Şans kartı
+  if (c.type === "chance") {
+    hideNegotiationPanel();
+    const key = c.character || "";
+    cardImage.src = "assets/characters/" + encodeURIComponent(key + ".jpg");
+    cardImage.onerror = () => { cardImage.src = ""; };
+    charName.textContent = c.character_name || "";
+    cardText.textContent = c.text || "";
+    choiceLeft.style.opacity = "0";
+    choiceRight.style.opacity = "0";
+    overlayL.style.opacity = "0";
+    overlayR.style.opacity = "0";
+    card.classList.remove("letter-card");
+    card.classList.add("no-swipe");
+    const invBtn = document.getElementById("investigate-btn");
+    if (invBtn) invBtn.classList.add("hidden");
+    animateCardIn();
+    showChanceCard(c);
+    return;
+  }
+
   hideNegotiationPanel();
 
   const key = c.character || "";
@@ -769,7 +914,62 @@ function hideNegotiationPanel() {
   if (devamBtn) devamBtn.style.display = "none";
 }
 
+function showChanceCard(c) {
+  document.getElementById("card-choices").style.display = "none";
+  const panel = document.getElementById("chance-panel");
+  if (panel) panel.classList.remove("hidden");
+
+  const coin = document.getElementById("chance-coin");
+  if (!coin) return;
+  coin.classList.remove("spinning");
+  coin.style.setProperty("--coin-end", "1800deg");
+
+  coin.onclick = () => {
+    if (coin.classList.contains("spinning")) return;
+    const win = Math.random() < 0.5;
+    coin.style.setProperty("--coin-end", win ? "1800deg" : "1980deg");
+    coin.classList.add("spinning");
+
+    if (window.playSwipeRight && win) playSwipeRight();
+    if (window.playSwipeLeft && !win) playSwipeLeft();
+
+    setTimeout(() => {
+      if (panel) panel.classList.add("hidden");
+      document.getElementById("card-choices").style.display = "";
+      coin.classList.remove("spinning");
+      coin.onclick = null;
+      card.classList.remove("no-swipe");
+
+      const effects = win ? (c.chance_win_effects || {}) : (c.chance_lose_effects || {});
+      const flags = win ? (c.chance_win_flags || []) : (c.chance_lose_flags || []);
+      for (const f of flags) activeFlags[f] = true;
+      applyEffects(effects);
+      if (!isGameOver) {
+        cardsPlayed++;
+        advanceHicriMonth();
+        checkMissions();
+        if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
+        if (!isGameOver) setTimeout(dealNext, 200);
+      }
+    }, 1100);
+  };
+}
+
 // ── Stats ─────────────────────────────────────────────────────────
+function updatePortraitExpression() {
+  const img = document.getElementById("card-image");
+  if (!img) return;
+  const vals = Object.values(stats);
+  const hasDanger  = vals.some(v => v <= 20);
+  const hasExcess  = vals.some(v => v >= 80);
+  const isBlessed  = vals.every(v => v >= 45 && v <= 72);
+  img.classList.remove("state-danger","state-excess","state-blessed","state-normal");
+  if (hasDanger)      img.classList.add("state-danger");
+  else if (hasExcess) img.classList.add("state-excess");
+  else if (isBlessed) img.classList.add("state-blessed");
+  else                img.classList.add("state-normal");
+}
+
 function updateStatUI() {
   const map = { saray: "saray", "yeniçeri": "yeniceri", ulema: "ulema", hazine: "hazine" };
   let anyDanger = false;
@@ -790,6 +990,7 @@ function updateStatUI() {
     dangerPulseActive = false;
     if (window.stopDangerPulse) stopDangerPulse();
   }
+  updatePortraitExpression();
 }
 
 function hasAdvisor(id) {
@@ -803,13 +1004,118 @@ function amplify(stat, delta) {
   return Math.round(delta * mult);
 }
 
+function showStatDelta(statKey, delta) {
+  if (delta === 0) return;
+  const statMap = { saray: "saray", "yeniçeri": "yeniceri", ulema: "ulema", hazine: "hazine" };
+  const id = statMap[statKey];
+  if (!id) return;
+  const el = document.querySelector(`.stat[data-stat="${id}"]`);
+  if (!el) return;
+  const d = document.createElement("div");
+  d.className = "stat-delta " + (delta > 0 ? "positive" : "negative");
+  d.textContent = (delta > 0 ? "+" : "") + delta;
+  el.appendChild(d);
+  setTimeout(() => d.remove(), 1300);
+}
+
+function gainItem(itemId) {
+  if (!ITEMS[itemId]) return;
+  const emptySlot = playerItems.indexOf(null);
+  if (emptySlot === -1) {
+    playerItems[0] = itemId;
+    updateItemBar();
+    showItemToast("🔄 " + ITEMS[itemId].icon + " " + ITEMS[itemId].name + " (slot güncellendi)");
+    return;
+  }
+  playerItems[emptySlot] = itemId;
+  updateItemBar();
+  showItemToast("✨ " + ITEMS[itemId].icon + " " + ITEMS[itemId].name + " kazandın!");
+}
+
+function activateItem(slotIndex) {
+  if (!playerItems[slotIndex]) return;
+  const itemId = playerItems[slotIndex];
+  const item = ITEMS[itemId];
+
+  if (item.effect === "heal_20") {
+    const lowestStat = Object.entries(stats).reduce((a, b) => b[1] < a[1] ? b : a);
+    stats[lowestStat[0]] = Math.min(100, stats[lowestStat[0]] + 20);
+    showStatDelta(lowestStat[0], 20);
+    updateStatUI();
+    playerItems[slotIndex] = null;
+    updateItemBar();
+    showItemToast(item.icon + " " + item.name + " kullanıldı! +20");
+    return;
+  }
+  if (item.effect === "skip_card") {
+    playerItems[slotIndex] = null;
+    updateItemBar();
+    showItemToast(item.icon + " Kart atlandı!");
+    setTimeout(dealNext, 100);
+    return;
+  }
+
+  if (activeItemIndex === slotIndex) {
+    activeItemIndex = null;
+    pendingItemEffect = null;
+  } else {
+    activeItemIndex = slotIndex;
+    pendingItemEffect = item.effect;
+  }
+  updateItemBar();
+}
+
+function consumeActiveItem() {
+  if (activeItemIndex === null) return;
+  playerItems[activeItemIndex] = null;
+  activeItemIndex = null;
+  pendingItemEffect = null;
+  updateItemBar();
+}
+
+function updateItemBar() {
+  for (let i = 0; i < 3; i++) {
+    const slot = document.getElementById("item-slot-" + i);
+    if (!slot) continue;
+    const itemId = playerItems[i];
+    const icon = slot.querySelector(".item-icon");
+    const name = slot.querySelector(".item-name");
+    if (itemId && ITEMS[itemId]) {
+      icon.textContent = ITEMS[itemId].icon;
+      name.textContent = ITEMS[itemId].name;
+      slot.classList.remove("empty");
+      slot.classList.toggle("active", activeItemIndex === i);
+    } else {
+      icon.textContent = "—";
+      name.textContent = "";
+      slot.classList.add("empty");
+      slot.classList.remove("active");
+    }
+  }
+}
+
+function showItemToast(msg) {
+  const t = document.createElement("div");
+  t.className = "item-toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2700);
+}
+
 function applyEffects(effects) {
+  const blockMap = { block_hazine: "hazine", block_saray: "saray", block_yeniceri: "yeniçeri" };
+  let shouldConsumeItem = false;
+
   for (let [stat, raw] of Object.entries(effects || {})) {
     // sultanSabir özel işlem
     if (stat === "sultanSabir") {
-      let sc = raw;
-      if (hasAdvisor("semsi")) sc = Math.round(sc * 0.5);
-      sultanSabir = Math.min(100, Math.max(0, sultanSabir + sc));
+      if (pendingItemEffect === "block_sabir") {
+        shouldConsumeItem = true;
+      } else {
+        let sc = raw;
+        if (hasAdvisor("semsi")) sc = Math.round(sc * 0.5);
+        sultanSabir = Math.min(100, Math.max(0, sultanSabir + sc));
+      }
       continue;
     }
 
@@ -817,15 +1123,24 @@ function applyEffects(effects) {
     if (hasAdvisor("sinan") && (stat === "saray" || stat === "ulema")) raw = Math.round(raw * 1.2);
     if (hasAdvisor("hurrem") && stat === "yeniçeri" && raw < 0) raw = Math.round(raw * 0.75);
 
+    // Item block kontrolü
+    const blockedStat = blockMap[pendingItemEffect];
+    if (blockedStat && stat === blockedStat && raw < 0) {
+      raw = 0;
+      shouldConsumeItem = true;
+    }
+
     const amp = amplify(stat, raw);
     stats[stat] = Math.min(100, Math.max(0, (stats[stat] ?? 50) + amp));
+    showStatDelta(stat, amp);
 
-    if (stat === "saray") {
+    if (stat === "saray" && pendingItemEffect !== "block_sabir") {
       let sabirChange = raw < 0 ? -3 : 2;
       if (hasAdvisor("semsi")) sabirChange = Math.round(sabirChange * 0.5);
       sultanSabir = Math.min(100, Math.max(0, sultanSabir + sabirChange));
     }
   }
+  if (shouldConsumeItem) consumeActiveItem();
   updateStatUI();
   checkSultanSabir();
   checkGameOver();
@@ -931,6 +1246,10 @@ function decide(dir) {
   // Flag'ler
   for (const f of (currentCard[dir + "_flags_set"] || [])) activeFlags[f] = true;
 
+  // Item grant
+  const grantKey = "grants_item_on_" + dir;
+  if (currentCard[grantKey]) gainItem(currentCard[grantKey]);
+
   // Karakter hafızası
   const charKey = currentCard.character || "";
   const charNameKey = currentCard.character_name || "";
@@ -951,6 +1270,7 @@ function decide(dir) {
 
   applyEffects(currentCard[dir + "_effects"] || {});
   if (isGameOver) return;
+  checkMissions();
 
   // Ses
   if (dir === "right" && window.playSwipeRight) playSwipeRight();
@@ -1015,7 +1335,7 @@ const THRESHOLD = 100;
 let startX = 0, startY = 0, curX = 0, isDragging = false, isAnimating = false;
 
 function onStart(x, y) {
-  if (isAnimating || isGameOver) return;
+  if (card.classList.contains('no-swipe') || isAnimating || isGameOver) return;
   if (currentCard && (currentCard.type === "negotiation" || currentCard.type === "letter")) return;
   startX = x; startY = y; curX = x; isDragging = true;
   card.classList.add("dragging");
@@ -1044,6 +1364,26 @@ function onMove(x) {
     overlayL.style.opacity = overlayR.style.opacity = "0";
     choiceLeft.style.opacity = choiceRight.style.opacity = "0";
   }
+
+  // Söz balonu
+  const bubble = document.getElementById("speech-bubble");
+  const speechText = document.getElementById("speech-text");
+  if (bubble && currentCard) {
+    if (Math.abs(dx) > 50) {
+      const text = dx < 0
+        ? (currentCard.speech_left || "")
+        : (currentCard.speech_right || "");
+      if (text) {
+        speechText.textContent = text;
+        bubble.className = dx < 0 ? "left-dir" : "right-dir";
+        bubble.style.opacity = String(Math.min(1, (Math.abs(dx) - 50) / 60));
+      } else {
+        bubble.style.opacity = "0";
+      }
+    } else {
+      bubble.style.opacity = "0";
+    }
+  }
 }
 
 function onEnd() {
@@ -1057,6 +1397,8 @@ function onEnd() {
 }
 
 function flyOff(dir) {
+  const bubble = document.getElementById("speech-bubble");
+  if (bubble) bubble.style.opacity = "0";
   if (isAnimating) return;
   isAnimating = true;
   const tx = dir === "left" ? -600 : 600;
@@ -1070,6 +1412,8 @@ function flyOff(dir) {
 }
 
 function snapBack() {
+  const bubble = document.getElementById("speech-bubble");
+  if (bubble) bubble.style.opacity = "0";
   card.style.transition = "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s";
   card.style.transform = "translateX(0) rotate(0deg)";
   overlayL.style.opacity = overlayR.style.opacity = "0";
@@ -1083,7 +1427,7 @@ window.addEventListener("mouseup",   () => onEnd());
 
 // Keyboard
 window.addEventListener("keydown", e => {
-  if (isAnimating || isGameOver || currentCard === null) return;
+  if (card.classList.contains('no-swipe') || isAnimating || isGameOver || currentCard === null) return;
   if (currentCard && (currentCard.type === "negotiation" || currentCard.type === "letter")) return;
   if (e.key === "ArrowLeft")  flyOff("left");
   if (e.key === "ArrowRight") flyOff("right");
@@ -1140,6 +1484,7 @@ function advanceYear() {
   }
 
   updateDynamicSubtitle();
+  checkMissions();
 }
 
 // ── Game Over ─────────────────────────────────────────────────────
@@ -1222,6 +1567,15 @@ function showGameOver(reason) {
 
   // Ölüm arşivi
   renderDeathArchive();
+
+  const missionSumEl = document.getElementById("mission-summary");
+  if (missionSumEl) missionSumEl.textContent = getMissionSummary();
+  const missionDetEl = document.getElementById("mission-details");
+  if (missionDetEl) {
+    missionDetEl.innerHTML = getMissionDetails().map(m =>
+      `<div style="font-size:11px; color:${m.completed ? '#55dd66' : 'rgba(201,162,39,0.4)'}; font-family:'Cinzel'">${m.completed ? '✓' : '✗'} ${m.name}</div>`
+    ).join("");
+  }
 
   gameoverScreen.classList.add("visible");
 }
