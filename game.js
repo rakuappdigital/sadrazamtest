@@ -350,12 +350,12 @@ let currentDeathTitle = "SADRAZAMLIK SONA ERDİ";
 
 // ── Item Sistemi ──────────────────────────────────────────────────
 const ITEMS = {
-  altin_muhur:    { icon: '<img src="assets/icons/item-altin-muhur.png">',    name: "Altın Mühür",    desc: "Sonraki hazine cezasını sıfırla",  effect: "block_hazine" },
-  sultan_ferman:  { icon: '<img src="assets/icons/item-sultan-ferman.png">',  name: "Sultan Fermanı", desc: "Sonraki saray cezasını sıfırla",   effect: "block_saray" },
-  yeniceri_nisan: { icon: '<img src="assets/icons/item-yeniceri-nisan.png">', name: "Yeniçeri Nişanı",desc: "Sonraki ordu cezasını sıfırla",    effect: "block_yeniceri" },
-  sifa_otu:       { icon: '<img src="assets/icons/item-sifa-otu.png">',       name: "Şifa Otu",       desc: "Herhangi 1 stat +20",              effect: "heal_20" },
-  casus_maskesi:  { icon: '<img src="assets/icons/item-casus-maskesi.png">', name: "Casus Maskesi",  desc: "Bir sonraki kartı atla",            effect: "skip_card" },
-  dervis_muska:   { icon: '<img src="assets/icons/item-dervis-muska.png">',  name: "Derviş Muskası", desc: "Sultan sabrı değişmez (1 kart)",   effect: "block_sabir" },
+  altin_muhur:    { icon: "🪙", name: "Altın Mühür",    desc: "Sonraki hazine cezasını sıfırla",      effect: "block_hazine",  color: "#C9A227" },
+  sultan_ferman:  { icon: "📜", name: "Sultan Fermanı", desc: "Sonraki saray cezasını sıfırla",       effect: "block_saray",   color: "#9b59b6" },
+  yeniceri_nisan: { icon: "⚔️", name: "Yeniçeri Nişanı",desc: "Sonraki ordu cezasını sıfırla",       effect: "block_yeniceri",color: "#e74c3c" },
+  sifa_otu:       { icon: "🌿", name: "Şifa Otu",       desc: "En düşük stat +20 (anlık)",           effect: "heal_20",       color: "#27ae60" },
+  casus_maskesi:  { icon: "🎭", name: "Casus Maskesi",  desc: "Bu kartı atla, sonraki kart gelsin",  effect: "skip_card",     color: "#2980b9" },
+  dervis_muska:   { icon: "🔮", name: "Derviş Muskası", desc: "Bu kart Sultan sabrını etkilemez",    effect: "block_sabir",   color: "#8e44ad" },
 };
 
 let playerItems = [null, null, null];
@@ -1504,9 +1504,60 @@ function gainItem(itemId) {
 }
 
 function activateItem(slotIndex) {
-  if (!playerItems[slotIndex]) return;
+  if (isGameOver) return;
   const itemId = playerItems[slotIndex];
+  if (!itemId) return;
   const item = ITEMS[itemId];
+  Haptics.tap();
+  showItemConfirm(slotIndex, item);
+}
+
+function showItemConfirm(slotIndex, item) {
+  // Var olan popup'ı kaldır
+  document.getElementById("item-confirm-popup")?.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "item-confirm-popup";
+  popup.innerHTML = `
+    <div class="icp-icon">${item.icon}</div>
+    <div class="icp-name">${item.name}</div>
+    <div class="icp-desc">${item.desc}</div>
+    <div class="icp-btns">
+      <button class="icp-use" id="icp-use-btn">Kullan ✓</button>
+      <button class="icp-cancel" id="icp-cancel-btn">Vazgeç</button>
+    </div>`;
+
+  document.getElementById("game")?.appendChild(popup);
+
+  const doUse = (e) => {
+    if(e) e.preventDefault();
+    popup.remove();
+    executeItem(slotIndex, item);
+  };
+  const doCancel = (e) => {
+    if(e) e.preventDefault();
+    popup.remove();
+  };
+
+  const useBtn    = document.getElementById("icp-use-btn");
+  const cancelBtn = document.getElementById("icp-cancel-btn");
+  useBtn   ?.addEventListener("click",    doUse);
+  useBtn   ?.addEventListener("touchend", doUse,    { passive: false });
+  cancelBtn?.addEventListener("click",    doCancel);
+  cancelBtn?.addEventListener("touchend", doCancel, { passive: false });
+
+  // Dışarı tıklama kapatır
+  setTimeout(() => {
+    const outside = (e) => {
+      if (!popup.contains(e.target)) { popup.remove(); document.removeEventListener("touchend", outside); }
+    };
+    document.addEventListener("touchend", outside, { passive: true });
+  }, 200);
+}
+
+function executeItem(slotIndex, item) {
+  itemsUsed++;
+  uniqueItemsCollected.add(Object.keys(ITEMS).find(k => ITEMS[k] === item));
 
   if (item.effect === "heal_20") {
     const lowestStat = Object.entries(stats).reduce((a, b) => b[1] < a[1] ? b : a);
@@ -1515,33 +1566,40 @@ function activateItem(slotIndex) {
     updateStatUI();
     playerItems[slotIndex] = null;
     updateItemBar();
-    showItemToast(item.icon + " " + item.name + " kullanıldı! +20");
+    showItemToast(item.icon + " " + item.name + " — +" + 20 + " " + lowestStat[0]);
+    Haptics.statPositive();
     return;
   }
   if (item.effect === "skip_card") {
     playerItems[slotIndex] = null;
     updateItemBar();
-    showItemToast(item.icon + " Kart atlandı!");
-    setTimeout(dealNext, 100);
+    showItemToast(item.icon + " Kart geçildi");
+    card.style.opacity = "0";
+    setTimeout(dealNext, 300);
     return;
   }
 
+  // Pasif efektler (bir sonraki kart için)
   if (activeItemIndex === slotIndex) {
     activeItemIndex = null;
     pendingItemEffect = null;
   } else {
     activeItemIndex = slotIndex;
     pendingItemEffect = item.effect;
+    showItemToast(item.icon + " " + item.name + " — Sonraki karar için hazır");
+    // Kart üzerinde aktif gösterge
+    card.style.boxShadow = `0 0 0 2px ${item.color || "var(--gold)"}, 0 8px 40px rgba(0,0,0,0.8)`;
   }
   updateItemBar();
 }
 
 function consumeActiveItem() {
   if (activeItemIndex === null) return;
-  itemsUsed++;
   playerItems[activeItemIndex] = null;
   activeItemIndex = null;
   pendingItemEffect = null;
+  // Kart glow'unu temizle
+  card.style.boxShadow = "";
   updateItemBar();
 }
 
@@ -1553,13 +1611,18 @@ function updateItemBar() {
     const icon = slot.querySelector(".item-icon");
     const name = slot.querySelector(".item-name");
     if (itemId && ITEMS[itemId]) {
-      icon.textContent = ITEMS[itemId].icon;
-      name.textContent = ITEMS[itemId].name;
+      const itm = ITEMS[itemId];
+      icon.textContent = itm.icon;   // emoji — her zaman çalışır
+      icon.style.fontSize = "22px";
+      name.textContent = itm.name;
+      slot.style.borderColor = activeItemIndex === i ? (itm.color || "var(--gold)") : "";
       slot.classList.remove("empty");
       slot.classList.toggle("active", activeItemIndex === i);
     } else {
-      icon.textContent = "—";
+      icon.textContent = "";
+      icon.style.fontSize = "";
       name.textContent = "";
+      slot.style.borderColor = "";
       slot.classList.add("empty");
       slot.classList.remove("active");
     }

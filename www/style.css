@@ -1664,3 +1664,65 @@ html, body {
   box-shadow: 0 4px 24px rgba(201,162,39,0.3);
 }
 #card-area { position: relative; }
+
+/* ── Item Onay Popup ── */
+#item-confirm-popup {
+  position: fixed;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  background: var(--card-bg);
+  border: 1px solid var(--gold);
+  border-radius: 16px;
+  padding: 16px 20px 14px;
+  min-width: 240px;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.8), 0 0 0 1px var(--gold-dim);
+  animation: slideUp 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.icp-icon { font-size: 32px; }
+.icp-name {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+.icp-desc {
+  font-family: 'IM Fell English', serif;
+  font-size: 12px;
+  color: rgba(240,230,208,0.75);
+  font-style: italic;
+  line-height: 1.5;
+}
+.icp-btns { display: flex; gap: 8px; margin-top: 4px; }
+.icp-use {
+  flex: 2;
+  padding: 10px;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.icp-cancel {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold-dim);
+  border-radius: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
