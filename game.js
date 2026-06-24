@@ -262,6 +262,7 @@ function checkMissions() {
       m.completed = true;
       completedMissions.push(m);
       updateMissionSlot(i, true);
+      Haptics.missionComplete();
       if (window.playAchievement) setTimeout(playAchievement, 200);
     }
   });
@@ -1163,6 +1164,9 @@ function dealNext() {
   if (c.sound === "hasat" && window.playEvent_hasat) playEvent_hasat();
   if (c.character === "14-casuslar_basi" && c.text && c.text.includes("mektup") && window.playLetterArrival) playLetterArrival();
 
+  // Kriz kartı haptiği
+  if (c.is_crisis) Haptics.crisisCard();
+
   animateCardIn();
   updateDynamicSubtitle();
 }
@@ -1214,6 +1218,7 @@ function animateCardIn() {
 
 // ── Mektup Kartı ─────────────────────────────────────────────────
 function showLetterCard(c) {
+  Haptics.letterArrival();
   hideNegotiationPanel();
 
   const key = c.character || "";
@@ -1339,6 +1344,7 @@ function showChanceCard(c) {
     const win = Math.random() < 0.5;
     coin.style.setProperty("--coin-end", win ? "1800deg" : "1980deg");
     coin.classList.add("spinning");
+    Haptics.coinSpin();
 
     if (window.playSwipeRight && win) playSwipeRight();
     if (window.playSwipeLeft && !win) playSwipeLeft();
@@ -1349,6 +1355,9 @@ function showChanceCard(c) {
       coin.classList.remove("spinning");
       coin.onclick = null;
       card.classList.remove("no-swipe");
+
+      if (win) Haptics.chanceWin();
+      else Haptics.chanceLose();
 
       const effects = win ? (c.chance_win_effects || {}) : (c.chance_lose_effects || {});
       const flags = win ? (c.chance_win_flags || []) : (c.chance_lose_flags || []);
@@ -1396,6 +1405,7 @@ function updateStatUI() {
   if (anyDanger && !dangerPulseActive) {
     dangerPulseActive = true;
     if (window.startDangerPulse) startDangerPulse();
+  Haptics.statDanger();
   } else if (!anyDanger && dangerPulseActive) {
     dangerPulseActive = false;
     if (window.stopDangerPulse) stopDangerPulse();
@@ -1426,6 +1436,10 @@ function amplify(stat, delta) {
 
 function showStatDelta(statKey, delta) {
   if (delta === 0) return;
+  // Haptik
+  if (delta > 0) Haptics.statPositive();
+  else Haptics.statNegative();
+
   const statMap = { saray: "saray", "yeniçeri": "yeniceri", ulema: "ulema", hazine: "hazine" };
   const id = statMap[statKey];
   if (!id) return;
@@ -1602,6 +1616,7 @@ function checkCurse(dir) {
 
 function triggerCurse() {
   cursedEver = true;
+  Haptics.curseTriggered();
   // Lanet overlay
   let overlay = document.getElementById("curse-overlay");
   if (!overlay) {
@@ -1778,12 +1793,16 @@ function checkFactionPressure(faction) {
 const THRESHOLD = 100;
 let startX = 0, startY = 0, curX = 0, isDragging = false, isAnimating = false;
 
+let _haptThresholdFired = false;
+
 function onStart(x, y) {
   if (card.classList.contains('no-swipe') || isAnimating || isGameOver) return;
   if (currentCard && (currentCard.type === "negotiation" || currentCard.type === "letter")) return;
   startX = x; startY = y; curX = x; isDragging = true;
+  _haptThresholdFired = false;
   card.classList.add("dragging");
   card.style.transition = "none";
+  Haptics.cardPickup();
 }
 
 function onMove(x) {
@@ -1794,6 +1813,15 @@ function onMove(x) {
   card.style.transform = `translateX(${dx}px) rotate(${rot}deg)`;
 
   const progress = Math.min(1, Math.abs(dx) / THRESHOLD);
+
+  // Eşik haptiği — %80'e ulaşınca bir kez tetikle
+  if (progress >= 0.8 && !_haptThresholdFired) {
+    _haptThresholdFired = true;
+    Haptics.swipeThresholdCrossed();
+  } else if (progress < 0.5) {
+    _haptThresholdFired = false;
+  }
+
   if (dx < -15) {
     overlayL.style.opacity = String(progress * 0.6);
     overlayR.style.opacity = "0";
@@ -1845,6 +1873,8 @@ function flyOff(dir) {
   if (bubble) bubble.style.opacity = "0";
   if (isAnimating) return;
   isAnimating = true;
+  if (dir === "right") Haptics.swipeRight();
+  else Haptics.swipeLeft();
   const tx = dir === "left" ? -680 : 680;
   card.style.transition = "transform 0.28s ease-in, opacity 0.22s ease-in";
   card.style.transform = `translateX(${tx}px) rotate(${dir === "left" ? -22 : 22}deg)`;
@@ -1868,6 +1898,7 @@ function flyOff(dir) {
 function snapBack() {
   const bubble = document.getElementById("speech-bubble");
   if (bubble) bubble.style.opacity = "0";
+  Haptics.snapBack();
   card.style.transition = "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s";
   card.style.transform = "translateX(0) rotate(0deg)";
   overlayL.style.opacity = overlayR.style.opacity = "0";
@@ -1900,7 +1931,7 @@ window.addEventListener("touchend",  () => onEnd());
 // ── Yıl Geçişi ───────────────────────────────────────────────────
 function advanceYear() {
   year++;
-
+  Haptics.yearAdvance();
   if (window.playYearAdvance) playYearAdvance();
 
   if (hasAdvisor("piri_reis")) {
@@ -2061,6 +2092,7 @@ function triggerGameOver(reason) {
   isGameOver = true;
   clearSave();
   stopAmbientMusic();
+  Haptics.gameOver();
   if (window.stopDangerPulse) stopDangerPulse();
 
   // Sinematik ölüm
@@ -2197,6 +2229,7 @@ function checkAchievements(deathReason) {
 }
 
 function showAchievementToast(a) {
+  Haptics.achievement();
   const tierColors = { bronze:"#cd7f32", silver:"#aaa", gold:"#C9A227", platinum:"#e5e4e2", secret:"#9b59b6" };
   const color = tierColors[a.tier] || "#C9A227";
   const toast = document.createElement("div");
