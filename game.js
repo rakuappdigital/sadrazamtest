@@ -1241,17 +1241,37 @@ function showLetterCard(c) {
 
   if (window.playLetterArrival) playLetterArrival();
 
-  // no-swipe: swipe'ı engeller ama pointer events açık kalır — DEVAM butonu çalışır
   card.classList.add("no-swipe");
   animateCardIn();
 
+  // DEVAM butonu göster
   const devamBtn = document.getElementById("letter-devam-btn");
   if (devamBtn) devamBtn.classList.remove("hidden");
 
   window._letterDevamCard = c;
+
+  // Ekrana herhangi bir yere dokunmak da geçiyor (iOS güvenilir yöntem)
+  const tapAnywhere = (e) => {
+    if (e.target.id === "letter-devam-btn") return; // buton zaten handle ediyor
+    clearLetterTapHandler();
+    handleLetterDevam();
+  };
+  window._letterTapHandler = tapAnywhere;
+  // 600ms sonra aktif et (animasyon bitsin, yanlışlıkla kapanmasın)
+  setTimeout(() => {
+    document.getElementById("game")?.addEventListener("touchend", tapAnywhere, { once: true, passive: true });
+  }, 600);
+}
+
+function clearLetterTapHandler() {
+  if (window._letterTapHandler) {
+    document.getElementById("game")?.removeEventListener("touchend", window._letterTapHandler);
+    window._letterTapHandler = null;
+  }
 }
 
 function handleLetterDevam() {
+  clearLetterTapHandler();
   const devamBtn = document.getElementById("letter-devam-btn");
   if (devamBtn) devamBtn.classList.add("hidden");
 
@@ -1297,8 +1317,8 @@ function showNegotiationCard(c) {
   const btn = document.getElementById("investigate-btn");
   if (btn) btn.classList.add("hidden");
 
+  card.classList.add("no-swipe");
   animateCardIn();
-  card.style.pointerEvents = "none";
 
   const panel = document.getElementById("negotiation-panel");
   const optList = document.getElementById("negotiation-options");
@@ -1307,16 +1327,27 @@ function showNegotiationCard(c) {
     const btn = document.createElement("button");
     btn.className = "negot-btn";
     btn.textContent = opt.label;
-    btn.addEventListener("click", () => {
+    btn.style.cssText += ";cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;";
+
+    const handleChoice = (e) => {
+      if (e) e.preventDefault();
+      if (btn.dataset.used) return;
+      btn.dataset.used = "1";
+      Haptics.tap();
       for (const f of (opt.flags_set || [])) activeFlags[f] = true;
       applyEffects(opt.effects || {});
+      card.classList.remove("no-swipe");
       hideNegotiationPanel();
       if (!isGameOver) {
         cardsPlayed++;
+        advanceHicriMonth();
         if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
         if (!isGameOver) setTimeout(dealNext, 150);
       }
-    });
+    };
+
+    btn.addEventListener("click",    handleChoice);
+    btn.addEventListener("touchend", handleChoice, { passive: false });
     optList.appendChild(btn);
   });
   panel.classList.remove("hidden");

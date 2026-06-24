@@ -14,31 +14,25 @@ button {
   outline: none;
 }
 
-/* ── iOS Safe Area — TÜM EKRANLAR ──────────────────────────────── */
-/* #game container: Dynamic Island üstü + Home Bar altı */
-#game {
-  padding-top:    env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  padding-left:   env(safe-area-inset-left, 0px);
-  padding-right:  env(safe-area-inset-right, 0px);
+/* ── iOS Safe Area — KESİN ÇÖZÜM ───────────────────────────────── */
+/* Spacer div'ler: padding yerine gerçek flex item kullanılıyor.
+   Bu yaklaşım layout reflow'larından etkilenmez. */
+#ios-safe-top {
+  width: 100%;
+  min-height: env(safe-area-inset-top, 0px);
+  flex-shrink: 0;
+}
+#ios-safe-bottom {
+  width: 100%;
+  min-height: env(safe-area-inset-bottom, 0px);
+  flex-shrink: 0;
 }
 
-/* Giriş, seçim ve diğer tam ekran sayfalar */
-#intro-screen, #howto-screen, #sultan-screen,
-#advisor-screen, #achievements-screen, #gameover-screen {
-  padding-top:    env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-#intro-content {
-  padding-top: max(32px, env(safe-area-inset-top, 32px));
-}
-.selection-content {
-  padding-top: max(28px, env(safe-area-inset-top, 28px));
-}
-#howto-content {
-  padding-top: max(28px, env(safe-area-inset-top, 28px));
-}
+/* Giriş ve tam ekran sayfalar */
+#intro-content    { padding-top: max(32px, env(safe-area-inset-top, 32px)); }
+.selection-content{ padding-top: max(28px, env(safe-area-inset-top, 28px)); }
+#howto-content    { padding-top: max(28px, env(safe-area-inset-top, 28px)); }
+#gameover-panel   { margin-top:  max(0px,  env(safe-area-inset-top, 0px)); }
 
 :root {
   --gold: #C9A227;
