@@ -717,7 +717,14 @@ function checkResumeAvailable() {
     document.body.appendChild(banner);
     document.getElementById('resume-btn').onclick = () => {
       banner.remove();
+      // Tüm seçim ekranlarını gizle, direkt oyuna geç
+      introScreen.style.display = "none";
+      const sultanSc = document.getElementById("sultan-screen");
+      const advisorSc = document.getElementById("advisor-screen");
+      if (sultanSc) sultanSc.classList.add("hidden");
+      if (advisorSc) advisorSc.classList.add("hidden");
       loadGameState(s);
+      startAmbientMusic();
     };
     document.getElementById('resume-discard').onclick = () => {
       clearSave();
@@ -777,6 +784,8 @@ function loadGameState(s) {
   updateDynamicSubtitle();
   ensureFateBar();
   updateMissionBar();
+  // Tutorial atlansın — devam ediyoruz
+  localStorage.setItem('sadrazam_tutorial_done', '1');
   gameScreen.classList.remove("hidden");
   dealNext();
 }
