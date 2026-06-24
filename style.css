@@ -1605,3 +1605,29 @@ html, body {
   font-family: 'Cinzel', serif;
   font-size: 13px;
 }
+
+/* Mektup DEVAM butonu — kartın dışında, card-area içinde */
+#letter-devam-btn {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, rgba(201,162,39,0.2), rgba(201,162,39,0.1));
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 3px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#letter-devam-btn:hover {
+  background: rgba(201,162,39,0.3);
+  box-shadow: 0 4px 24px rgba(201,162,39,0.3);
+}
+#card-area { position: relative; }

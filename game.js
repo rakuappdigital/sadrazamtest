@@ -1244,36 +1244,43 @@ function showLetterCard(c) {
   animateCardIn();
   card.style.pointerEvents = "none";
 
-  // Devam butonu
-  let devamBtn = document.getElementById("letter-devam-btn");
-  if (!devamBtn) {
-    devamBtn = document.createElement("button");
-    devamBtn.id = "letter-devam-btn";
-    devamBtn.className = "intro-btn";
-    devamBtn.style.cssText = "margin-top: 8px; font-size: 11px; padding: 10px 20px; max-width: 200px;";
-    devamBtn.textContent = "DEVAM";
-    const cardBottom = document.getElementById("card-bottom");
-    if (cardBottom) cardBottom.appendChild(devamBtn);
+  // Devam butonu — kartın DIŞINDA, #card-area seviyesinde (transform/pointer sorununu önler)
+  const devamBtn = document.getElementById("letter-devam-btn");
+  if (devamBtn) {
+    devamBtn.classList.remove("hidden");
   }
-  devamBtn.style.display = "block";
-  devamBtn.style.pointerEvents = "auto";
-  devamBtn.style.position = "relative";
-  devamBtn.style.zIndex = "20";
-  devamBtn.onclick = () => {
-    devamBtn.style.display = "none";
-    card.classList.remove("letter-card");
-    card.style.pointerEvents = "auto";
 
-    // Sultan sabir etkisi
+  window._letterDevamCard = c;
+}
+
+function handleLetterDevam() {
+  const devamBtn = document.getElementById("letter-devam-btn");
+  if (devamBtn) devamBtn.classList.add("hidden");
+
+  const c = window._letterDevamCard;
+  card.classList.remove("letter-card");
+  card.style.pointerEvents = "auto";
+
+  if (c) {
+    // Stat efektleri (mektup etkileri artık gerçek stat'ları etkiliyor)
+    const effects = { ...(c.right_effects || {}) };
+    delete effects.sultanSabir; // sultansabir ayrı işleniyor
+    if (Object.keys(effects).length > 0) applyEffects(effects);
+
+    // Sultan sabır etkisi
     if (c.right_effects && c.right_effects.sultanSabir) {
       sultanSabir = Math.min(100, Math.max(0, sultanSabir + c.right_effects.sultanSabir));
     }
     for (const f of (c.right_flags_set || [])) activeFlags[f] = true;
 
-    cardsPlayed++;
-    if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
-    if (!isGameOver) setTimeout(dealNext, 150);
-  };
+    if (!isGameOver) {
+      cardsPlayed++;
+      advanceHicriMonth();
+      if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
+      if (!isGameOver) setTimeout(dealNext, 150);
+    }
+  }
+  window._letterDevamCard = null;
 }
 
 // ── Müzakere ─────────────────────────────────────────────────────
