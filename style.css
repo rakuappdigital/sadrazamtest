@@ -177,14 +177,14 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   background: rgba(201,162,39,0.06);
   border: 1px solid rgba(201,162,39,0.2);
   border-radius: 8px;
   padding: 8px 10px;
 }
-.isp span:first-child { font-size: 16px; }
-.isp span:last-child  { font-size: 9px; font-family: 'Cinzel', serif; color: rgba(201,162,39,0.6); letter-spacing: 1px; }
+.isp img { width: 36px; height: 36px; object-fit: contain; }
+.isp span { font-size: 9px; font-family: 'Cinzel', serif; color: rgba(201,162,39,0.6); letter-spacing: 1px; }
 
 /* Buton grubu */
 #intro-buttons {
@@ -487,7 +487,8 @@ html, body {
   box-shadow: 0 0 10px rgba(201,162,39,0.25);
 }
 
-.ac-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.ac-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; width: 56px; height: 56px; }
+.ac-icon img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
 .ac-name {
   font-family: 'Cinzel', serif;
   font-size: 13px;
@@ -1213,7 +1214,8 @@ html, body {
 .item-slot:hover { background: rgba(201,162,39,0.2); }
 .item-slot.active { border-color: var(--gold); background: rgba(201,162,39,0.25); transform: scale(1.05); box-shadow: 0 0 12px rgba(201,162,39,0.4); }
 .item-slot.empty { opacity: 0.35; cursor: default; }
-.item-slot .item-icon { font-size: 20px; }
+.item-slot .item-icon { font-size: 20px; display: flex; align-items: center; justify-content: center; }
+.item-slot .item-icon img { width: 28px; height: 28px; object-fit: contain; }
 .item-slot .item-name { font-size: 9px; color: var(--gold); font-family: 'Cinzel'; letter-spacing: 0.5px; }
 .item-toast {
   position: fixed;

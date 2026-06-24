@@ -74,7 +74,7 @@ const ADVISORS = [
   {
     id: "sokollu",
     name: "Sokollu Mehmed Paşa",
-    icon: "⚖️",
+    icon: '<img src="assets/advisors/advisor-sokollu.png" alt="Sokollu">',
     title: "Deneyimli Vezir",
     desc: "Tüm stat değişimleri %15 azalır",
     effect: "reduce_all_15"
@@ -82,7 +82,7 @@ const ADVISORS = [
   {
     id: "piri_reis",
     name: "Piri Reis",
-    icon: "⚓",
+    icon: '<img src="assets/advisors/advisor-piri-reis.png" alt="Piri Reis">',
     title: "Kaptan-ı Derya",
     desc: "Her yıl Hazine +6",
     effect: "hazine_per_year_6"
@@ -90,7 +90,7 @@ const ADVISORS = [
   {
     id: "sinan",
     name: "Mimar Sinan",
-    icon: "🏛️",
+    icon: '<img src="assets/advisors/advisor-sinan.png" alt="Sinan">',
     title: "Baş Mimar",
     desc: "Saray ve Ulema etkileri %20 güçlenir",
     effect: "saray_ulema_boost_20"
@@ -98,7 +98,7 @@ const ADVISORS = [
   {
     id: "semsi",
     name: "Şemsi Paşa",
-    icon: "📜",
+    icon: '<img src="assets/advisors/advisor-semsi.png" alt="Şemsi">',
     title: "Saray Kâtibi",
     desc: "Sultan sabrı azalması %50 yavaşlar",
     effect: "sultan_sabir_slow_50"
@@ -106,7 +106,7 @@ const ADVISORS = [
   {
     id: "hurrem",
     name: "Hürrem Haseki Sultan",
-    icon: "💎",
+    icon: '<img src="assets/advisors/advisor-hurrem.png" alt="Hürrem">',
     title: "Has Kadın",
     desc: "Yeniçeri negatif etkileri %25 azalır",
     effect: "yeniceri_neg_reduce_25"
@@ -277,12 +277,12 @@ let currentDeathTitle = "SADRAZAMLIK SONA ERDİ";
 
 // ── Item Sistemi ──────────────────────────────────────────────────
 const ITEMS = {
-  altin_muhur:    { icon: "🪙", name: "Altın Mühür",    desc: "Sonraki hazine cezasını sıfırla",   effect: "block_hazine" },
-  sultan_ferman:  { icon: "📜", name: "Sultan Fermanı",  desc: "Sonraki saray cezasını sıfırla",    effect: "block_saray" },
-  yeniceri_nisan: { icon: "⚔️", name: "Yeniçeri Nişanı", desc: "Sonraki ordu cezasını sıfırla",    effect: "block_yeniceri" },
-  sifa_otu:       { icon: "🌿", name: "Şifa Otu",        desc: "Herhangi 1 stat +20",              effect: "heal_20" },
-  casus_maskesi:  { icon: "🎭", name: "Casus Maskesi",   desc: "Bir sonraki kartı atla",           effect: "skip_card" },
-  dervis_muska:   { icon: "🔮", name: "Derviş Muskası",  desc: "Sultan sabrı değişmez (1 kart)",   effect: "block_sabir" },
+  altin_muhur:    { icon: '<img src="assets/icons/item-altin-muhur.png">',    name: "Altın Mühür",    desc: "Sonraki hazine cezasını sıfırla",  effect: "block_hazine" },
+  sultan_ferman:  { icon: '<img src="assets/icons/item-sultan-ferman.png">',  name: "Sultan Fermanı", desc: "Sonraki saray cezasını sıfırla",   effect: "block_saray" },
+  yeniceri_nisan: { icon: '<img src="assets/icons/item-yeniceri-nisan.png">', name: "Yeniçeri Nişanı",desc: "Sonraki ordu cezasını sıfırla",    effect: "block_yeniceri" },
+  sifa_otu:       { icon: '<img src="assets/icons/item-sifa-otu.png">',       name: "Şifa Otu",       desc: "Herhangi 1 stat +20",              effect: "heal_20" },
+  casus_maskesi:  { icon: '<img src="assets/icons/item-casus-maskesi.png">', name: "Casus Maskesi",  desc: "Bir sonraki kartı atla",            effect: "skip_card" },
+  dervis_muska:   { icon: '<img src="assets/icons/item-dervis-muska.png">',  name: "Derviş Muskası", desc: "Sultan sabrı değişmez (1 kart)",   effect: "block_sabir" },
 };
 
 let playerItems = [null, null, null];
