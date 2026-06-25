@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════
-//  SADRAZAM — game.js  (v3.0)
+//  SADRAZAM — game.js  (v3.1)
 // ═══════════════════════════════════════════════════════════════════
+
 
 const CARDS_PER_YEAR = 10;
 const PASSIVE_HAZINE_DRAIN = 2;
@@ -12,6 +13,18 @@ const HICRI_MONTHS = [
   "Ramazan","Şevval","Zilkade","Zilhicce"
 ];
 const SULTAN_HICRI_START = { kanuni: 927, yavuz: 918, murad3: 982 };
+
+// ★ GOD MODE — test için geçici. Kaldırmak için ★ GOD MODE etiketli tüm satırları sil.
+let godMode = false; // ★ GOD MODE
+function toggleGodMode() { // ★ GOD MODE
+  godMode = !godMode; // ★ GOD MODE
+  const badge = document.getElementById('god-badge'); // ★ GOD MODE
+  if (godMode) { // ★ GOD MODE
+    if (!badge) { const b = document.createElement('div'); b.id='god-badge'; b.textContent='⚡ GOD'; document.body.appendChild(b); } // ★ GOD MODE
+  } else { // ★ GOD MODE
+    if (badge) badge.remove(); // ★ GOD MODE
+  } // ★ GOD MODE
+} // ★ GOD MODE
 
 // ── Dinamik başlıklar ─────────────────────────────────────────────
 const DYNAMIC_SUBTITLES = [
@@ -43,6 +56,73 @@ const DEATH_TABLE = {
   ulema:      { 0: "Şeyhülislam dinsizlikle itham etti. Halk seni linç etti.", 100: "Ulema artık senden değil, Şeyhülislam'dan emir alıyor." },
   hazine:     { 0: "Devlet iflas etti. Asker maaşını alamadı. Herkes kaçtı.", 100: "Hazinede bu kadar altın tehlikeli. Sultan seni zimmetçilikle suçladı." },
 };
+
+// 30+ bağlam duyarlı ölüm metni havuzu
+const DEATH_TEXTS = {
+  saray_0: [
+    "Sultan sana idam fermanı gönderdi. Cellat kapında bekliyordu.",
+    "Bir sabah Topkapı'dan haberci geldi — güven bitmişti.",
+    "Sarayın kapıları kapandı. Bir daha açılmadı senin için.",
+    "Sultan'ın gözünde kaybolmak, imparatorlukta ölmektir.",
+    "Yıllar içinde birikenler tek bir kelimeyle silindi: idam."
+  ],
+  saray_100: [
+    "Çok güçlendin. Sultan bu gölgeyi kaldıramadı.",
+    "Tahtın gölgesine giren ya taht olur ya toz. Sen toz oldun.",
+    "Sultan geceleri senin gücünü düşündü — ve sabah kararını verdi.",
+    "Hükümdarın gözüne giren sonunda çıkamaz. Çıkamazdın.",
+    "Sarayda çok parlak yanarsan, biri söndürür. Söndürüldün."
+  ],
+  yeniceri_0: [
+    "Ordu dağıldı. Düşman İstanbul surlarını gördüğünde artık geç kalmıştı.",
+    "Yeniçeri maaşsız kalınca sadakati de bitirdi. Ardından sen de bittin.",
+    "Sınırlar çözülünce her şey çözülür. Çözüldü.",
+    "Ordu olmayan imparatorluk kağıt üzerinde kalır. Kaldın."
+  ],
+  yeniceri_100: [
+    "Yeniçeriler saraya yürüdü. Tahtı devirdiler. Seni de.",
+    "Kılıç elden çıkınca kılıç sahibini seçer. Seni seçmedi.",
+    "Askeri güç, kontrol edilemeyince imhaya döner. Döndü.",
+    "Çok güçlü bir ordu sadrazamını da yer. Yedi."
+  ],
+  ulema_0: [
+    "Şeyhülislam dinsizlikle itham etti. Halk seni linç etti.",
+    "Cuma hutbesinde adın okunmadı — bu sessizlik her şeydi.",
+    "Dini otorite kaybedince, halk seni kaybeder. Kaybettiler.",
+    "İmamlar döndü, halk döndü. Sen yapayalnız kaldın."
+  ],
+  ulema_100: [
+    "Ulema artık senden değil, Şeyhülislam'dan emir alıyor.",
+    "Din bir araçtı; sonunda araca ihtiyaç kalmadı.",
+    "Şeyhülislam Divan'da ayağa kalktı — bundan sonrası şeriat.",
+    "Dini güç siyasi güçten ayrıldığında sadrazam gereksizleşir."
+  ],
+  hazine_0: [
+    "Devlet iflas etti. Asker maaşını alamadı. Herkes kaçtı.",
+    "Boş kasa, boş vaatler, boş saray. Hepsi birlikte geldi.",
+    "Hazine bitince güç biter, güç bitince devlet biter.",
+    "Para yokken kararlar da anlamsızlaşır. Anlamsızlaştın."
+  ],
+  hazine_100: [
+    "Bu kadar altın tehlikelidir. Sultan zimmetçilikle suçladı.",
+    "Hazinedeki fazla devleti değil, sadrazamı yok eder.",
+    "Serveti gizleyemedin. Saray gizliyi sevmez.",
+    "Sultan altınların nereden geldiğini sordu. Cevap yoktu."
+  ]
+};
+
+function getRichDeathText(reason, statKey, statVal) {
+  const key = statKey === "yeniçeri" ? "yeniceri" : statKey;
+  const pool = DEATH_TEXTS[key + "_" + (statVal <= 0 ? "0" : "100")];
+  let base = pool ? pool[Math.floor(Math.random() * pool.length)] : reason;
+
+  // Yıl bazlı ek bağlam
+  if (year >= 15) base += " On beş yılı aşmıştın — az değil.";
+  else if (year >= 10) base += " On yılı gördün. Çok az kişi bu kadar dayanır.";
+  else if (year <= 2) base += " Divan seni henüz tanıyamamıştı.";
+
+  return base;
+}
 
 // ── Sultan tanımları ──────────────────────────────────────────────
 const SULTANS = [
@@ -169,6 +249,354 @@ const ACHIEVEMENTS = [
   { id: "deli_dervis_right", tier:"secret", icon:"🔮", name:"Kehanet Tuttu",      desc:"Deli Derviş'i 2 kez ziyaret et.",            check: s => (s.characterMemory?.["25-deli_dervis"]?.left||0)+(s.characterMemory?.["25-deli_dervis"]?.right||0) >= 2 },
 ];
 
+// ── Rakip Vezir Dinamik Diyalog ──────────────────────────────────
+const RAKIP_GUCLU = [
+  "önünüzde eğildi, gözlerini kaçırdı.",
+  "sizi selamlayıp hızla çekildi.",
+  "söyleyeceklerini yarım bıraktı.",
+  "çekinerek yaklaştı, sesiniz yükselince geriledi."
+];
+const RAKIP_ZAYIF = [
+  "sizi umursamadan geçip gitti.",
+  "gülümseyerek koltuğunuza yaslandı.",
+  "sesini yükseltmekten çekinmedi.",
+  "doğrudan gözlerinizin içine baktı."
+];
+
+function getRakipSuffix() {
+  const avg = Object.values(stats).reduce((a,b)=>a+b,0)/4;
+  if (avg >= 58) return " — Rakip vezir " + RAKIP_GUCLU[Math.floor(Math.random()*RAKIP_GUCLU.length)];
+  if (avg <= 42) return " — Rakip vezir " + RAKIP_ZAYIF[Math.floor(Math.random()*RAKIP_ZAYIF.length)];
+  return "";
+}
+
+// ── Dönüm Noktası + Miras ────────────────────────────────────────
+const DONUM_CHOICES = [
+  { bar: "saray",    barLabel: "Saray ↑",   label: "Sarayı pekiştirdim",         desc: "Sultan'la bağları güçlendirdim, tahtı sağlamlaştırdım." },
+  { bar: "yeniçeri", barLabel: "Ordu ↑",    label: "Orduyu güçlendirdim",         desc: "Yeniçerilerin sadakatini kazandım, sınırları korudum." },
+  { bar: "ulema",    barLabel: "Ulema ↑",   label: "Dini otoriteyi destekledim",  desc: "Ulema ile barış içinde hükmettim, halkın güvenini aldım." },
+  { bar: "hazine",   barLabel: "Hazine ↑",  label: "Hazineyi büyüttüm",           desc: "Devlet kasasını doldurdum, ticareti canlandırdım." }
+];
+
+let _donumNextCard = 42;
+let _donumShownThisGame = false;
+
+function getDonumCard() {
+  return {
+    id: "donum_noktasi_" + cardsPlayed,
+    type: "easter",
+    easter_type: "donum",
+    character: "donum-noktasi",
+    character_name: "Dönüm Noktası",
+    text: "Yıllar geçti. Divan sizi dinliyor. Bu dönemde ne üzerine yoğunlaştığınız tarihçilerin dilinde yaşayacak.",
+    button: null,
+    stat_effect: null
+  };
+}
+
+function getMirasCard() {
+  const bar = localStorage.getItem("sadrazam_miras_bar");
+  const label = localStorage.getItem("sadrazam_miras_label");
+  if (!bar || !label) return null;
+  return {
+    id: "miras_kart",
+    type: "easter",
+    easter_type: "miras",
+    character: "miras-habercisi",
+    character_name: "Miras Habercisi",
+    text: `Bıraktığın miras yerini buldu. "${label}" — bu karar bugün hâlâ yankılanıyor.`,
+    button: "MİNNETTARIZ",
+    stat_effect: () => {
+      const delta = 15;
+      stats[bar] = Math.min(95, (stats[bar] || 50) + delta);
+      showStatDelta(bar, delta);
+      updateStatUI();
+      // Miras kullanıldı, bir daha çıkmasın
+      localStorage.removeItem("sadrazam_miras_bar");
+      localStorage.removeItem("sadrazam_miras_label");
+    }
+  };
+}
+
+// ── Easter Egg Sabit Verileri ─────────────────────────────────────
+
+const KEHANET_TEXTS = [
+  "Bu şehir bir gün müzeye dönecek, Paşam.",
+  "Boğaz bir gün Rus gemilerine açılacak.",
+  "Yeniçeriler bir gün kendi elleriyle sona erdirilecek.",
+  "Bu minarelerden hoparlörle ezan okunacak.",
+  "İnsanlar bir gün ceplerinde dünya taşıyacak.",
+  "Bu sarayın kapıları düşmana değil, ziyaretçiye açılacak.",
+  "Osmanlı toprakları küçülecek küçülecek...",
+  "Bir gün padişah olmayacak, Paşam.",
+  "Anadolu'da Türkçe konuşulacak ama alfabe değişecek.",
+  "Denizlerden geçen gemiler bir gün dumansız olacak.",
+  "Bu savaşlar müzelerde cam arkasında sergilenecek.",
+  "Her şey görüntüyle aktarılacak — haber, müzik, şiir hepsi.",
+  "Halifenin makamı kaldırılacak.",
+  "Bu imparatorluğun torunları cumhuriyet kuracak.",
+  "Bir gün insanlar gökyüzünde metal kuşlarla seyahat edecek."
+];
+let _kehanetIdx = 0;
+function getKehanetCard() {
+  const text = KEHANET_TEXTS[_kehanetIdx % KEHANET_TEXTS.length];
+  _kehanetIdx++;
+  return {
+    id: "easter_kehanet_" + _kehanetIdx,
+    type: "easter",
+    easter_type: "kehanet",
+    character: "25-deli_dervis",
+    character_name: "Deli Derviş",
+    text,
+    button: "YIKIL ZINNIK!",
+    stat_effect: null
+  };
+}
+
+// ── Tarihsel Figür Kartları ───────────────────────────────────────
+const BARBAROS_TEXTS = [
+  "Venedik'i dört bir yandan sardım, Paşam. Doğu Akdeniz artık bizim. Batılılar haritayı değiştiremiyor.",
+  "Preveze'de karşımda seksen iki gemi vardı. Şimdi hangisi nerede? Ben hâlâ buradayım.",
+  "Korsanlık mı dediniz? Osmanlı amiraline 'korsan' diyene kılıcımı yollardım eskiden. Şimdi gülüp geçiyorum.",
+  "Fransa ittifakı bazen işe yarar ama rüzgâr döner. Denizde bunu öğrendim, size de öğretirim.",
+  "Denizcileri kara askeriyle karıştırma sakın. Birinin işi plan yapmak, benimki plan bozmak.",
+  "Cerbe, Preveze, Tunus — her zafer bir sonrakine kapı açar. Durmak yok, Paşam.",
+  "Doğu kıyılarını ihmal ettiniz. Bu hata bedelini öder. Deniz af etmez.",
+  "Gemilerim için kereste lazım. Yeniçerilere sormayın, orman onların işi değil. Ben bilirim nerede bulunur."
+];
+let _barbarosIdx = 0;
+function getBarbarosCard() {
+  const text = BARBAROS_TEXTS[_barbarosIdx % BARBAROS_TEXTS.length];
+  _barbarosIdx++;
+  return { id:"easter_barbaros_"+_barbarosIdx, type:"easter", easter_type:"tarihsel",
+    character:"barbaros-hayreddin", character_name:"Barbaros Hayreddin Paşa",
+    text, button:"EYVALLAH REİS", stat_effect:null };
+}
+
+const LEONARDO_TEXTS = [
+  "Köprü teklifimi III. Bayezid kabul etmedi. Ben hâlâ beklemedeyim. İstanbul'un üzerinde bir köprü şart.",
+  "Sizin tüfekleriniz ilginç, Paşam. Mekanizmayı inceleyebilir miyim? Floransa'da bunu kimse görmedi.",
+  "Osmanlı minyatürcüleri perspektif kullanmıyor. Ben buna başka bir açıdan bakıyorum — kelimenin tam anlamıyla.",
+  "Uçan bir makine tasarladım. Batılılar güldü. Siz de gülün. Ama beş yüz yıl sonra anlayacaksınız.",
+  "Su kanallarınız mükemmel, ama pompa sistemi eski. İzin verirseniz sadece bir-iki not alayım.",
+  "Atölye açmak istiyorum İstanbul'da, Topkapı yakınları ideal. Işık iyi, ilham çok.",
+  "Floransalı Osmanlı'ya çalışır mı diye sordular. 'Emeğin dini yoktur' dedim. Hem de Latince.",
+  "Şu gece gökyüzü net. Yıldızlarınızı çiziyorum. Bilim mezhep tanımaz, Paşam."
+];
+let _leonardoIdx = 0;
+function getLeonardoCard() {
+  const text = LEONARDO_TEXTS[_leonardoIdx % LEONARDO_TEXTS.length];
+  _leonardoIdx++;
+  return { id:"easter_leonardo_"+_leonardoIdx, type:"easter", easter_type:"tarihsel",
+    character:"leonardo-davinci", character_name:"Leonardo da Vinci",
+    text, button:"ALA LEO!", stat_effect:null };
+}
+
+// Mahidevran kaldırıldı
+
+const HALIT_TEXTS = [
+  "Sadrazam, Hürrem bugün üç mektup gönderdi. Üçü de senin aleyhine. Şaşırma.",
+  "Ben Halit Ergenç değilim. Halit Ergenç beni oynuyor. İnce fark ama önemli, Sadrazam.",
+  "İbrahim'e de güvendim. Sonunu biliyorsun. Seninle benzerlik hissediyorum — bu iyi değil.",
+  "Harem'de yine bir şeyler oluyor. Her zaman bir şeyler oluyor. Artık şaşırmıyorum.",
+  "Şehzade Mustafa seninle görüşmek istiyordu. Müsait değildi. Artık hiç müsait olmayacak.",
+  "Muhteşem Yüzyıl'da beni yanlış gösterdiler. Hürrem o kadar da güçlü değildi. Yüzde seksendir diyelim.",
+  "Set'te yönetmen 'Daha dramatik!' diye bağırırdı. Şimdi sen sakin duruyorsun. İkimiz de yanlış yerdeyiz.",
+  "Osmanlı'yı omzumda taşıdım. Dizide de, tarihte de. İkisi de ağırdı ama dizi daha uzun sürdü."
+];
+let _halitIdx = 0;
+function getHalitCard() {
+  const text = HALIT_TEXTS[_halitIdx % HALIT_TEXTS.length];
+  _halitIdx++;
+  return { id:"easter_halit_"+_halitIdx, type:"easter", easter_type:"tarihsel",
+    character:"halit-ergenc", character_name:"Kanuni Sultan Süleyman",
+    text, button:"MUHTEŞEM!", stat_effect:null };
+}
+
+// ── Felaket / Mucize Kartları ─────────────────────────────────────
+const FELAKET_TEXTS = [
+  "Doğu'dan korkunç haberler geldi — veba, kıtlık ve isyan, hepsi aynı anda.",
+  "Saray yangını, hazine kayıpları, yeniçeri huzursuzluğu. Tanrı bu devleti sınamaktadır.",
+  "Deprem Konstantiniyye'yi sarstı. Her şey bir anda değişti.",
+  "Düşman saldırısı, salgın ve sel felaketi birlikte geldi. Divan dağıldı.",
+  "Hazine yağmalandı, surlar çatladı, ulema kriz ilan etti. Kaçış yok."
+];
+const MUCIZE_TEXTS = [
+  "Beklenmedik bir zafer haberi. İmparatorluk nefes aldı, her şey yoluna girdi.",
+  "Hazineden kayıp altınlar bulundu, ordu sadakatini yeniledi, ulema şükür duasına durdu.",
+  "Sultan fermanıyla tüm anlaşmazlıklar çözüldü. Osmanlı yeniden güçlendi.",
+  "Yüzyılın en büyük hasat haberi. Bereket her tarafa yayıldı.",
+  "Düşman geri çekildi, ticaret canlandı, sarayda barış hâkim oldu."
+];
+let _felaketIdx = 0, _mucizeIdx = 0;
+function getFelaketCard() {
+  const text = FELAKET_TEXTS[_felaketIdx % FELAKET_TEXTS.length]; _felaketIdx++;
+  return { id:"felaket_"+_felaketIdx, type:"easter", easter_type:"felaket",
+    character:"kader-felaket", character_name:"Kader",
+    text, button:"PEKÂLÂ", stat_effect: () => {
+      for (const s of Object.keys(stats)) {
+        const delta = -Math.round(stats[s] * 0.30);
+        stats[s] = Math.max(5, stats[s] + delta);
+        showStatDelta(s, delta);
+      }
+      updateStatUI();
+    }
+  };
+}
+function getMucizeCard() {
+  const text = MUCIZE_TEXTS[_mucizeIdx % MUCIZE_TEXTS.length]; _mucizeIdx++;
+  return { id:"mucize_"+_mucizeIdx, type:"easter", easter_type:"mucize",
+    character:"kader-mucize", character_name:"Kader",
+    text, button:"PEKÂLÂ", stat_effect: () => {
+      for (const s of Object.keys(stats)) {
+        const delta = Math.round(stats[s] * 0.30);
+        stats[s] = Math.min(95, stats[s] + delta);
+        showStatDelta(s, delta);
+      }
+      updateStatUI();
+    }
+  };
+}
+
+// ── Zaman Yolcusu ────────────────────────────────────────────────
+// ── Fısıltı Karakteri ────────────────────────────────────────────
+const FISILDAYAN_TEXTS = [
+  "Yarın birisi sizi Sultan'a şikâyet edecek. Dikkatli olun, Paşam.",
+  "Hazinede bir şeyler eksik. Kimse görmüyor, ama ben görüyorum.",
+  "Divan'da bir hain var. Henüz kim olduğunu bilmiyorum ama yakında anlayacaksınız.",
+  "Bu gece sarayda kimseye güvenmeyin. Sadece kendiniize.",
+  "Bir sonraki kararınız her şeyi değiştirebilir. Sabırsızlanmayın.",
+  "Yeniçeriler memnun değil. Bunu yüzünüze söyleyen olmaz ama kulak verin.",
+  "Sultan geceleri sizin hakkınızda konuşuyor. Hayırlısı olsun."
+];
+let _fisildayanIdx = 0;
+let _easterFisildayanNext = 110;
+
+function getFisildayanCard() {
+  const text = FISILDAYAN_TEXTS[_fisildayanIdx % FISILDAYAN_TEXTS.length];
+  _fisildayanIdx++;
+  return { id:"fisildayan_"+_fisildayanIdx, type:"easter", easter_type:"fisildayan",
+    character:"fisildayan", character_name:"???",
+    text, button:"...", stat_effect: null };
+}
+
+const ZAMAN_TEXTS = [
+  "Otonom araçlar piyasayı süpürüyor Paşam. Arabalar kendi kendine gidiyor. Sürücü içinde uyuyor.",
+  "Bir hastalık çıktı, tüm dünya evine kapandı. İki yıl boyunca. Veba bu kadar bile yapamamıştı.",
+  "Bir adam 280 milyon kişinin buluştuğu meydanı satın aldı ve adını değiştirdi.",
+  "Yapay zeka şiir yazıyor, resim çiziyor, hukuk danışmanlığı yapıyor. İnsanlar ne iş yapacak bilmiyor.",
+  "Tesla denen adam arabayı, roketi ve beyni icat etti. Aynı adam. Şimdi beynini de satmak istiyor.",
+  "İnsanlar telefona bakarak yürüyor. Direğe çarpıyor, nehre düşüyor. Kimse durmuyor, Paşam.",
+  "Kripto para denen şey icat ettiler — görünmez, elle tutulmaz, ama insanlar servetini verdi.",
+  "Bir kadın dans videosu çekiyor, milyonlar seyrediyor, bu işten para kazanıyor. Mesleği bu.",
+  "Uzaya tur satılıyor Paşam. Padişah değil, zengin vatandaş gidiyor.",
+  "ChatGPT denen şey ödev yazıyor, şiir yazıyor, sınava giriyor, doktoru geçiyor. Hani bu Divan'da işe yarar.",
+  "İnsanlar eve kapanınca 'binge watch' denen şeyi icat ettiler — on saatte on bölüm dizi.",
+  "Bir adam saçını mora boyadı, koluna dövme vurdu ve ünlü oldu. Mesleği bu, Paşam.",
+  "Amazon denen tüccar her şeyi satıyor — yiyecek, giysi, ilaç, kanepe. Çarşılar kapandı.",
+  "İnsanlar bilek saatiyle uyku takip ediyor. Kaç saat uyudum diye kontrol ediyor. Uyku artık bir görev.",
+  "Seçimler sosyal medyadan kazanılıyor. Miting yok, meydan yok — ekrandan iktidar, Paşam.",
+  "İklim değişiyor diyorlar. Kış gelmiyor, yazlar çok sıcak. Paşam, bizden mi kaldı bu?",
+  "Metaverse denen sanal dünya kurdular. İnsanlar oraya taşınıyor. Gerçek dünya ısıya bırakılıyor.",
+  "Çocuklar ekrana bakarak büyüyor. Kitap nedir bilmiyor, Divan şiiri hiç bilmiyor tabii.",
+  "Yapay zeka müzik yapıyor, sanat sergisi açıyor ve eleştirmen ödülü kazanıyor. Üstelik imzasız.",
+  "Filistin'de hâlâ savaş var. Osmanlı zamanında da vardı. Bazı şeyler değişmiyor, Paşam."
+];
+let _zamanIdx = 0;
+function getZamanCard() {
+  const text = ZAMAN_TEXTS[_zamanIdx % ZAMAN_TEXTS.length]; _zamanIdx++;
+  return { id:"zaman_"+_zamanIdx, type:"easter", easter_type:"zaman",
+    character:"zaman-yolcusu", character_name:"Zaman Yolcusu",
+    text, button:"NE DERSİN ZINNIK?", stat_effect: null };
+}
+
+const _HIST_GETTERS = [getBarbarosCard, getLeonardoCard, getHalitCard];
+function getNextHistoricalCard() {
+  const fn = _HIST_GETTERS[_easterHistIdx % _HIST_GETTERS.length];
+  _easterHistIdx++;
+  return fn();
+}
+
+const EVLIYA_TEXTS = [
+  "Topkapı'ya geldim, gördüm, yazdım. Şimdi İstanbul'da oturduğum yer bilinmiyor ama dünyanın en güzel şehri burası.",
+  "Yemen'de gördüm ki develer kadıyı tanıyor. İstanbul'daysa kadı develeri tanımıyor. Enteresan, efendim.",
+  "Seksen yedi yılda yüz kırk dört bin kilometre yol yaptım. Paşam, sen hiç seyahat etmeden nasıl idare ediyorsun?",
+  "Nil'de timsahla yüzdüm. Şişman olduğu için yavaştı, ben de kaçtım. Hayat bir macera, efendim.",
+  "Gürcistan'da bir müzisyen yirmi dil biliyordu. Ben sadece on dört. Mahçup oldum, not aldım, yola devam ettim.",
+  "Kırım'da bir hanın sarayında kaldım. Yemekleri mükemmeldi ama misafirperverlik dörtte birdi. Osmanlı'da yetişince anlarsınız.",
+  "Rüyamda Hazreti Peygamber'e 'şefaat' dedim, 'seyahat' çıktı. İşte bu yüzden hâlâ yoldayım, Paşam.",
+  "Buhara'dan getirdiğim baharatı Venedikli'ye sattım, o Fransız'a. Fiyat yüzde seksen arttı. Piyasa böyle işliyor.",
+  "Avrupalıların da vezirleri birbirini gammazlıyor, Paşam. Evrensel bir meslek bu, teselliye bak.",
+  "On yedi yıldır her şeyi yazdım. Seyahatnameyi bitirince ne yapacağımı bilmiyorum. Sanırım yeni bir seyahat."
+];
+
+const EASTER_CARDS = {
+  saray_kedisi: {
+    id: "easter_saray_kedisi",
+    type: "easter",
+    easter_type: "kedi",
+    character: "easter-kedi",
+    character_name: "Saray Kedisi",
+    text: "Topkapı'nın meşhur kedisi divanı bastı ve kararname tomarını devirdi.",
+    button: "ÂLÂ",
+    stat_effect: () => {
+      const statKeys = Object.keys(stats);
+      const target = statKeys[Math.floor(Math.random() * statKeys.length)];
+      const delta = Math.random() < 0.5 ? 3 : -3;
+      stats[target] = Math.min(100, Math.max(0, stats[target] + delta));
+      showStatDelta(target, delta);
+      updateStatUI();
+    }
+  },
+  yanlis_adam: {
+    id: "easter_yanlis_adam",
+    type: "easter",
+    easter_type: "yanlis",
+    character: "easter-yanlis",
+    character_name: "Yanlış Adam",
+    text: "Yanlış odaya girdim efendim, özür dilerim.",
+    button: "DEVRÜL KARŞIMDAN",
+    stat_effect: null
+  },
+  kehanet: {
+    id: "easter_kehanet",
+    type: "easter",
+    easter_type: "kehanet",
+    character: "25-deli_dervis",
+    character_name: "Deli Derviş",
+    text: "Bu imparatorluk 1453 yıl sonra sona erecek, Paşam.",
+    button: "YIKIL ZINNIK!",
+    stat_effect: null
+  },
+  pargali: {
+    id: "easter_pargali",
+    type: "easter",
+    easter_type: "pargali",
+    character: "pargali-ibrahim",
+    character_name: "Pargalı İbrahim Paşa",
+    text: "Sen beni unuttun mu, Süleyman?.. Topkapı'nın koridorları hâlâ beni biliyor.",
+    button: "PARGALI?",
+    stat_effect: null
+  }
+};
+
+// Evliya'yı her 30 kartta bir tetikle
+let _evliyaTextIdx = 0;
+function getEvliyaCard() {
+  const text = EVLIYA_TEXTS[_evliyaTextIdx % EVLIYA_TEXTS.length];
+  _evliyaTextIdx++;
+  return {
+    id: "easter_evliya_" + _evliyaTextIdx,
+    type: "easter",
+    easter_type: "evliya",
+    character: "evliya-celebi",
+    character_name: "Evliya Çelebi",
+    text,
+    button: "Eyvallah",
+    stat_effect: null
+  };
+}
+
 // Cross-game tracking için localStorage yardımcıları
 function getCrossGameData() {
   try { return JSON.parse(localStorage.getItem('sadrazam_crossgame') || '{}'); } catch(e) { return {}; }
@@ -191,158 +619,7 @@ function updateCrossGame(updates) {
 }
 
 // ── Görev Havuzu ──────────────────────────────────────────────────
-const MISSION_POOL = [
-  {
-    id: "denge_ustasi",
-    name: "Denge Ustası",
-    desc: "Tüm statların aynı anda 40-65 arasında olması",
-    check: () => Object.values(stats).every(v => v >= 40 && v <= 65)
-  },
-  {
-    id: "yeniceri_dostu",
-    name: "Yeniçeri Dostu",
-    desc: "Yeniçeri kartlarına 3 kez sağ cevap ver",
-    check: () => (characterMemory["2-yeniceri"] || {right:0}).right >= 3
-  },
-  {
-    id: "hazine_bekci",
-    name: "Hazine Bekçisi",
-    desc: "Hazineyi 5 yıl boyunca 40+ tutmak",
-    check: () => year >= 5 && stats.hazine >= 40
-  },
-  {
-    id: "sultanin_gozu",
-    name: "Sultanın Gözü",
-    desc: "Sultan kartlarına 3 kez evet de",
-    check: () => (characterMemory["1-sultan"] || {right:0}).right >= 3
-  },
-  {
-    id: "halkin_sesi",
-    name: "Halkın Sesi",
-    desc: "Halk fraksiyonu kartlarına 4 kez sağ cevap ver",
-    check: () => (factionFavors.halk || 0) >= 4
-  },
-  {
-    id: "dini_lider",
-    name: "Dini Lider",
-    desc: "Ulema'yı 60+ tutmak",
-    check: () => stats.ulema >= 60
-  },
-  {
-    id: "baris_elcisi",
-    name: "Barış Elçisi",
-    desc: "Lanet sistemini hiç tetiklememek",
-    check: () => !cursedEver
-  },
-  {
-    id: "bilge_sadrazam",
-    name: "Bilge Sadrazam",
-    desc: "Soruştur butonunu 3 kez kullan",
-    check: () => traitorInvestigated >= 3
-  }
-];
-
-let activeMissions = [];
-let completedMissions = [];
-let allMissionsCompleted = false;
-
-function initMissions() {
-  const pool = [...MISSION_POOL];
-  activeMissions = [];
-  for (let i = 0; i < 3; i++) {
-    const idx = Math.floor(Math.random() * pool.length);
-    activeMissions.push({ ...pool[idx], completed: false });
-    pool.splice(idx, 1);
-  }
-  completedMissions = [];
-  allMissionsCompleted = false;
-  updateMissionBar();
-}
-
-function checkMissions() {
-  activeMissions.forEach((m, i) => {
-    if (!m.completed && m.check()) {
-      m.completed = true;
-      completedMissions.push(m);
-      updateMissionSlot(i, true);
-      Haptics.missionComplete();
-      if (window.playAchievement) setTimeout(playAchievement, 200);
-    }
-  });
-
-  // 3/3 tamamlandı — ödül ver
-  if (!allMissionsCompleted && completedMissions.length === 3) {
-    allMissionsCompleted = true;
-    setTimeout(showAllMissionsReward, 800);
-  }
-}
-
-function showAllMissionsReward() {
-  if (isGameOver) return;
-
-  // Overlay
-  const overlay = document.createElement("div");
-  overlay.id = "mission-reward-overlay";
-  overlay.innerHTML = `
-    <div id="mission-reward-box">
-      <div id="mr-ornament">✦ ✦ ✦</div>
-      <div id="mr-title">3 GİZLİ GÖREV TAMAM</div>
-      <div id="mr-divider"></div>
-      <div id="mr-text">Sultan'ın gözüne girdiniz.<br>Devlet size minnettar.</div>
-      <div id="mr-bonus">Tüm değerler <span>+10</span></div>
-    </div>`;
-  document.body.appendChild(overlay);
-
-  // Haptik + ses
-  Haptics.achievement();
-  if (window.playAchievement) playAchievement();
-
-  // Tüm statlara +10 bonus
-  setTimeout(() => {
-    for (const stat of Object.keys(stats)) {
-      const bonus = 10;
-      stats[stat] = Math.min(100, stats[stat] + bonus);
-      showStatDelta(stat, bonus);
-    }
-    updateStatUI();
-  }, 600);
-
-  // 3.5 saniye sonra kapan
-  setTimeout(() => {
-    overlay.style.opacity = "0";
-    setTimeout(() => overlay.remove(), 400);
-  }, 3200);
-
-  overlay.addEventListener("click",    () => overlay.remove());
-  overlay.addEventListener("touchend", () => overlay.remove(), { passive: true });
-}
-
-function updateMissionBar() {
-  activeMissions.forEach((m, i) => updateMissionSlot(i, m.completed));
-}
-
-function updateMissionSlot(i, completed) {
-  const slot = document.getElementById("mission-slot-" + i);
-  if (!slot) return;
-  const check = slot.querySelector(".mission-check");
-  if (completed) {
-    slot.classList.add("completed");
-    if (check) check.textContent = "✓";
-  } else {
-    if (check) check.textContent = "?";
-  }
-}
-
-function getMissionSummary() {
-  return completedMissions.length + "/" + activeMissions.length + " gizli görev tamamlandı";
-}
-
-function getMissionDetails() {
-  return activeMissions.map(m => ({
-    name: m.name,
-    completed: m.completed
-  }));
-}
+// Gizli görevler sistemi kaldırıldı
 
 // ── State ─────────────────────────────────────────────────────────
 let allCards = [];
@@ -380,6 +657,16 @@ let minHazine = 100;
 let maxSaray = 0;
 let maxHazine = 0;
 let minAnyStat = 100;
+
+// Easter egg sayaçları (oyun başında sıfırlanır)
+let _easterKediNext    = 75;
+let _easterYanlisNext  = 60;
+let _easterYanlisCount = 0;
+let _easterKehanetNext = 65;
+let _easterPargaliDone = false;
+let _easterHistNext    = 80;  // Barbaros / Leonardo / Mahidevran
+let _easterHistIdx     = 0;
+let _easterZamanNext   = 90;  // Zaman Yolcusu
 let consecutiveSameDir = 0;
 let lastDir = null;
 let cursedEver = false;
@@ -397,17 +684,64 @@ let dangerPulseActive = false;
 let letterCardsPending = [];
 let currentDeathTitle = "SADRAZAMLIK SONA ERDİ";
 
+// ── Item Koşul Tablosu ────────────────────────────────────────────
+// Her kart için item kazanmak amacıyla gereken ek koşullar.
+// check(stats, year, sultanSabir) → true ise item verilir.
+const ITEM_GRANT_CONDITIONS = {
+  'sultan_tımar_ödülü': {
+    desc: "Saray ≥ 55 ve en az 3. yıl",
+    check: () => stats.saray >= 55 && year >= 3
+  },
+  'yeniceri_tüfek_talebi': {
+    desc: "Ordu ≥ 50 ve en az 2. yıl",
+    check: () => stats["yeniçeri"] >= 50 && year >= 2
+  },
+  'defterdar_borç_teklifi': {
+    desc: "Hazine ≥ 50 ve en az 3. yıl",
+    check: () => stats.hazine >= 50 && year >= 3
+  },
+  'hekimbasi_darüşşifa': {
+    desc: "Herhangi bir stat ≤ 35 (kritik durumda)",
+    check: () => Object.values(stats).some(v => v <= 35)
+  },
+  'derviş_kıyamet': {
+    desc: "Ulema ≤ 40 veya Sultan sabrı ≤ 40",
+    check: () => stats.ulema <= 40 || sultanSabir <= 40
+  },
+  'casuslar_gizli_kimlik': {
+    desc: "En az 4. yıl ve Saray 25-65 arası",
+    check: () => year >= 4 && stats.saray >= 25 && stats.saray <= 65
+  },
+};
+
+function checkItemGrantCondition(cardId) {
+  const cond = ITEM_GRANT_CONDITIONS[cardId];
+  if (!cond) return true; // koşulsuz kart
+  return cond.check();
+}
+
 // ── Item Sistemi ──────────────────────────────────────────────────
 const ITEMS = {
-  altin_muhur:    { icon: "🪙", name: "Altın Mühür",    desc: "Sonraki hazine cezasını sıfırla",      effect: "block_hazine",  color: "#C9A227" },
-  sultan_ferman:  { icon: "📜", name: "Sultan Fermanı", desc: "Sonraki saray cezasını sıfırla",       effect: "block_saray",   color: "#9b59b6" },
-  yeniceri_nisan: { icon: "⚔️", name: "Yeniçeri Nişanı",desc: "Sonraki ordu cezasını sıfırla",       effect: "block_yeniceri",color: "#e74c3c" },
-  sifa_otu:       { icon: "🌿", name: "Şifa Otu",       desc: "En düşük stat +20 (anlık)",           effect: "heal_20",       color: "#27ae60" },
-  casus_maskesi:  { icon: "🎭", name: "Casus Maskesi",  desc: "Bu kartı atla, sonraki kart gelsin",  effect: "skip_card",     color: "#2980b9" },
-  dervis_muska:   { icon: "🔮", name: "Derviş Muskası", desc: "Bu kart Sultan sabrını etkilemez",    effect: "block_sabir",   color: "#8e44ad" },
+  altin_muhur:    { icon: "assets/icons/item-altin-muhur.png",    name: "Altın Mühür",    desc: "Sonraki hazine cezasını sıfırla",      effect: "block_hazine",  color: "#C9A227" },
+  sultan_ferman:  { icon: "assets/icons/item-sultan-ferman.png",  name: "Sultan Fermanı", desc: "Sonraki saray cezasını sıfırla",       effect: "block_saray",   color: "#9b59b6" },
+  yeniceri_nisan: { icon: "assets/icons/item-yeniceri-nisan.png", name: "Yeniçeri Nişanı",desc: "Sonraki ordu cezasını sıfırla",       effect: "block_yeniceri",color: "#e74c3c" },
+  sifa_otu:       { icon: "assets/icons/item-sifa-otu.png",       name: "Şifa Otu",       desc: "En düşük stat +20 (anlık)",           effect: "heal_20",       color: "#27ae60" },
+  casus_maskesi:  { icon: "assets/icons/item-casus-maskesi.png",  name: "Casus Maskesi",  desc: "Bu kartı atla, sonraki kart gelsin",  effect: "skip_card",     color: "#2980b9" },
+  dervis_muska:   { icon: "assets/icons/item-dervis-muska.png",   name: "Derviş Muskası", desc: "Bu kart Sultan sabrını etkilemez",    effect: "block_sabir",   color: "#8e44ad" },
+};
+
+// Her item için oyuncu rehberi
+const ITEM_HOW_TO_USE = {
+  altin_muhur:    "Hazineni korumak için kullan. Bir sonraki kartta hazine cezası gelecekse eşyayı önceden aktive et — ceza sıfırlanır. Hazinen kritik düşeceği anlarda can simidi.",
+  sultan_ferman:  "Saray puanın tehlikede olduğu anlarda kullan. Bir sonraki kartta saray cezası gelecekse aktive et, ceza geçmez. Sultan'ın gözünden düşmek üzereyken kullan.",
+  yeniceri_nisan: "Orduyu kaybetmek üzere olduğun anlarda kullan. Bir sonraki kartta ordu cezası gelecekse aktive et, zarar gelmez. Yeniçeri isyanı ya da savaş kartlarına karşı güçlü.",
+  sifa_otu:       "Hemen etkili! Aktive ettiğin anda en düşük statına +20 ekler. Tükenmek üzereyken veya kritik durumlarda anlık kurtarıcı.",
+  casus_maskesi:  "İstemediğin bir kart geldiğinde kullan. Aktive edince mevcut kartı tamamen atlar, bir sonraki kart gelir. Tehlikeli bir karakterden kaçmak için ideal.",
+  dervis_muska:   "Sultan sabrı azaltıcı kartlara karşı kullan. Aktive edince bir sonraki kart Sultan sabrını hiç etkilemez. Sultan'ın sabrı azalıyorken hayat kurtarır.",
 };
 
 let playerItems = [null, null, null];
+let playerItemExpiry = [null, null, null]; // Her item için kalan kart sayısı (3'ten geri sayar)
 let activeItemIndex = null;
 let pendingItemEffect = null;
 
@@ -435,16 +769,46 @@ const negotiationPanel = document.getElementById("negotiation-panel");
 const cardChoices      = document.getElementById("card-choices");
 
 // ── Ekran Geçişleri ───────────────────────────────────────────────
+// ★ GOD MODE — intro footer'a 3 hızlı tap ile toggle
+(function() { // ★ GOD MODE
+  let tapCount = 0, tapTimer = null; // ★ GOD MODE
+  document.getElementById("intro-footer").addEventListener("click", () => { // ★ GOD MODE
+    tapCount++; // ★ GOD MODE
+    clearTimeout(tapTimer); // ★ GOD MODE
+    tapTimer = setTimeout(() => { tapCount = 0; }, 600); // ★ GOD MODE
+    if (tapCount >= 3) { tapCount = 0; toggleGodMode(); } // ★ GOD MODE
+  }); // ★ GOD MODE
+})(); // ★ GOD MODE
+
 document.getElementById("btn-start").addEventListener("click", () => {
+  if (window.playSelectConfirm) playSelectConfirm();
   isPasaMode = false;
   introScreen.style.display = "none";
   showSultanScreen();
 });
 
 document.getElementById("btn-pasa-mode").addEventListener("click", () => {
+  if (window.playSelectConfirm) playSelectConfirm();
   isPasaMode = true;
   introScreen.style.display = "none";
   showSultanScreen();
+});
+
+document.getElementById("btn-akcesystem").addEventListener("click", () => {
+  const overlay = document.createElement("div");
+  overlay.id = "akcesystem-overlay";
+  overlay.innerHTML = `
+    <div id="akcesystem-box">
+      <div id="akcesystem-icon">🪙</div>
+      <div id="akcesystem-title">YAKINDA!</div>
+      <div id="akcesystem-divider"></div>
+      <div id="akcesystem-text">Bazen işler yolunda gitmediğinde biraz akçeyle bu işi çözebilirsin. Yakında burada olacak!</div>
+      <button id="akcesystem-close">ANLADIM</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const close = () => { overlay.style.opacity="0"; overlay.style.transition="opacity 0.25s"; setTimeout(()=>overlay.remove(),260); };
+  document.getElementById("akcesystem-close").onclick = close;
+  overlay.addEventListener("click", e => { if(e.target===overlay) close(); });
 });
 
 document.getElementById("btn-howto").addEventListener("click", () => {
@@ -452,16 +816,44 @@ document.getElementById("btn-howto").addEventListener("click", () => {
   howtoScreen.classList.add("visible");
 });
 
+document.getElementById("btn-howto-back").addEventListener("click", () => {
+  howtoScreen.classList.remove("visible");
+  introScreen.style.display = "";
+});
+
 document.getElementById("btn-play-now").addEventListener("click", () => {
   howtoScreen.classList.remove("visible");
-  showSultanScreen();
+  introScreen.style.display = "";
 });
 
 document.getElementById("restart-btn").addEventListener("click", restartGame);
 
+// ── Sultan Seçim — Global Fonksiyonlar ───────────────────────────
+function confirmSultan() {
+  if (!selectedSultan) { alert("Lütfen bir sultan seçin."); return; }
+  if (window.playSelectConfirm) playSelectConfirm();
+  sultanScreen.classList.add("hidden");
+  showAdvisorScreen();
+}
+function backToIntro() {
+  sultanScreen.classList.add("hidden");
+  introScreen.style.display = "";
+}
+function backToSultan() {
+  advisorScreen.classList.add("hidden");
+  showSultanScreen();
+}
+function confirmAdvisor() {
+  if (selectedAdvisors.length !== 2) { alert("Lütfen tam olarak 2 danışman seçin."); return; }
+  if (window.playSelectConfirm) playSelectConfirm();
+  advisorScreen.classList.add("hidden");
+  startGame();
+}
+
 // ── Sultan Seçim Ekranı ───────────────────────────────────────────
 function showSultanScreen() {
   sultanScreen.classList.remove("hidden");
+  selectedSultan = null;
   const grid = document.getElementById("sultan-grid");
   grid.innerHTML = "";
   SULTANS.forEach(s => {
@@ -477,19 +869,13 @@ function showSultanScreen() {
         <span>💰 ${s.stats.hazine}</span>
       </div>
     `;
-    btn.addEventListener("click", () => {
+    btn.onclick = () => {
       document.querySelectorAll(".sultan-card").forEach(el => el.classList.remove("selected"));
       btn.classList.add("selected");
       selectedSultan = s;
-    });
+    };
     grid.appendChild(btn);
   });
-
-  document.getElementById("btn-sultan-confirm").onclick = () => {
-    if (!selectedSultan) { alert("Lütfen bir sultan seçin."); return; }
-    sultanScreen.classList.add("hidden");
-    showAdvisorScreen();
-  };
 }
 
 // ── Danışman Seçim Ekranı ─────────────────────────────────────────
@@ -509,7 +895,7 @@ function showAdvisorScreen() {
         <div class="ac-desc">${a.desc}</div>
       </div>
     `;
-    btn.addEventListener("click", () => {
+    btn.onclick = () => {
       if (btn.classList.contains("selected")) {
         btn.classList.remove("selected");
         selectedAdvisors = selectedAdvisors.filter(x => x.id !== a.id);
@@ -519,15 +905,9 @@ function showAdvisorScreen() {
         selectedAdvisors.push(a);
       }
       document.getElementById("advisor-count").textContent = selectedAdvisors.length + "/2 seçildi";
-    });
+    };
     grid.appendChild(btn);
   });
-
-  document.getElementById("btn-advisor-confirm").onclick = () => {
-    if (selectedAdvisors.length !== 2) { alert("Lütfen tam olarak 2 danışman seçin."); return; }
-    advisorScreen.classList.add("hidden");
-    startGame();
-  };
 }
 
 // ── Oyunu Başlat ──────────────────────────────────────────────────
@@ -552,6 +932,24 @@ function startGame() {
   forcedQueue = [];
   scheduledCards = [];
   characterMemory = {};
+
+  // Easter egg sayaçları sıfırla
+  _easterKediNext    = 75;
+  _easterYanlisNext  = 60;
+  _easterYanlisCount = 0;
+  _easterKehanetNext = 65;
+  _easterPargaliDone = false;
+  _easterHistNext    = 80;
+  _easterHistIdx     = 0;
+  _easterZamanNext   = 90;
+  _easterFisildayanNext = 110;
+  _fisildayanIdx     = 0;
+  _donumNextCard     = 42;
+  _donumShownThisGame = false;
+  _evliyaTextIdx     = 0;
+  _kehanetIdx        = 0;
+  _felaketIdx        = 0;
+  _mucizeIdx         = 0;
   activeArcs = {};
   triggeredArcs = {};
   isNight = false;
@@ -568,6 +966,7 @@ function startGame() {
   letterCardsPending = [];
   dangerPulseActive = false;
   playerItems = [null, null, null];
+  playerItemExpiry = [null, null, null];
   activeItemIndex = null;
   pendingItemEffect = null;
   updateItemBar();
@@ -608,16 +1007,10 @@ function startGame() {
   updateStatUI();
   updateDynamicSubtitle();
   ensureFateBar();
-  initMissions();
 
   gameScreen.classList.remove("hidden");
 
-  // Tutorial — ilk oyunda göster
-  if (!localStorage.getItem('sadrazam_tutorial_done')) {
-    showTutorial(() => { dealNext(); });
-  } else {
-    dealNext();
-  }
+  dealNext();
 
   startAmbientMusic();
 }
@@ -726,71 +1119,142 @@ function playAmbientLayer() {
   if (!ambientCtx || !ambientRunning) return;
   if (ambientCtx.state === 'suspended') { ambientCtx.resume(); return; }
 
-  const now = ambientCtx.currentTime;
+  const c = ambientCtx;
+  const now = c.currentTime;
+  const DUR = 14; // saniye
+  const nodes = [];
 
-  // Drone — ney benzeri, güçlendirilmiş
-  const osc1 = ambientCtx.createOscillator();
-  const gain1 = ambientCtx.createGain();
-  const filter1 = ambientCtx.createBiquadFilter();
-  osc1.type = 'sine';
-  osc1.frequency.value = isNight ? 110 : 123;
-  filter1.type = 'lowpass';
-  filter1.frequency.value = 600;
-  gain1.gain.setValueAtTime(0, now);
-  gain1.gain.linearRampToValueAtTime(0.12, now + 1.5); // fade in
-  osc1.connect(filter1);
-  filter1.connect(gain1);
-  gain1.connect(ambientCtx.destination);
-  osc1.start(now);
+  // Reverb (window.createReverb sounds.js'de global olarak tanımlı)
+  const rev = (window.createReverb ? window.createReverb(c, 2.5, 2.5) : null) || c.createGain();
+  rev.connect(c.destination);
 
-  // Harmonik tremolo
-  const osc2 = ambientCtx.createOscillator();
-  const gain2 = ambientCtx.createGain();
-  const lfo = ambientCtx.createOscillator();
-  const lfoGain = ambientCtx.createGain();
-  osc2.type = 'triangle';
-  osc2.frequency.value = isNight ? 165 : 185;
-  lfo.frequency.value = 0.3;
-  lfoGain.gain.value = 0.03;
-  gain2.gain.setValueAtTime(0, now);
-  gain2.gain.linearRampToValueAtTime(0.06, now + 2);
-  lfo.connect(lfoGain);
-  lfoGain.connect(gain2.gain);
-  osc2.connect(gain2);
-  gain2.connect(ambientCtx.destination);
-  osc2.start(now);
-  lfo.start(now);
+  // ── 1. NEY DRONE ──────────────────────────────────────────────────
+  // Hicaz makamı: gündüz D3 (146.83), gece C3 (130.81) temel
+  const neyBase = isNight ? 130.81 : 146.83;
 
-  // Çok hafif yüksek frekans (saray atmosferi)
-  const osc3 = ambientCtx.createOscillator();
-  const gain3 = ambientCtx.createGain();
-  osc3.type = 'sine';
-  osc3.frequency.value = isNight ? 330 : 370;
-  gain3.gain.setValueAtTime(0, now);
-  gain3.gain.linearRampToValueAtTime(0.025, now + 3);
-  osc3.connect(gain3);
-  gain3.connect(ambientCtx.destination);
-  osc3.start(now);
+  const neyOsc = c.createOscillator();
+  neyOsc.type = 'triangle';
+  neyOsc.frequency.value = neyBase;
 
-  ambientNodes = [osc1, osc2, osc3, lfo];
+  // Vibrato (ney titreşimi)
+  const vibOsc = c.createOscillator();
+  vibOsc.frequency.value = 5.5;
+  const vibGain = c.createGain();
+  vibGain.gain.value = 2.5;
+  vibOsc.connect(vibGain);
+  vibGain.connect(neyOsc.frequency);
 
-  // Fade out öncesinde yenile
-  const duration = 9000;
-  setTimeout(() => {
-    ambientNodes.forEach(n => {
-      try {
-        if (ambientCtx && gain1) {
-          const t = ambientCtx.currentTime;
-          gain1.gain.linearRampToValueAtTime(0, t + 1);
-          gain2.gain.linearRampToValueAtTime(0, t + 1);
-          gain3.gain.linearRampToValueAtTime(0, t + 1);
-        }
-        setTimeout(() => { try { n.stop(); } catch(e) {} }, 1200);
-      } catch(e) {}
+  // Nefes sesi (ney'in hava sesi)
+  const noiseBuf = c.createBuffer(1, c.sampleRate, c.sampleRate);
+  const nd = noiseBuf.getChannelData(0);
+  for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+  const noiseSrc = c.createBufferSource();
+  noiseSrc.buffer = noiseBuf; noiseSrc.loop = true;
+  const noiseBp = c.createBiquadFilter();
+  noiseBp.type = 'bandpass'; noiseBp.frequency.value = neyBase * 3; noiseBp.Q.value = 10;
+  const noiseGain = c.createGain();
+  noiseGain.gain.value = 0.008;
+  noiseSrc.connect(noiseBp); noiseBp.connect(noiseGain);
+
+  const neyMaster = c.createGain();
+  neyMaster.gain.setValueAtTime(0, now);
+  neyMaster.gain.linearRampToValueAtTime(0.07, now + 2);
+  neyMaster.gain.setValueAtTime(0.1, now + DUR - 2);
+  neyMaster.gain.linearRampToValueAtTime(0, now + DUR);
+
+  neyOsc.connect(neyMaster); noiseGain.connect(neyMaster);
+  neyMaster.connect(rev); neyMaster.connect(c.destination);
+  neyOsc.start(now); vibOsc.start(now); noiseSrc.start(now);
+  nodes.push(neyOsc, vibOsc, noiseSrc);
+
+  // ── 2. HİCAZ MAKAM MELODİSİ ─────────────────────────────────────
+  // D Hicaz: D Eb F# G A Bb C D
+  const HICAZ = [
+    neyBase,            // D
+    neyBase * 1.0595,   // Eb (minor second)
+    neyBase * 1.2599,   // F# (augmented second — karakteristik Hicaz aralığı)
+    neyBase * 1.3348,   // G
+    neyBase * 1.4983,   // A
+    neyBase * 1.5874,   // Bb
+    neyBase * 1.7818,   // C
+    neyBase * 2         // D (üst oktav)
+  ];
+
+  const noteCount = 3 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < noteCount; i++) {
+    const t = now + 2.5 + Math.random() * (DUR - 5);
+    const freq = HICAZ[Math.floor(Math.random() * HICAZ.length)];
+    const useHighOct = Math.random() < 0.25;
+
+    const mOsc = c.createOscillator();
+    mOsc.type = 'triangle';
+    mOsc.frequency.value = freq * (useHighOct ? 2 : 1);
+
+    const mVib = c.createOscillator();
+    mVib.frequency.value = 5 + Math.random() * 1.2;
+    const mVibG = c.createGain();
+    mVibG.gain.value = 3;
+    mVib.connect(mVibG); mVibG.connect(mOsc.frequency);
+
+    const mGain = c.createGain();
+    const noteDur = 0.6 + Math.random() * 0.8;
+    mGain.gain.setValueAtTime(0, t);
+    mGain.gain.linearRampToValueAtTime(0.055, t + 0.12);
+    mGain.gain.exponentialRampToValueAtTime(0.001, t + noteDur);
+
+    mOsc.connect(mGain); mGain.connect(rev); mGain.connect(c.destination);
+    mOsc.start(t); mVib.start(t);
+    mOsc.stop(t + noteDur + 0.1); mVib.stop(t + noteDur + 0.1);
+    nodes.push(mOsc, mVib);
+  }
+
+  // ── 3. DEF (Çerçeve davulu) — gündüz, %60 olasılık ──────────────
+  if (!isNight && Math.random() < 0.6) {
+    // Basit usul: düm tek tek düm tek
+    const defPattern = [0, 0.75, 1.1, 1.5, 2.25, 2.6, 3.0, 3.75, 4.1];
+    const defStart = now + 3;
+    defPattern.forEach(offset => {
+      const t = defStart + offset;
+      const isDum = offset % 1.5 < 0.2; // güçlü vuruş
+      const dOsc = c.createOscillator();
+      dOsc.type = 'sine';
+      dOsc.frequency.setValueAtTime(isDum ? 170 : 120, t);
+      dOsc.frequency.exponentialRampToValueAtTime(isDum ? 55 : 70, t + 0.09);
+      const dGain = c.createGain();
+      dGain.gain.setValueAtTime(isDum ? 0.04 : 0.025, t);
+      dGain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+      dOsc.connect(dGain); dGain.connect(c.destination);
+      dOsc.start(t); dOsc.stop(t + 0.15);
+      nodes.push(dOsc);
     });
+  }
+
+  // ── 4. TAMBUR TELI — yumuşak, sporadic ───────────────────────────
+  if (Math.random() < 0.4) {
+    const tamburFreqs = [HICAZ[0], HICAZ[2], HICAZ[4], HICAZ[7]];
+    const t = now + 5 + Math.random() * 4;
+    const freq = tamburFreqs[Math.floor(Math.random() * tamburFreqs.length)];
+    const tOsc = c.createOscillator();
+    tOsc.type = 'sawtooth';
+    tOsc.frequency.value = freq;
+    const tFilter = c.createBiquadFilter();
+    tFilter.type = 'lowpass'; tFilter.frequency.value = 800;
+    const tGain = c.createGain();
+    tGain.gain.setValueAtTime(0.06, t);
+    tGain.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+    tOsc.connect(tFilter); tFilter.connect(tGain);
+    tGain.connect(rev); tGain.connect(c.destination);
+    tOsc.start(t); tOsc.stop(t + 1.3);
+    nodes.push(tOsc);
+  }
+
+  ambientNodes = nodes;
+
+  setTimeout(() => {
+    nodes.forEach(n => { try { n.stop(); } catch(e) {} });
     ambientNodes = [];
-    if (ambientRunning && !isGameOver) setTimeout(playAmbientLayer, 300);
-  }, duration);
+    if (ambientRunning && !isGameOver) setTimeout(playAmbientLayer, 400);
+  }, DUR * 1000);
 }
 
 function stopAmbientMusic() {
@@ -815,13 +1279,11 @@ function saveGameState() {
       stats, year, cardsPlayed, hicriYear, hicriMonth,
       activeFlags: Object.keys(activeFlags),
       isNight, sultanSabir, currentTitle, isPasaMode, pasaPromoted,
-      playerItems, selectedSultanId: selectedSultan?.id,
+      playerItems, playerItemExpiry, selectedSultanId: selectedSultan?.id,
       selectedAdvisorIds: selectedAdvisors.map(a => a.id),
       characterMemory, factionFavors, factionPressureSent,
       playCounts, cursedEver, traitorInvestigated, hiddenTraitor,
       scheduledCards, forcedQueueIds: forcedQueue.map(c => c.id),
-      activeMissions: activeMissions.map(m => ({...m, check: undefined})),
-      completedMissionIds: completedMissions.map(m => m.id),
       v: 2
     };
     localStorage.setItem('sadrazam_save', JSON.stringify(state));
@@ -886,6 +1348,7 @@ function loadGameState(s) {
   isPasaMode = s.isPasaMode;
   pasaPromoted = s.pasaPromoted;
   playerItems = s.playerItems || [null,null,null];
+  playerItemExpiry = s.playerItemExpiry || [null,null,null];
   characterMemory = s.characterMemory || {};
   factionFavors = s.factionFavors || {saray:0,ordu:0,din:0,halk:0};
   factionPressureSent = s.factionPressureSent || {saray:false,ordu:false,din:false,halk:false};
@@ -902,13 +1365,6 @@ function loadGameState(s) {
   isInvestigating = false;
   dangerPulseActive = false;
 
-  // Missions
-  activeMissions = (s.activeMissions || []).map(m => {
-    const poolItem = MISSION_POOL.find(p => p.id === m.id);
-    return poolItem ? { ...poolItem, completed: m.completed } : null;
-  }).filter(Boolean);
-  completedMissions = activeMissions.filter(m => m.completed);
-
   if (titleLabel) titleLabel.textContent = currentTitle;
   if (isNight) gameScreen.classList.add("night-mode");
   else gameScreen.classList.remove("night-mode");
@@ -918,7 +1374,6 @@ function loadGameState(s) {
   updateStatUI();
   updateDynamicSubtitle();
   ensureFateBar();
-  updateMissionBar();
   // Tutorial atlansın — devam ediyoruz
   localStorage.setItem('sadrazam_tutorial_done', '1');
   gameScreen.classList.remove("hidden");
@@ -1066,6 +1521,12 @@ function getEligible() {
     if (c.required_faction_pressure && !activeFlags["faction_pressure_" + c.required_faction_pressure]) return false;
     // weight:1 özel kartlar arc dışında çıkmasın
     if (c.weight === 1 && !c.arc_id) return false;
+    // Sultan kartları: ilk 3 yıl çıkmasın, kriz/rahat anda gelsin
+    if (c.character === "1-sultan") {
+      if (year < 3) return false;
+      const avg = Object.values(stats).reduce((a,b)=>a+b,0)/4;
+      if (avg > 38 && avg < 62) return false; // Dengeli — sultan rahatsız etmez
+    }
     // Gece kartları gece önceliği (ama hepsi karışabilir)
     if (c.time === "night" && !isNight) return false;
     return passesFilters(c);
@@ -1114,6 +1575,29 @@ let currentCard = null;
 function dealNext() {
   if (isGameOver) return;
 
+  // Item expiry: her kart açılışında sayacı azalt
+  for (let i = 0; i < 3; i++) {
+    if (playerItems[i] !== null && playerItemExpiry[i] !== null) {
+      playerItemExpiry[i]--;
+      if (playerItemExpiry[i] <= 0) {
+        const expiredId = playerItems[i];
+        playerItems[i] = null;
+        playerItemExpiry[i] = null;
+        if (activeItemIndex === i) { activeItemIndex = null; pendingItemEffect = null; card.style.boxShadow = ""; }
+        updateItemBar();
+        showItemExpiredToast(expiredId);
+      }
+    }
+  }
+
+  // Her kart geçişinde no-swipe ve artık görünmemesi gereken panelleri temizle
+  card.classList.remove("no-swipe");
+  const chancePanel = document.getElementById("chance-panel");
+  if (chancePanel) chancePanel.classList.add("hidden");
+  const devamBtn = document.getElementById("letter-devam-btn");
+  if (devamBtn) devamBtn.classList.add("hidden");
+  if (cardChoices) cardChoices.style.display = "";
+
   // Gece modu toggle (her 3 kartta)
   nightCardCount++;
   if (nightCardCount % 3 === 0) {
@@ -1130,13 +1614,25 @@ function dealNext() {
   currentCard = c;
   isInvestigating = false;
 
+  // Easter egg kartı
+  if (c.type === "easter") {
+    showEasterCard(c);
+    return;
+  }
+
+  // Sultan olay kartı — letter/normal ayrımından önce yakala
+  if (c.character === "1-sultan") {
+    showSultanEventCard(c);
+    return;
+  }
+
   // Müzakere kartı
   if (c.type === "negotiation") {
     showNegotiationCard(c);
     return;
   }
 
-  // Mektup kartı
+  // Mektup kartı (sultan mektupları artık gösterilmiyor)
   if (c.type === "letter") {
     showLetterCard(c);
     return;
@@ -1170,11 +1666,6 @@ function dealNext() {
 
   const imgName = key + ".jpg";
   const imgPath = "assets/characters/" + encodeURIComponent(imgName);
-  // Preload ile flash önle
-  const preload = new Image();
-  preload.onload = () => { cardImage.src = imgPath; };
-  preload.onerror = () => { cardImage.src = ""; };
-  preload.src = imgPath;
 
   // Gizli hain hint
   let displayText = c.text || "";
@@ -1184,6 +1675,11 @@ function dealNext() {
     if (totalMem > 0 && totalMem % 7 === 0) {
       displayText += " — gözleri anlık bir şeye takıldı.";
     }
+  }
+
+  // Rakip vezir: stat'a göre davranış ipucu ekle
+  if (key === "8-rakip-vezir") {
+    displayText += getRakipSuffix();
   }
 
   charName.textContent = c.character_name || "";
@@ -1199,8 +1695,22 @@ function dealNext() {
   // Mektup stili kaldır
   card.classList.remove("letter-card");
 
-  // Soruşturma butonu
-  setupInvestigateBtn(c, displayText);
+  // Soruşturma butonu kaldırıldı
+  const _invBtn = document.getElementById("investigate-btn");
+  if (_invBtn) _invBtn.classList.add("hidden");
+
+  // Görseli yükle — hazır olunca göster, yoksa gizle (spinner çıkmasın)
+  cardImage.removeAttribute("src");
+  cardImage.style.visibility = "hidden";
+  const preload = new Image();
+  preload.onload = () => {
+    cardImage.src = imgPath;
+    cardImage.style.visibility = "";
+  };
+  preload.onerror = () => {
+    cardImage.style.visibility = "hidden";
+  };
+  preload.src = imgPath;
 
   // Ses
   if (isNight || c.time === "night") {
@@ -1263,6 +1773,432 @@ function animateCardIn() {
     card.style.transform = "translateY(0) rotate(0deg)";
     card.style.opacity = "1";
   }));
+}
+
+// ── Sultan Öfkesi (1. Aşama: Karanlık + Metin) ───────────────────
+function triggerSultanRage(parentOverlay, onDone) {
+  Haptics.gameOver();
+
+  // Önce overlay içeriğini gizle, sadece karanlık kalsın
+  const box = parentOverlay.querySelector("#sultan-event-box");
+  if (box) box.style.display = "none";
+
+  const rage = document.createElement("div");
+  rage.id = "sultan-rage";
+  rage.innerHTML = `
+    <div id="sultan-rage-text">SEN CİHANLAR HÜKÜMDARINI<br>REDDETMEYE NASIL CÜRRET EDERSİN<br><em>BRE DEYYUS!</em></div>`;
+  parentOverlay.appendChild(rage);
+
+  // Tekrar eden sarsıntı (2 sn boyunca)
+  let shakeCount = 0;
+  const shakeInterval = setInterval(() => {
+    parentOverlay.classList.add("sultan-shake");
+    setTimeout(() => parentOverlay.classList.remove("sultan-shake"), 500);
+    shakeCount++;
+    if (shakeCount >= 3) clearInterval(shakeInterval);
+  }, 650);
+
+  // 2 sn sonra söndür, onDone çağır
+  setTimeout(() => {
+    rage.style.opacity = "0";
+    rage.style.transition = "opacity 0.5s ease";
+    parentOverlay.style.opacity = "0";
+    parentOverlay.style.transition = "opacity 0.5s ease";
+    setTimeout(() => {
+      clearInterval(shakeInterval);
+      rage.remove();
+      onDone();
+    }, 520);
+  }, 2000);
+}
+
+// ── İdam Animasyonu (2. Aşama: Kılıç + Kan) ──────────────────────
+function showExecutionAnimation(onDone) {
+  const el = document.createElement("div");
+  el.id = "execution-overlay";
+  el.innerHTML = `
+    <div id="exec-flash"></div>
+    <div id="exec-sword-wrap">
+      <svg id="exec-sword" viewBox="0 0 320 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30,28 L295,8 L300,20 L30,34 Z" fill="rgba(201,162,39,0.95)"/>
+        <path d="M275,9 L300,14 L295,21 Z" fill="#fff" opacity="0.65"/>
+        <rect x="6" y="22" width="30" height="14" rx="3" fill="rgba(110,70,15,0.95)"/>
+        <rect x="28" y="13" width="9" height="32" rx="2" fill="rgba(150,100,25,0.95)"/>
+        <ellipse cx="260" cy="21" rx="5" ry="7" fill="rgba(180,0,0,0.85)"/>
+        <ellipse cx="240" cy="23" rx="3" ry="5" fill="rgba(180,0,0,0.6)"/>
+      </svg>
+    </div>
+    <div id="exec-blood-spray"></div>`;
+  document.body.appendChild(el);
+
+  // Kan damlacıkları
+  const spray = document.getElementById("exec-blood-spray");
+  for (let i = 0; i < 20; i++) {
+    const dot = document.createElement("div");
+    dot.className = "exec-drop";
+    dot.style.cssText = `
+      left:${30+Math.random()*40}%;top:${25+Math.random()*50}%;
+      width:${5+Math.random()*10}px;height:${5+Math.random()*10}px;
+      animation-delay:${0.7+Math.random()*0.3}s;
+      animation-duration:${0.6+Math.random()*0.5}s;
+      --tx:${(Math.random()-0.5)*160}px;--ty:${30+Math.random()*100}px;`;
+    spray.appendChild(dot);
+  }
+
+  // 2.5 sn görünür kal — önce onDone başlat, sonra overlay sol
+  setTimeout(() => {
+    onDone(); // game over başlasın, arkada cinematic death hazırlansın
+    el.style.opacity = "0";
+    el.style.transition = "opacity 0.6s ease";
+    setTimeout(() => el.remove(), 620);
+  }, 2500);
+}
+
+// ── Easter Egg Kart Gösterici ─────────────────────────────────────
+function showEasterCard(c) {
+  hideNegotiationPanel();
+
+  const isPargali = c.easter_type === "pargali";
+  const isYanlis  = c.easter_type === "yanlis";
+  const isDonum   = c.easter_type === "donum";
+
+  // Dönüm Noktası: özel seçim ekranı
+  if (isDonum) {
+    showDonumEkrani();
+    return;
+  }
+
+  // Pargalı özel müzik
+  if (isPargali && window.playPargaliSad) playPargaliSad();
+
+  // Görsel
+  const imgPath = "assets/characters/" + encodeURIComponent(c.character + ".jpg");
+  cardImage.style.visibility = "hidden";
+  const preload = new Image();
+  preload.onload  = () => { cardImage.src = imgPath; cardImage.style.visibility = ""; };
+  preload.onerror = () => { cardImage.style.visibility = "hidden"; };
+  preload.src = imgPath;
+
+  charName.textContent = c.character_name || "";
+  cardText.textContent = c.text || "";
+  choiceLeft.style.opacity = "0";
+  choiceRight.style.opacity = "0";
+  overlayL.style.opacity = "0";
+  overlayR.style.opacity = "0";
+  card.classList.remove("letter-card");
+  card.classList.add("no-swipe");
+
+  // Pargalı ghost efekti
+  if (isPargali) {
+    card.classList.add("pargali-ghost");
+    // Dokunca 2 sn blur kalkar, sonra geri gelir
+    let _ghostTimer = null;
+    const _ghostReveal = () => {
+      card.classList.remove("pargali-ghost");
+      clearTimeout(_ghostTimer);
+      _ghostTimer = setTimeout(() => card.classList.add("pargali-ghost"), 2000);
+    };
+    card.addEventListener("touchstart", _ghostReveal, { passive: true, once: false });
+    card.addEventListener("mousedown",  _ghostReveal, { once: false });
+    // Kart geçince listener'ları temizle
+    card._ghostReveal = _ghostReveal;
+  } else {
+    card.classList.remove("pargali-ghost");
+    if (card._ghostReveal) {
+      card.removeEventListener("touchstart", card._ghostReveal);
+      card.removeEventListener("mousedown",  card._ghostReveal);
+      card._ghostReveal = null;
+    }
+  }
+
+  // Soruştur butonu gizle
+  const invBtn = document.getElementById("investigate-btn");
+  if (invBtn) invBtn.classList.add("hidden");
+
+  // Özel buton
+  let easterBtn = document.getElementById("easter-action-btn");
+  if (!easterBtn) {
+    easterBtn = document.createElement("button");
+    easterBtn.id = "easter-action-btn";
+    document.getElementById("card-bottom").appendChild(easterBtn);
+  }
+  easterBtn.textContent = c.easter_type === "yanlis_idam" ? "İDAM EDİN!" : (c.button || "DEVAM");
+  easterBtn.className = "easter-btn " + (c.easter_type || "");
+  easterBtn.classList.remove("hidden");
+
+  let fired = false;
+  const doAction = () => {
+    if (fired) return; fired = true;
+
+    // Buton tık sesi
+    if (window.playButtonTap) playButtonTap();
+    // Ses
+    if (c.easter_type === "kedi"        && window.playCatMeow)         playCatMeow();
+    if ((c.easter_type === "yanlis" || c.easter_type === "yanlis_idam") && window.playWhipCrack) playWhipCrack();
+    if (c.easter_type === "kehanet"     && window.playRunningFootsteps) playRunningFootsteps();
+    if (c.easter_type === "evliya"      && window.playWindGust)         playWindGust();
+
+    // Efekt
+    if (c.stat_effect) c.stat_effect();
+
+    // Yanlış Adam idam: kan ekranı + game over
+    if (c.easter_type === "yanlis_idam") {
+      easterBtn.classList.add("hidden");
+      triggerYanlisIdam();
+      return;
+    }
+
+    // Pargalı: yavaşça silinerek geç
+    if (isPargali) {
+      card.style.transition = "opacity 1.2s ease";
+      card.style.opacity = "0";
+      easterBtn.classList.add("hidden");
+      setTimeout(() => {
+        card.classList.remove("pargali-ghost");
+        card.style.opacity = "";
+        card.style.transition = "";
+        advanceEasterCard(c);
+      }, 1250);
+      return;
+    }
+
+    easterBtn.classList.add("hidden");
+    card.classList.remove("no-swipe");
+    const delay = (c.easter_type === "yanlis" || c.easter_type === "kehanet") ? 400 : 150;
+    setTimeout(() => advanceEasterCard(c), delay);
+  };
+
+  easterBtn.onclick = doAction;
+
+  animateCardIn();
+}
+
+function showDonumEkrani() {
+  _donumShownThisGame = true;
+  const overlay = document.createElement("div");
+  overlay.id = "donum-overlay";
+  overlay.innerHTML = `
+    <div id="donum-box">
+      <div id="donum-ornament">✦</div>
+      <div id="donum-title">DÖNÜM NOKTASI</div>
+      <div id="donum-divider"></div>
+      <div id="donum-text">Yıllar geçti, divan sizi izledi. Bu dönemin mirası ne olacak?</div>
+      <div id="donum-choices">
+        ${DONUM_CHOICES.map((ch, i) => `
+          <button class="donum-btn" data-idx="${i}">
+            <div class="donum-btn-top">
+              <span class="donum-label">${ch.label}</span>
+              <span class="donum-bar-badge">${ch.barLabel}</span>
+            </div>
+            <span class="donum-desc">${ch.desc}</span>
+          </button>`).join("")}
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  overlay.querySelectorAll(".donum-btn").forEach(btn => {
+    btn.onclick = () => {
+      if (window.playSelectConfirm) playSelectConfirm();
+      const ch = DONUM_CHOICES[parseInt(btn.dataset.idx)];
+      localStorage.setItem("sadrazam_miras_bar", ch.bar);
+      localStorage.setItem("sadrazam_miras_label", ch.label);
+      showItemToast("✦ Mirasın kaydedildi: " + ch.label);
+      overlay.style.opacity = "0";
+      overlay.style.transition = "opacity 0.3s ease";
+      setTimeout(() => {
+        overlay.remove();
+        advanceEasterCard({ id:"donum" });
+      }, 320);
+    };
+  });
+}
+
+function advanceEasterCard(c) {
+  card.classList.remove("pargali-ghost", "no-swipe");
+  cardsPlayed++;
+  advanceHicriMonth();
+  if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
+  if (!isGameOver) { saveGameState(); setTimeout(dealNext, 200); }
+}
+
+function triggerYanlisIdam() {
+  // Ekran yavaşça kırmızıya dolar
+  const bloodEl = document.createElement("div");
+  bloodEl.id = "yanlis-blood-overlay";
+  document.body.appendChild(bloodEl);
+  // Ses
+  if (window.playGameOver) playGameOver();
+  Haptics.gameOver();
+  setTimeout(() => {
+    bloodEl.remove();
+    deathCharacterKey = "easter-yanlis";
+    triggerGameOver("O 'yanlış oda' hikayesi sona erdi. Kimliğini öğrendiler — ve seni de.");
+  }, 2200);
+}
+
+// ── Sultan Olay Kartı ─────────────────────────────────────────────
+function showSultanEventCard(c) {
+  hideNegotiationPanel();
+  Haptics.letterArrival();
+  if (window.playLetterArrival) playLetterArrival();
+
+  // Stat değerlendirmesi
+  const statValues = Object.values(stats);
+  const avgStat = statValues.reduce((a, b) => a + b, 0) / statValues.length;
+  const minStat = Math.min(...statValues);
+  const isPositive = avgStat >= 55 && minStat >= 35;
+
+  // BEYAN metinleri (soru değil)
+  const positiveTexts = [
+    "Devlet işleri yolunda gidiyor, Sadrazam. Bu dengeyi koruyun.",
+    "Taht sizi layık buluyor. Osmanlı sizinle güçlü.",
+    "Hazinemiz dolu, ordumuz sağlam. Memnuniyetimizi bildirmek istedik.",
+    "Divan'ın bu sükûneti bizi memnun ediyor. Böyle devam edin."
+  ];
+  const negativeTexts = [
+    "Bu gidişat bizi rahatsız ediyor, Sadrazam. Durumu toparlamanızı bekliyoruz.",
+    "İmparatorluk zayıflıyor. Bu yük omuzlarınızda, bunu bilin.",
+    "Divan'dan gelen haberler iç açıcı değil. Tedbirinizi vakit geçirmeden alın.",
+    "Sabır taşı çatlamak üzere. Bunu son uyarı olarak kabul edin."
+  ];
+
+  const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const eventText = isPositive ? rand(positiveTexts) : rand(negativeTexts);
+  const effectLabel = isPositive ? "Tüm güçler +20" : "Tüm güçler −10";
+  const effectClass = isPositive ? "positive" : "negative";
+
+  // Overlay
+  const overlay = document.createElement("div");
+  overlay.id = "sultan-event-overlay";
+  overlay.innerHTML = `
+    <div id="sultan-event-box">
+      <div id="sultan-event-label">SULTAN'DAN HABER</div>
+      <img id="sultan-event-img" src="assets/characters/1-sultan.jpg" alt="Sultan">
+      <div id="sultan-event-title">${c.character_name || "Sultan"}</div>
+      <div id="sultan-event-divider"></div>
+      <div id="sultan-event-text">${eventText}</div>
+      <div id="sultan-event-effect" class="sultan-event-effect-box ${effectClass}">${effectLabel}</div>
+      <div id="sultan-swipe-hint">← Reddet &nbsp;&nbsp; Kabul et →</div>
+      <button id="sultan-event-devam">Başüstüne Hünkarım</button>
+    </div>`;
+
+  document.body.appendChild(overlay);
+
+  const box = document.getElementById("sultan-event-box");
+  let fired = false;
+
+  // Kabul — normal efekt
+  const doAccept = () => {
+    if (fired) return; fired = true;
+    window._sultanAccept = null; window._sultanReject = null;
+    box.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+    box.style.transform = "translateX(120%) rotate(12deg)";
+    box.style.opacity = "0";
+    setTimeout(() => {
+      overlay.remove();
+      applySultanEffect(isPositive, c, "right");
+    }, 320);
+  };
+
+  // Ret — rage + oyun biter
+  const doReject = () => {
+    if (fired) return; fired = true;
+    window._sultanAccept = null; window._sultanReject = null;
+
+    // Arkadaki kart alanını hemen gizle (flash engellemek için)
+    gameScreen.style.pointerEvents = "none";
+    card.style.opacity = "0";
+
+    box.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+    box.style.transform = "translateX(-120%) rotate(-12deg)";
+    box.style.opacity = "0";
+
+    const SULTAN_DEATH_MESSAGES = [
+      "Başın gövdenden ayrıldı. Topkapı'nın taş avlusunda celladın kılıcı tek vuruşta işini bitirdi.",
+      "Boğaz'ın soğuk sularına çuval içinde atıldın. Sultan kıyıdan seyretti.",
+      "Sarayın karanlık koridorlarında hançerle can verdin. Kimse sormadı, kimse aramadı.",
+      "Zehirli şerbet içirildi. Sabah namazında uyandıramadılar seni.",
+      "Yeniçeriler tarafından saray avlusunda taşlandın. Hünkarın buyruğuyla."
+    ];
+    const msg = SULTAN_DEATH_MESSAGES[Math.floor(Math.random() * SULTAN_DEATH_MESSAGES.length)];
+    deathCharacterKey = "1-sultan";
+
+    setTimeout(() => {
+      triggerSultanRage(overlay, () => {
+        overlay.remove();
+        showExecutionAnimation(() => {
+          gameScreen.style.pointerEvents = "";
+          card.style.opacity = "";
+          triggerGameOver(msg);
+        });
+      });
+    }, 320);
+  };
+
+  // Global erişim (keyboard için)
+  window._sultanAccept = doAccept;
+  window._sultanReject = doReject;
+
+  // Buton
+  const devamBtn = document.getElementById("sultan-event-devam");
+  devamBtn.onclick = doAccept;
+
+  // Swipe desteği
+  let startX = 0, dragging = false;
+  box.addEventListener("mousedown",  e => { startX = e.clientX; dragging = true; box.style.transition = "none"; });
+  box.addEventListener("touchstart", e => { startX = e.touches[0].clientX; dragging = true; box.style.transition = "none"; }, { passive: true });
+
+  window.addEventListener("mousemove", e => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    box.style.transform = `translateX(${dx}px) rotate(${dx * 0.05}deg)`;
+  });
+  window.addEventListener("touchmove", e => {
+    if (!dragging) return;
+    const dx = e.touches[0].clientX - startX;
+    box.style.transform = `translateX(${dx}px) rotate(${dx * 0.05}deg)`;
+  }, { passive: true });
+
+  const onSwipeEnd = (clientX) => {
+    if (!dragging) return;
+    dragging = false;
+    const dx = clientX - startX;
+    if (dx > 90)       doAccept();
+    else if (dx < -90) doReject();
+    else {
+      box.style.transition = "transform 0.35s cubic-bezier(0.34,1.56,0.64,1)";
+      box.style.transform = "translateX(0) rotate(0deg)";
+    }
+  };
+  window.addEventListener("mouseup",  e => onSwipeEnd(e.clientX));
+  window.addEventListener("touchend", e => onSwipeEnd(e.changedTouches[0].clientX), { passive: true });
+}
+
+function applySultanEffect(positive, c, dir) {
+  const change = positive ? 20 : -10;
+  for (const stat of Object.keys(stats)) {
+    const newVal = positive
+      ? Math.min(95, stats[stat] + change)
+      : Math.max(5, stats[stat] + change);
+    stats[stat] = newVal;
+    showStatDelta(stat, newVal - stats[stat] + change);
+  }
+  updateStatUI();
+
+  sultanSabir = Math.min(100, Math.max(0, sultanSabir + (positive ? 5 : -8)));
+  checkSultanSabir();
+  if (isGameOver) return;
+
+  const charKey = c.character || "";
+  if (!characterMemory[charKey]) characterMemory[charKey] = { left: 0, right: 0, last: null };
+  characterMemory[charKey][dir]++;
+  characterMemory[charKey].last = dir;
+  seenCharacters.add(charKey);
+
+  cardsPlayed++;
+  advanceHicriMonth();
+  if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
+  if (!isGameOver) { saveGameState(); setTimeout(dealNext, 200); }
 }
 
 // ── Mektup Kartı ─────────────────────────────────────────────────
@@ -1378,10 +2314,10 @@ function showNegotiationCard(c) {
     btn.textContent = opt.label;
     btn.style.cssText += ";cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;";
 
-    const handleChoice = (e) => {
-      if (e) e.preventDefault();
+    btn.onclick = () => {
       if (btn.dataset.used) return;
       btn.dataset.used = "1";
+      if (window.playButtonTap) playButtonTap();
       Haptics.tap();
       for (const f of (opt.flags_set || [])) activeFlags[f] = true;
       applyEffects(opt.effects || {});
@@ -1394,9 +2330,6 @@ function showNegotiationCard(c) {
         if (!isGameOver) setTimeout(dealNext, 150);
       }
     };
-
-    btn.addEventListener("click",    handleChoice);
-    btn.addEventListener("touchend", handleChoice, { passive: false });
     optList.appendChild(btn);
   });
   panel.classList.remove("hidden");
@@ -1451,7 +2384,6 @@ function showChanceCard(c) {
       if (!isGameOver) {
         cardsPlayed++;
         advanceHicriMonth();
-        checkMissions();
         if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
         if (!isGameOver) setTimeout(dealNext, 200);
       }
@@ -1541,15 +2473,75 @@ function gainItem(itemId) {
   if (!ITEMS[itemId]) return;
   uniqueItemsCollected.add(itemId);
   const emptySlot = playerItems.indexOf(null);
-  if (emptySlot === -1) {
-    playerItems[0] = itemId;
-    updateItemBar();
-    showItemToast("🔄 " + ITEMS[itemId].icon + " " + ITEMS[itemId].name + " (slot güncellendi)");
-    return;
-  }
-  playerItems[emptySlot] = itemId;
+  const slot = emptySlot === -1 ? 0 : emptySlot;
+  playerItems[slot] = itemId;
+  playerItemExpiry[slot] = 3; // 3 kart sonra tükenir
   updateItemBar();
-  showItemToast("✨ " + ITEMS[itemId].icon + " " + ITEMS[itemId].name + " kazandın!");
+  showItemUnlockAnimation(itemId);
+}
+
+function showItemUnlockAnimation(itemId) {
+  const itm = ITEMS[itemId];
+  if (!itm) return;
+
+  // Overlay — karartma
+  const overlay = document.createElement("div");
+  overlay.id = "item-unlock-overlay";
+  overlay.innerHTML = `
+    <div id="iu-glow"></div>
+    <img id="iu-img" src="${itm.icon}" alt="${itm.name}">
+    <div id="iu-label">YENİ EŞYA</div>`;
+  document.body.appendChild(overlay);
+
+  // Ses + haptik
+  Haptics.achievement();
+  if (window.playAchievement) playAchievement();
+
+  // 2.8 sn ekranda kal, sonra popup'a geç
+  setTimeout(() => {
+    overlay.classList.add("iu-fade-out");
+    setTimeout(() => {
+      overlay.remove();
+      showItemInfoPopup(itemId);
+    }, 400);
+  }, 2800);
+}
+
+function showItemInfoPopup(itemId) {
+  const itm = ITEMS[itemId];
+  if (!itm) return;
+
+  const howToUse = ITEM_HOW_TO_USE[itemId] || itm.desc;
+  const cond = ITEM_GRANT_CONDITIONS[itemId];
+
+  const popup = document.createElement("div");
+  popup.id = "item-info-popup";
+  popup.innerHTML = `
+    <div id="iip-box">
+      <div id="iip-header">
+        <img id="iip-img" src="${itm.icon}" alt="${itm.name}">
+        <div id="iip-titles">
+          <div id="iip-tag">YENİ EŞYA KAZANILDI</div>
+          <div id="iip-name">${itm.name}</div>
+        </div>
+      </div>
+      <div id="iip-divider"></div>
+      <div id="iip-section-title">NE İŞE YARAR?</div>
+      <div id="iip-desc">${howToUse}</div>
+      <div id="iip-section-title">NASIL KULLANILIR?</div>
+      <div id="iip-how">Ekranın altındaki eşya slotuna dokun → "Kullan" seç → Sonraki kart geldiğinde otomatik devreye girer.</div>
+      ${cond ? `<div id="iip-condition">✦ Kazanım koşulu: <em>${cond.desc}</em></div>` : ""}
+      <button id="iip-ok">ANLADIM →</button>
+    </div>`;
+  document.body.appendChild(popup);
+
+  const close = () => {
+    popup.style.opacity = "0";
+    setTimeout(() => popup.remove(), 300);
+  };
+  const okBtn = document.getElementById("iip-ok");
+  okBtn.addEventListener("click",    close);
+  okBtn.addEventListener("touchend", close, { passive: true });
 }
 
 function activateItem(slotIndex) {
@@ -1568,7 +2560,7 @@ function showItemConfirm(slotIndex, item) {
   const popup = document.createElement("div");
   popup.id = "item-confirm-popup";
   popup.innerHTML = `
-    <div class="icp-icon">${item.icon}</div>
+    <div class="icp-icon"><img src="${item.icon}" alt="${item.name}"></div>
     <div class="icp-name">${item.name}</div>
     <div class="icp-desc">${item.desc}</div>
     <div class="icp-btns">
@@ -1614,15 +2606,17 @@ function executeItem(slotIndex, item) {
     showStatDelta(lowestStat[0], 20);
     updateStatUI();
     playerItems[slotIndex] = null;
+    playerItemExpiry[slotIndex] = null;
     updateItemBar();
-    showItemToast(item.icon + " " + item.name + " — +" + 20 + " " + lowestStat[0]);
+    showItemToast(item.name + " — +" + 20 + " " + lowestStat[0]);
     Haptics.statPositive();
     return;
   }
   if (item.effect === "skip_card") {
     playerItems[slotIndex] = null;
+    playerItemExpiry[slotIndex] = null;
     updateItemBar();
-    showItemToast(item.icon + " Kart geçildi");
+    showItemToast(item.name + " — Kart geçildi");
     card.style.opacity = "0";
     setTimeout(dealNext, 300);
     return;
@@ -1635,7 +2629,7 @@ function executeItem(slotIndex, item) {
   } else {
     activeItemIndex = slotIndex;
     pendingItemEffect = item.effect;
-    showItemToast(item.icon + " " + item.name + " — Sonraki karar için hazır");
+    showItemToast(item.name + " — Sonraki karar için hazır");
     // Kart üzerinde aktif gösterge
     card.style.boxShadow = `0 0 0 2px ${item.color || "var(--gold)"}, 0 8px 40px rgba(0,0,0,0.8)`;
   }
@@ -1645,9 +2639,9 @@ function executeItem(slotIndex, item) {
 function consumeActiveItem() {
   if (activeItemIndex === null) return;
   playerItems[activeItemIndex] = null;
+  playerItemExpiry[activeItemIndex] = null;
   activeItemIndex = null;
   pendingItemEffect = null;
-  // Kart glow'unu temizle
   card.style.boxShadow = "";
   updateItemBar();
 }
@@ -1661,12 +2655,22 @@ function updateItemBar() {
     const name = slot.querySelector(".item-name");
     if (itemId && ITEMS[itemId]) {
       const itm = ITEMS[itemId];
-      icon.textContent = itm.icon;   // emoji — her zaman çalışır
-      icon.style.fontSize = "22px";
+      icon.innerHTML = `<img src="${itm.icon}" alt="${itm.name}" onerror="this.parentElement.textContent='?'">`;
+      icon.style.fontSize = "";
       name.textContent = itm.name;
       slot.style.borderColor = activeItemIndex === i ? (itm.color || "var(--gold)") : "";
       slot.classList.remove("empty");
       slot.classList.toggle("active", activeItemIndex === i);
+      // Expiry sayacı badge
+      let badge = slot.querySelector(".item-expiry-badge");
+      const exp = playerItemExpiry[i];
+      if (exp !== null && exp <= 3) {
+        if (!badge) { badge = document.createElement("span"); badge.className = "item-expiry-badge"; slot.appendChild(badge); }
+        badge.textContent = exp;
+        badge.style.color = exp <= 1 ? "#e05555" : exp <= 2 ? "#e0a020" : "rgba(201,162,39,0.7)";
+      } else if (badge) {
+        badge.remove();
+      }
     } else {
       icon.textContent = "";
       icon.style.fontSize = "";
@@ -1676,6 +2680,16 @@ function updateItemBar() {
       slot.classList.remove("active");
     }
   }
+}
+
+function showItemExpiredToast(itemId) {
+  const itm = ITEMS[itemId];
+  if (!itm) return;
+  const toast = document.createElement("div");
+  toast.className = "item-expired-toast";
+  toast.innerHTML = `<img src="${itm.icon}" alt="${itm.name}"><span>Tükendi</span>`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
 }
 
 function showItemToast(msg) {
@@ -1703,6 +2717,7 @@ function applyEffects(effects) {
       continue;
     }
 
+    if (godMode && raw < 0) raw = 0; // ★ GOD MODE — negatif stat değişimini engelle
     if (hasAdvisor("sokollu")) raw = Math.round(raw * 0.85);
     if (hasAdvisor("sinan") && (stat === "saray" || stat === "ulema")) raw = Math.round(raw * 1.2);
     if (hasAdvisor("hurrem") && stat === "yeniçeri" && raw < 0) raw = Math.round(raw * 0.75);
@@ -1742,8 +2757,8 @@ function checkSultanSabir() {
 function checkGameOver() {
   if (isGameOver) return false;
   for (const stat of Object.keys(stats)) {
-    if (stats[stat] <= 0)   { triggerGameOver(DEATH_TABLE[stat]?.[0]   || "Oyun bitti."); return true; }
-    if (stats[stat] >= 100) { triggerGameOver(DEATH_TABLE[stat]?.[100] || "Oyun bitti."); return true; }
+    if (stats[stat] <= 0)   { triggerGameOver(getRichDeathText(DEATH_TABLE[stat]?.[0]   || "Oyun bitti.", stat, 0));   return true; }
+    if (stats[stat] >= 100) { triggerGameOver(getRichDeathText(DEATH_TABLE[stat]?.[100] || "Oyun bitti.", stat, 100)); return true; }
   }
   return false;
 }
@@ -1831,9 +2846,11 @@ function decide(dir) {
   // Flag'ler
   for (const f of (currentCard[dir + "_flags_set"] || [])) activeFlags[f] = true;
 
-  // Item grant
+  // Item grant — koşul kontrolü
   const grantKey = "grants_item_on_" + dir;
-  if (currentCard[grantKey]) gainItem(currentCard[grantKey]);
+  if (currentCard[grantKey] && checkItemGrantCondition(currentCard.id)) {
+    gainItem(currentCard[grantKey]);
+  }
 
   // Karakter hafızası
   const charKey = currentCard.character || "";
@@ -1855,7 +2872,6 @@ function decide(dir) {
 
   applyEffects(currentCard[dir + "_effects"] || {});
   if (isGameOver) return;
-  checkMissions();
 
   // ── Achievement tracking ──────────────────────────────────────
   if (charKey) seenCharacters.add(charKey);
@@ -1884,6 +2900,89 @@ function decide(dir) {
   advanceHicriMonth();
 
   if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
+
+  // Easter egg injection'ları (sayaç bazlı — seyrek)
+  if (!isGameOver) {
+    // ★ GOD MODE — her 3 kartta rastgele easter egg
+    if (godMode && cardsPlayed > 0 && cardsPlayed % 3 === 0) { // ★ GOD MODE
+      const godEggs = [ // ★ GOD MODE
+        () => ({ ...EASTER_CARDS.saray_kedisi }), // ★ GOD MODE
+        () => ({ ...EASTER_CARDS.yanlis_adam }), // ★ GOD MODE
+        () => ({ ...EASTER_CARDS.pargali }), // ★ GOD MODE
+        getEvliyaCard, getZamanCard, getFisildayanCard, // ★ GOD MODE
+        getBarbarosCard, getLeonardoCard, getHalitCard, // ★ GOD MODE
+        getKehanetCard, getDonumCard, // ★ GOD MODE
+        () => getFelaketCard(), () => getMucizeCard() // ★ GOD MODE
+      ]; // ★ GOD MODE
+      const fn = godEggs[Math.floor(Math.random() * godEggs.length)]; // ★ GOD MODE
+      forcedQueue.unshift(fn()); // ★ GOD MODE
+    } // ★ GOD MODE
+
+    // Saray Kedisi: her 75 kartta 1
+    if (cardsPlayed >= _easterKediNext) {
+      _easterKediNext = cardsPlayed + 75;
+      forcedQueue.push({ ...EASTER_CARDS.saray_kedisi });
+    }
+    // Yanlış Adam: her 60 kartta 1
+    if (cardsPlayed >= _easterYanlisNext) {
+      _easterYanlisNext = cardsPlayed + 60;
+      _easterYanlisCount++;
+      const yanlis = { ...EASTER_CARDS.yanlis_adam };
+      if (_easterYanlisCount >= 3) yanlis.easter_type = "yanlis_idam";
+      forcedQueue.push(yanlis);
+    }
+    // Tarihsel Kehanet: her 65 kartta 1
+    if (cardsPlayed >= _easterKehanetNext) {
+      _easterKehanetNext = cardsPlayed + 65;
+      forcedQueue.push(getKehanetCard());
+    }
+    // Evliya Çelebi: her 50 kartta 1
+    if (cardsPlayed > 0 && cardsPlayed % 50 === 0) {
+      forcedQueue.push(getEvliyaCard());
+    }
+    // Tarihsel figürler (Barbaros / Leonardo / Mahidevran): her 80 kartta 1
+    if (cardsPlayed >= _easterHistNext) {
+      _easterHistNext = cardsPlayed + 80;
+      forcedQueue.push(getNextHistoricalCard());
+    }
+    // Zaman Yolcusu: her 90 kartta 1
+    if (cardsPlayed >= _easterZamanNext) {
+      _easterZamanNext = cardsPlayed + 90;
+      forcedQueue.push(getZamanCard());
+    }
+    // Fısıltı karakteri: her 110 kartta 1, sadece gece
+    if (isNight && cardsPlayed >= _easterFisildayanNext) {
+      _easterFisildayanNext = cardsPlayed + 110;
+      forcedQueue.push(getFisildayanCard());
+    }
+    // Dönüm Noktası: oyun başına 1 kez, 42. kartta
+    if (!_donumShownThisGame && cardsPlayed >= _donumNextCard) {
+      forcedQueue.push(getDonumCard());
+    }
+    // Miras Kartı: bir önceki oyunda miras bırakıldıysa 15. karttan sonra 1 kez
+    if (cardsPlayed >= 15 && localStorage.getItem("sadrazam_miras_bar")) {
+      const mirasCard = getMirasCard();
+      if (mirasCard) {
+        forcedQueue.push(mirasCard);
+        localStorage.removeItem("sadrazam_miras_bar"); // kuyruktan sonra sil (duplicate önle)
+      }
+    }
+    // Pargalı İbrahim: en erken 35. kart, oyun başına 1 kez, %4
+    if (!_easterPargaliDone && cardsPlayed >= 35 && Math.random() < 0.04) {
+      _easterPargaliDone = true;
+      forcedQueue.push({ ...EASTER_CARDS.pargali });
+    }
+
+    // Felaket kartı: ortalama stat ≥ 65 ve %6
+    // Mucize kartı: ortalama stat ≤ 40 ve %6
+    const _avgStat = Object.values(stats).reduce((a,b) => a+b, 0) / 4;
+    if (_avgStat >= 65 && Math.random() < 0.06) {
+      forcedQueue.unshift(getFelaketCard());
+    } else if (_avgStat <= 40 && Math.random() < 0.06) {
+      forcedQueue.unshift(getMucizeCard());
+    }
+  }
+
   if (!isGameOver) {
     saveGameState();
     setTimeout(dealNext, 200);
@@ -1946,6 +3045,7 @@ let _haptThresholdFired = false;
 function onStart(x, y) {
   if (card.classList.contains('no-swipe') || isAnimating || isGameOver) return;
   if (currentCard && (currentCard.type === "negotiation" || currentCard.type === "letter")) return;
+  if (currentCard && currentCard.character === "1-sultan") return; // sultan event overlay gösteriliyor
   startX = x; startY = y; curX = x; isDragging = true;
   _haptThresholdFired = false;
   card.classList.add("dragging");
@@ -2060,8 +3160,15 @@ window.addEventListener("mouseup",   () => onEnd());
 
 // Keyboard
 window.addEventListener("keydown", e => {
+  // Sultan overlay açıkken ok tuşları sultana yönlendir
+  if (document.getElementById("sultan-event-overlay")) {
+    if (e.key === "ArrowRight" && window._sultanAccept) { e.preventDefault(); window._sultanAccept(); }
+    if (e.key === "ArrowLeft"  && window._sultanReject) { e.preventDefault(); window._sultanReject(); }
+    return;
+  }
   if (card.classList.contains('no-swipe') || isAnimating || isGameOver || currentCard === null) return;
   if (currentCard && (currentCard.type === "negotiation" || currentCard.type === "letter")) return;
+  if (currentCard && currentCard.character === "1-sultan") return;
   if (e.key === "ArrowLeft")  flyOff("left");
   if (e.key === "ArrowRight") flyOff("right");
 });
@@ -2096,14 +3203,7 @@ function advanceYear() {
     if (terfiCard) forcedQueue.unshift(terfiCard);
   }
 
-  // Sultan mektubu (%30 ihtimal)
-  if (Math.random() < 0.30) {
-    const letterCards = allCards.filter(c => c.type === "letter" && !activeFlags["sultan_mektup_" + c.id + "_okundu"]);
-    if (letterCards.length > 0) {
-      const lc = letterCards[Math.floor(Math.random() * letterCards.length)];
-      forcedQueue.push(lc);
-    }
-  }
+  // Sultan mektupları kaldırıldı — sultan kartları showSultanEventCard ile yönetiliyor
 
   // Yıllık event kartı
   const eventCards = getEventCards();
@@ -2154,7 +3254,6 @@ function advanceYear() {
   checkRelationshipEffects();
 
   updateDynamicSubtitle();
-  checkMissions();
 }
 
 // ── Müttefik Flag Sistemi ─────────────────────────────────────────
@@ -2316,15 +3415,6 @@ function showGameOver(reason) {
   // Ölüm arşivi
   renderDeathArchive();
 
-  const missionSumEl = document.getElementById("mission-summary");
-  if (missionSumEl) missionSumEl.textContent = getMissionSummary();
-  const missionDetEl = document.getElementById("mission-details");
-  if (missionDetEl) {
-    missionDetEl.innerHTML = getMissionDetails().map(m =>
-      `<div style="font-size:11px; color:${m.completed ? '#55dd66' : 'rgba(201,162,39,0.4)'}; font-family:'Cinzel'">${m.completed ? '✓' : '✗'} ${m.name}</div>`
-    ).join("");
-  }
-
   gameoverScreen.classList.add("visible");
 }
 
@@ -2346,7 +3436,6 @@ function buildAchievementState(deathReason) {
   const cg = getCrossGameData();
   return {
     year, stats, isPasaMode, pasaPromoted, cursedEver, sultanId: selectedSultan?.id,
-    allMissionsCompleted,
     traitorInvestigated, seenCharacters, receivedLetters, chanceCardsPlayed,
     chanceStreak, chainsCompleted, warVictory, itemsUsed, uniqueItemsCollected,
     minHazine, maxSaray, maxHazine, minAnyStat, characterMemory,
@@ -2417,8 +3506,9 @@ function renderAchievementBadges() {
     const a = ACHIEVEMENTS.find(x => x.id === id);
     if (a) {
       const badge = document.createElement("div");
-      badge.className = "achievement-badge";
-      badge.textContent = a.label;
+      badge.className = "achievement-badge tier-" + a.tier;
+      badge.textContent = a.icon + " " + a.name;
+      badge.title = a.desc;
       badgesDiv.appendChild(badge);
     }
   });
@@ -2472,20 +3562,175 @@ function saveHighScore() {
 }
 
 // ── Paylaşım ─────────────────────────────────────────────────────
-document.getElementById("share-btn").addEventListener("click", () => {
+document.getElementById("share-btn").addEventListener("click", showShareMenu);
+
+function getShareText() {
   const sultanName = selectedSultan ? selectedSultan.name : "Sultan";
-  const text = `Sadrazam'da ${sultanName} döneminde ${year} yıl ayakta kalabildim! 🗡️ Sen kaç yıl dayanabilirsin? sadrazam-web.vercel.app`;
-  if (navigator.share) {
-    navigator.share({ title: "Sadrazam", text }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById("share-btn");
-      const orig = btn.textContent;
-      btn.textContent = "KOPYALANDI!";
-      setTimeout(() => { btn.textContent = orig; }, 2000);
-    });
+  return `Sadrazam oyununda ${sultanName} döneminde ${year} yıl ayakta kalabildim! Sen kaç yıl dayanabilirsin? 🗡️\nsadrazam-web.vercel.app`;
+}
+
+function showShareMenu() {
+  document.getElementById("share-menu")?.remove();
+  const menu = document.createElement("div");
+  menu.id = "share-menu";
+  menu.innerHTML = `
+    <div id="share-menu-box">
+      <div id="share-menu-title">PAYLAŞ</div>
+      <button class="share-opt" id="share-wp">WhatsApp</button>
+      <button class="share-opt" id="share-x">X (Twitter)</button>
+      <button class="share-opt" id="share-ferman">Ferman Olarak Paylaş</button>
+      <button class="share-opt ghost" id="share-cancel">İptal</button>
+    </div>`;
+  document.body.appendChild(menu);
+
+  const text = getShareText();
+  const encoded = encodeURIComponent(text);
+
+  document.getElementById("share-wp").onclick = () => {
+    menu.remove();
+    window.open("https://api.whatsapp.com/send?text=" + encoded, "_blank");
+  };
+  document.getElementById("share-x").onclick = () => {
+    menu.remove();
+    window.open("https://x.com/intent/tweet?text=" + encoded, "_blank");
+  };
+  document.getElementById("share-ferman").onclick = async () => {
+    menu.remove();
+    await shareFerman();
+  };
+  document.getElementById("share-cancel").onclick = () => menu.remove();
+  menu.addEventListener("click", e => { if (e.target === menu) menu.remove(); });
+}
+
+async function shareFerman() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 800; canvas.height = 1100;
+  const c = canvas.getContext("2d");
+  const sultanName = selectedSultan ? selectedSultan.name : "Sultan";
+  const deathText = document.getElementById("gameover-reason")?.textContent || "";
+
+  // Arka plan
+  c.fillStyle = "#070511";
+  c.fillRect(0, 0, 800, 1100);
+
+  // Dış çerçeve (çift altın hat)
+  c.strokeStyle = "rgba(201,162,39,0.7)";
+  c.lineWidth = 2;
+  c.strokeRect(18, 18, 764, 1064);
+  c.strokeStyle = "rgba(201,162,39,0.3)";
+  c.lineWidth = 1;
+  c.strokeRect(28, 28, 744, 1044);
+
+  // Köşe bezemeleri
+  const corners = [[28,28],[772,28],[28,1072],[772,1072]];
+  corners.forEach(([x,y]) => {
+    c.beginPath();
+    c.arc(x, y, 8, 0, Math.PI*2);
+    c.strokeStyle = "rgba(201,162,39,0.6)";
+    c.lineWidth = 1.5;
+    c.stroke();
+  });
+
+  // Üst süsleme çizgisi
+  c.strokeStyle = "rgba(201,162,39,0.25)";
+  c.lineWidth = 1;
+  c.beginPath(); c.moveTo(50, 90); c.lineTo(750, 90); c.stroke();
+  c.beginPath(); c.moveTo(50, 95); c.lineTo(750, 95); c.stroke();
+
+  // Orta çizgi
+  c.beginPath(); c.moveTo(80, 560); c.lineTo(720, 560); c.stroke();
+
+  // Alt çizgi
+  c.beginPath(); c.moveTo(50, 1005); c.lineTo(750, 1005); c.stroke();
+  c.beginPath(); c.moveTo(50, 1010); c.lineTo(750, 1010); c.stroke();
+
+  // Tuğra sembolü
+  c.fillStyle = "rgba(201,162,39,0.15)";
+  c.beginPath(); c.arc(400, 200, 70, 0, Math.PI*2); c.fill();
+  c.strokeStyle = "rgba(201,162,39,0.5)"; c.lineWidth = 1.5;
+  c.beginPath(); c.arc(400, 200, 70, 0, Math.PI*2); c.stroke();
+
+  // Hilal
+  c.beginPath(); c.arc(400, 200, 45, 0, Math.PI*2);
+  c.strokeStyle = "rgba(201,162,39,0.7)"; c.lineWidth = 1.5; c.stroke();
+  c.beginPath(); c.arc(415, 194, 36, 0, Math.PI*2);
+  c.fillStyle = "#070511"; c.fill();
+
+  // Metin fonksiyonu
+  function drawText(text, y, size, color, align="center", maxW=680) {
+    c.font = `${size}px Georgia, serif`;
+    c.fillStyle = color;
+    c.textAlign = align;
+    // Uzun metni wrap et
+    const words = text.split(" ");
+    let line = "", lines = [];
+    for (const w of words) {
+      const test = line + w + " ";
+      if (c.measureText(test).width > maxW && line !== "") { lines.push(line.trim()); line = w + " "; }
+      else line = test;
+    }
+    if (line) lines.push(line.trim());
+    lines.forEach((l, i) => c.fillText(l, align==="center" ? 400 : 60, y + i*(size*1.4)));
+    return lines.length;
   }
-});
+
+  // İçerik
+  drawText("✦  S A D R A Z A M  ✦", 60, 22, "rgba(201,162,39,0.55)");
+  drawText("SADRAZAMLIK SONA ERDİ", 310, 28, "#C9A227");
+  drawText(sultanName + " Dönemi · " + year + " Yıl", 360, 18, "rgba(240,230,208,0.7)");
+
+  c.font = "italic 15px Georgia, serif";
+  c.fillStyle = "rgba(201,162,39,0.4)";
+  c.textAlign = "center";
+  c.fillText("· · ·", 400, 410);
+
+  const reasonLines = drawText(deathText, 440, 16, "rgba(240,230,208,0.85)");
+  const barY = 440 + reasonLines * 22 + 30;
+
+  // Stat barları (basit)
+  const barStats = [
+    { label:"SARAY",   val: Math.round(stats.saray || 0) },
+    { label:"ORDU",    val: Math.round(stats["yeniçeri"] || 0) },
+    { label:"ULEMA",   val: Math.round(stats.ulema || 0) },
+    { label:"HAZİNE",  val: Math.round(stats.hazine || 0) }
+  ];
+  let by = Math.max(barY, 590);
+  barStats.forEach(({label, val}) => {
+    c.font = "11px Georgia, serif";
+    c.fillStyle = "rgba(201,162,39,0.5)";
+    c.textAlign = "left";
+    c.fillText(label, 80, by);
+    c.fillStyle = "rgba(255,255,255,0.08)";
+    c.fillRect(200, by-12, 500, 10);
+    c.fillStyle = val < 30 ? "#e05555" : val > 70 ? "#C9A227" : "rgba(201,162,39,0.6)";
+    c.fillRect(200, by-12, Math.round(val * 5), 10);
+    c.font = "11px Georgia, serif";
+    c.fillStyle = "rgba(240,230,208,0.5)";
+    c.textAlign = "right";
+    c.fillText(val + "%", 720, by);
+    by += 30;
+  });
+
+  // Alt imza
+  drawText("sadrazam-web.vercel.app", 1040, 13, "rgba(201,162,39,0.3)");
+
+  // Paylaş
+  canvas.toBlob(async (blob) => {
+    if (!blob) return;
+    const file = new File([blob], "sadrazam-ferman.png", { type: "image/png" });
+    try {
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: "Sadrazam Fermanı" });
+      } else {
+        // Fallback: indir
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "sadrazam-ferman.png"; a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+    } catch(e) {}
+  }, "image/png");
+}
 
 // ── Restart ───────────────────────────────────────────────────────
 function restartGame() {
@@ -2509,6 +3754,49 @@ function restartGame() {
   if (cinematicEl) cinematicEl.classList.add("hidden");
 
   introScreen.style.display = "";
+}
+
+// ── Oyun İçi Menü ────────────────────────────────────────────────
+function showGameMenu() {
+  if (isGameOver) return;
+  const overlay = document.createElement("div");
+  overlay.id = "game-menu-overlay";
+  overlay.innerHTML = `
+    <div id="game-menu-box">
+      <div id="game-menu-title">DURAKLAT</div>
+      <div id="game-menu-divider"></div>
+      <button class="game-menu-option danger" id="gm-quit">OYUNU BİTİR</button>
+      <button class="game-menu-option secondary" id="gm-resume">DEVAM ET</button>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  let menuFired = false;
+  const doQuit = () => {
+    if (menuFired) return; menuFired = true;
+    overlay.remove();
+    clearSave();
+    isGameOver = true;
+    stopAmbientMusic();
+    gameScreen.classList.add("hidden");
+    gameoverScreen.classList.remove("visible");
+    gameScreen.classList.remove("night-mode");
+    card.style.opacity = "0";
+    currentCard = null;
+    selectedSultan = null;
+    selectedAdvisors = [];
+    hideNegotiationPanel();
+    const cinematicEl = document.getElementById("cinematic-death");
+    if (cinematicEl) cinematicEl.classList.add("hidden");
+    introScreen.style.display = "";
+  };
+
+  const doResume = () => { if (!document.body.contains(overlay)) return; overlay.remove(); };
+
+  document.getElementById("gm-quit").addEventListener("click",    doQuit);
+  document.getElementById("gm-quit").addEventListener("touchend", doQuit, { passive: true });
+  document.getElementById("gm-resume").addEventListener("click",    doResume);
+  document.getElementById("gm-resume").addEventListener("touchend", doResume, { passive: true });
+  overlay.addEventListener("click", e => { if (e.target === overlay) doResume(); });
 }
 
 // ── Başarımlar Ekranı ─────────────────────────────────────────────

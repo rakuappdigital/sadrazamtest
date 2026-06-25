@@ -6905,6 +6905,33 @@
       "investigate_text": "Alim gerçekten Bağdat'tan mı, yoksa Safevi ajanı mı? Casuslar başı araştırabilir.",
       "speech_left": "Bilge kapısı kapatılmaz.",
       "speech_right": "Doğu'nun sırrı Osmanlı'dadır."
+    },
+    {
+      "id": "casuslar_gizli_kimlik",
+      "character": "14-casuslar_basi",
+      "character_name": "Casuslar Başı",
+      "faction": "saray",
+      "text": "Paşam, bazen en güvenli yol gizlenmektir. Size özel ağımızda kullandığımız bir kimlik maskesi hazırlattım. Tehlikeli anlarda kimliğinizi gizlemenizi sağlar.",
+      "left_text": "Gerek yok, reddediyorum",
+      "right_text": "Al, işe yarar",
+      "left_effects": {
+        "saray": 2,
+        "ulema": 1
+      },
+      "right_effects": {
+        "saray": -2,
+        "hazine": -3
+      },
+      "left_flags_set": [],
+      "right_flags_set": [],
+      "required_flags": [],
+      "excluded_flags": [],
+      "weight": 6,
+      "min_year": 2,
+      "category": "espionage",
+      "speech_left": "Anlıyorum, Paşam. Ama teklif açık.",
+      "speech_right": "Akıllıca. Umarım hiç kullanmak gerekmez.",
+      "grants_item_on_right": "casus_maskesi"
     }
   ]
 }

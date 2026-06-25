@@ -59,20 +59,21 @@
       <!-- Butonlar -->
       <div id="intro-buttons">
         <button id="btn-start" class="intro-btn primary">
-          <span class="btn-icon">⚜</span> OYUNA BAŞLA
+          <span class="btn-icon">⚜</span> SADRAZAM MODU
         </button>
         <button id="btn-pasa-mode" class="intro-btn secondary">
-          <span class="btn-icon">📜</span> PAŞALIK MODUNDA BAŞLA
+          <span class="btn-icon">📜</span> PAŞALIK MODU
         </button>
         <button id="btn-achievements" class="intro-btn secondary">
           <span class="btn-icon">🏆</span> BAŞARIMLARIM <span id="ach-count-badge"></span>
         </button>
+        <button id="btn-akcesystem" class="intro-btn ghost">🪙 AKÇE AL</button>
         <button id="btn-howto" class="intro-btn ghost">NASIL OYNANIR?</button>
       </div>
 
     </div>
 
-    <div id="intro-footer">v4.0 · rakuappdigital · 2025</div>
+    <div id="intro-footer">v1.1 · rakuappdigital · 2025</div>
   </div>
 
   <!-- ── NASIL OYNANIR ── -->
@@ -125,12 +126,12 @@
         <p class="howto-body">
           Kartı <strong>sola kaydır</strong> ya da ← tuşuna bas → <em>Hayır</em><br/>
           Kartı <strong>sağa kaydır</strong> ya da → tuşuna bas → <em>Evet</em><br/>
-          Kartı <strong>🔍 soruştur</strong> → Karakteri incele (sultanı sabırsızlatır)<br/>
           Her 10 kartta bir yıl geçer. Hazine her yıl azalır.
         </p>
       </div>
 
       <button id="btn-play-now" class="intro-btn">ANLADIM, BAŞLAYALIM</button>
+      <button id="btn-howto-back" class="intro-btn ghost">← GERİ</button>
     </div>
   </div>
 
@@ -165,7 +166,10 @@
       <p class="sel-subtitle">Hangi sultan döneminde görev yapıyorsunuz?</p>
       <div class="sel-divider"></div>
       <div id="sultan-grid" class="sultan-grid"></div>
-      <button id="btn-sultan-confirm" class="intro-btn" style="margin-top:20px;">DEVAM ET</button>
+    </div>
+    <div class="sel-confirm-btn">
+      <button class="intro-btn primary" onclick="confirmSultan()">DEVAM ET →</button>
+      <button class="intro-btn ghost" onclick="backToIntro()">← GERİ</button>
     </div>
   </div>
 
@@ -178,7 +182,10 @@
       <div class="sel-divider"></div>
       <div id="advisor-count" class="advisor-count">0/2 seçildi</div>
       <div id="advisor-grid" class="advisor-grid"></div>
-      <button id="btn-advisor-confirm" class="intro-btn" style="margin-top:20px;">OYUNA BAŞLA</button>
+    </div>
+    <div class="sel-confirm-btn">
+      <button class="intro-btn primary" onclick="confirmAdvisor()">OYUNA BAŞLA →</button>
+      <button class="intro-btn ghost" onclick="backToSultan()">← GERİ</button>
     </div>
   </div>
 
@@ -204,21 +211,6 @@
       </div>
     </div>
 
-    <!-- Gizli Görevler — stats'ın hemen altında, safe area içinde -->
-    <div id="mission-bar">
-      <div class="mission-slot" id="mission-slot-0">
-        <span class="mission-check">?</span>
-        <span class="mission-label">Gizli Görev</span>
-      </div>
-      <div class="mission-slot" id="mission-slot-1">
-        <span class="mission-check">?</span>
-        <span class="mission-label">Gizli Görev</span>
-      </div>
-      <div class="mission-slot" id="mission-slot-2">
-        <span class="mission-check">?</span>
-        <span class="mission-label">Gizli Görev</span>
-      </div>
-    </div>
 
     <!-- Kader İpleri -->
     <div id="fate-bar"></div>
@@ -228,6 +220,7 @@
       <div id="year-label">Muharrem 927</div>
       <div id="dynamic-subtitle"></div>
     </div>
+    <button id="game-menu-btn" onclick="showGameMenu()">☰</button>
 
     <div id="card-area">
       <div id="swipe-hint-left" class="swipe-hint">← Hayır</div>
@@ -286,8 +279,6 @@
       <div id="gameover-divider"></div>
       <div id="gameover-reason"></div>
       <div id="gameover-year"></div>
-      <div id="mission-summary" style="font-size:12px; color: rgba(201,162,39,0.6); font-family:'Cinzel'"></div>
-      <div id="mission-details" style="display:flex; flex-direction:column; gap:4px; margin-top:4px;"></div>
       <button id="share-btn" class="intro-btn secondary" style="margin-top:4px;">PAYLAŞ</button>
       <button id="restart-btn">YENİDEN BAŞLA</button>
     </div>

@@ -5,12 +5,36 @@
   let _ctx = null;
 
   function ctx() {
-    if (!_ctx) _ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (_ctx.state === 'suspended') _ctx.resume();
+    if (!_ctx) {
+      try { _ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return null; }
+    }
+    if (_ctx && _ctx.state === 'suspended') _ctx.resume();
     return _ctx;
   }
 
-  // Reverb yardımcısı
+  // İlk kullanıcı etkileşiminde AudioContext kilidi aç (web tarayıcı politikası)
+  function unlockAudio() {
+    const c = ctx();
+    if (!c) return;
+    if (c.state === 'suspended') {
+      c.resume().then(() => {
+        // Sessiz bir tampon çal — unlock için
+        const buf = c.createBuffer(1, 1, c.sampleRate);
+        const src = c.createBufferSource();
+        src.buffer = buf;
+        src.connect(c.destination);
+        src.start(0);
+      });
+    }
+    document.removeEventListener('touchstart', unlockAudio);
+    document.removeEventListener('mousedown',  unlockAudio);
+    document.removeEventListener('click',      unlockAudio);
+  }
+  document.addEventListener('touchstart', unlockAudio, { passive: true });
+  document.addEventListener('mousedown',  unlockAudio);
+  document.addEventListener('click',      unlockAudio);
+
+  // Reverb yardımcısı (global olarak da erişilebilir)
   function createReverb(c, duration, decay) {
     const convolver = c.createConvolver();
     const sr = c.sampleRate;
@@ -23,6 +47,7 @@
     convolver.buffer = buf;
     return convolver;
   }
+  window.createReverb = createReverb; // game.js'den erişim için
 
   // 1. Parchment rustle: white noise burst, bandpass 600-1200Hz, 0.12s decay
   window.playCardDraw = function() {
@@ -341,6 +366,130 @@
     bp.connect(g);
     g.connect(c.destination);
     src.start();
+  };
+
+  // Easter egg sesleri
+
+  // Kedi miyavı: 800→1200→600Hz sine sweep
+  window.playCatMeow = function() {
+    const c = ctx();
+    const osc = c.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, c.currentTime);
+    osc.frequency.linearRampToValueAtTime(1200, c.currentTime + 0.15);
+    osc.frequency.linearRampToValueAtTime(600, c.currentTime + 0.5);
+    const vib = c.createOscillator();
+    vib.frequency.value = 6;
+    const vibG = c.createGain();
+    vibG.gain.value = 30;
+    vib.connect(vibG);
+    vibG.connect(osc.frequency);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0, c.currentTime);
+    g.gain.linearRampToValueAtTime(0.18, c.currentTime + 0.1);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.55);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(); vib.start();
+    osc.stop(c.currentTime + 0.6); vib.stop(c.currentTime + 0.6);
+  };
+
+  // Kırbaç: yüksek frekans noise burst, 0.08s
+  window.playWhipCrack = function() {
+    const c = ctx();
+    const buf = c.createBuffer(1, c.sampleRate * 0.12, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) {
+      const env = i < 200 ? i / 200 : Math.pow(1 - (i - 200) / (d.length - 200), 2);
+      d[i] = (Math.random() * 2 - 1) * env;
+    }
+    const src = c.createBufferSource(); src.buffer = buf;
+    const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 4000;
+    const g = c.createGain(); g.gain.value = 0.9;
+    src.connect(hp); hp.connect(g); g.connect(c.destination);
+    src.start();
+  };
+
+  // Koşma: hızlı ritimli noise thumps x6
+  window.playRunningFootsteps = function() {
+    const c = ctx();
+    for (let i = 0; i < 6; i++) {
+      const osc = c.createOscillator(); osc.type = 'sine';
+      osc.frequency.setValueAtTime(90, c.currentTime + i * 0.1);
+      osc.frequency.exponentialRampToValueAtTime(50, c.currentTime + i * 0.1 + 0.07);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.22, c.currentTime + i * 0.1);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i * 0.1 + 0.09);
+      osc.connect(g); g.connect(c.destination);
+      osc.start(c.currentTime + i * 0.1);
+      osc.stop(c.currentTime + i * 0.1 + 0.1);
+    }
+  };
+
+  // Rüzgar: bandpass noise sweep 300→800Hz, 1.2s
+  window.playWindGust = function() {
+    const c = ctx();
+    const buf = c.createBuffer(1, c.sampleRate * 1.4, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = c.createBufferSource(); src.buffer = buf;
+    const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.8;
+    bp.frequency.setValueAtTime(300, c.currentTime);
+    bp.frequency.linearRampToValueAtTime(800, c.currentTime + 0.6);
+    bp.frequency.linearRampToValueAtTime(200, c.currentTime + 1.4);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0, c.currentTime);
+    g.gain.linearRampToValueAtTime(0.14, c.currentTime + 0.3);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 1.4);
+    src.connect(bp); bp.connect(g); g.connect(c.destination);
+    src.start();
+  };
+
+  // Pargalı hüzün: yavaş azalan minor arpej A2-C3-E3-A3, reverb
+  window.playPargaliSad = function() {
+    const c = ctx();
+    const rev = createReverb(c, 3, 2); rev.connect(c.destination);
+    const notes = [110, 130.81, 164.81, 220]; // A2, C3, E3, A3
+    notes.forEach((freq, i) => {
+      const osc = c.createOscillator(); osc.type = 'sine'; osc.frequency.value = freq;
+      const g = c.createGain();
+      const t = c.currentTime + i * 0.6;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.12, t + 0.1);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 1.5);
+      osc.connect(g); g.connect(rev); g.connect(c.destination);
+      osc.start(t); osc.stop(t + 1.6);
+    });
+  };
+
+  // Buton tıklama — yumuşak sine tını, kısa
+  window.playButtonTap = function() {
+    const c = ctx(); if (!c) return;
+    const osc = c.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = 740;
+    const g = c.createGain();
+    g.gain.setValueAtTime(0, c.currentTime);
+    g.gain.linearRampToValueAtTime(0.12, c.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.12);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(); osc.stop(c.currentTime + 0.13);
+  };
+
+  // Seçim onayı — iki nota, yumuşak
+  window.playSelectConfirm = function() {
+    const c = ctx(); if (!c) return;
+    [523, 659].forEach((freq, i) => {
+      const osc = c.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const g = c.createGain();
+      const t = c.currentTime + i * 0.1;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.1, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      osc.connect(g); g.connect(c.destination);
+      osc.start(t); osc.stop(t + 0.27);
+    });
   };
 
   // Danger pulse management

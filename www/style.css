@@ -58,6 +58,7 @@ html, body {
   align-items: center;
   font-family: 'IM Fell English', Georgia, serif;
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
 /* ── SHARED SCREEN ── */
@@ -119,8 +120,8 @@ html, body {
 }
 
 @keyframes introFadeIn {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* Tuğra SVG */
@@ -290,6 +291,75 @@ html, body {
 
 .btn-icon { font-size: 14px; }
 
+/* Paylaş Menüsü */
+#share-menu {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+  z-index: 300; display: flex; align-items: flex-end; justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+#share-menu-box {
+  background: #0E0B1A; border: 1px solid var(--gold-dim); border-radius: 16px 16px 0 0;
+  padding: 24px 20px 32px; width: 100%; max-width: 440px;
+  display: flex; flex-direction: column; gap: 10px;
+  animation: slideUpSheet 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes slideUpSheet {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+#share-menu-title {
+  font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 3px;
+  color: rgba(201,162,39,0.45); text-align: center; margin-bottom: 4px;
+}
+.share-opt {
+  width: 100%; padding: 14px; font-family: 'Cinzel', serif; font-size: 13px;
+  letter-spacing: 2px; border-radius: 8px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: background 0.15s;
+  border: 1px solid var(--gold-dim); color: var(--gold);
+  background: rgba(201,162,39,0.07);
+}
+.share-opt:active { background: rgba(201,162,39,0.2); }
+.share-opt.ghost { border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); background: transparent; font-size: 11px; }
+
+/* ★ GOD MODE badge */
+#god-badge {
+  position: fixed; top: 6px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,200,0,0.15); border: 1px solid rgba(255,200,0,0.4);
+  color: #ffd700; font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 2px; padding: 3px 12px; border-radius: 20px;
+  z-index: 999; pointer-events: none;
+}
+
+/* Akçe Sistemi Popup */
+#akcesystem-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+  z-index: 200; display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+#akcesystem-box {
+  background: #0E0B1A; border: 1px solid var(--gold-dim); border-radius: 14px;
+  padding: 32px 24px; max-width: 300px; width: 88%;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  text-align: center; animation: iipSlideUp 0.3s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+#akcesystem-icon { font-size: 36px; }
+#akcesystem-title {
+  font-family: 'Cinzel Decorative', serif; font-size: 18px;
+  color: var(--gold); letter-spacing: 3px;
+}
+#akcesystem-divider { width: 60px; height: 1px; background: var(--gold-dim); }
+#akcesystem-text {
+  font-family: 'IM Fell English', serif; font-size: 14px;
+  color: var(--text); line-height: 1.7; opacity: 0.85; font-style: italic;
+}
+#akcesystem-close {
+  width: 100%; padding: 12px; font-family: 'Cinzel', serif; font-size: 12px;
+  letter-spacing: 2px; color: var(--gold); background: rgba(201,162,39,0.1);
+  border: 1px solid var(--gold-dim); border-radius: 6px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: background 0.2s; margin-top: 4px;
+}
+#akcesystem-close:active { background: rgba(201,162,39,0.22); }
+
 #intro-footer {
   position: absolute;
   bottom: 18px;
@@ -308,6 +378,7 @@ html, body {
   display: none;
   align-items: flex-start;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 #howto-screen.visible { display: flex; }
@@ -322,6 +393,7 @@ html, body {
   width: 100%;
   text-align: center;
 }
+
 
 #howto-ornament { font-size: 18px; color: var(--gold-dim); }
 
@@ -391,8 +463,31 @@ html, body {
   background: var(--bg);
   z-index: 11;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   align-items: flex-start;
   position: relative;
+  flex-direction: column;
+}
+
+/* Confirm butonu her zaman altta sabit */
+.sel-confirm-btn {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 440px;
+  align-self: center;
+  padding: 12px 24px max(16px, env(safe-area-inset-bottom, 16px));
+  background: linear-gradient(to top, var(--bg) 75%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 2;
+}
+.sel-confirm-btn .intro-btn {
+  width: 100%;
+  max-width: 100%;
 }
 
 .selection-screen::before {
@@ -1026,7 +1121,13 @@ html, body {
   border-radius: 20px;
   padding: 4px 10px;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
+.achievement-badge.tier-bronze  { color: #cd7f32; border-color: rgba(205,127,50,0.4); }
+.achievement-badge.tier-silver  { color: #aaa;    border-color: rgba(170,170,170,0.4); }
+.achievement-badge.tier-gold    { color: var(--gold); border-color: var(--gold-dim); }
+.achievement-badge.tier-platinum{ color: #e5e4e2; border-color: rgba(229,228,226,0.4); }
+.achievement-badge.tier-secret  { color: #9b59b6; border-color: rgba(155,89,182,0.4); }
 
 /* Achievement toast */
 .achievement-toast {
@@ -1230,6 +1331,7 @@ html, body {
   width: 100%;
 }
 .item-slot {
+  position: relative;
   flex: 1;
   max-width: 100px;
   height: 48px;
@@ -1249,6 +1351,48 @@ html, body {
 .item-slot.empty { opacity: 0.35; cursor: default; }
 .item-slot .item-icon { font-size: 20px; display: flex; align-items: center; justify-content: center; }
 .item-slot .item-icon img { width: 28px; height: 28px; object-fit: contain; }
+
+/* Expiry badge */
+.item-expiry-badge {
+  position: absolute;
+  top: 3px; right: 3px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Tükendi toast */
+.item-expired-toast {
+  position: fixed;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  background: rgba(8,6,18,0.92);
+  border: 1px solid rgba(201,162,39,0.3);
+  border-radius: 12px;
+  padding: 20px 28px;
+  z-index: 150;
+  animation: expiredAnim 2s ease forwards;
+  pointer-events: none;
+}
+.item-expired-toast img {
+  width: 56px; height: 56px; object-fit: contain;
+  filter: grayscale(1) brightness(0.5);
+}
+.item-expired-toast span {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: rgba(180,60,60,0.9);
+}
+@keyframes expiredAnim {
+  0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.8); }
+  20%  { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  70%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%,-50%) scale(0.9); }
+}
 .item-slot .item-name { font-size: 9px; color: var(--gold); font-family: 'Cinzel'; letter-spacing: 0.5px; }
 .item-toast {
   position: fixed;
@@ -1686,6 +1830,7 @@ html, body {
   gap: 8px;
 }
 .icp-icon { font-size: 32px; }
+.icp-icon img { width: 44px; height: 44px; object-fit: contain; }
 .icp-name {
   font-family: 'Cinzel', serif;
   font-size: 13px;
@@ -1794,3 +1939,703 @@ html, body {
   font-weight: bold;
   font-size: 16px;
 }
+
+/* ════════════════════════════════════════
+   EASTER EGG KARTLARI
+════════════════════════════════════════ */
+
+/* Pargalı ghost/hayal efekti */
+#card.pargali-ghost {
+  filter: blur(1.5px) grayscale(0.4) brightness(0.75);
+  opacity: 0.78;
+  box-shadow: 0 0 40px rgba(100,120,200,0.25), 0 0 80px rgba(80,100,180,0.1) !important;
+}
+#card.pargali-ghost #card-image {
+  filter: saturate(0.5) brightness(0.8) sepia(0.2);
+}
+
+/* Easter buton */
+#easter-action-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 13px 20px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  background: rgba(201,162,39,0.08);
+}
+#easter-action-btn:active { background: rgba(201,162,39,0.2); transform: scale(0.97); }
+
+/* Kedi butonu — daha yumuşak altın */
+#easter-action-btn.kedi { letter-spacing: 5px; font-size: 15px; }
+
+/* Yanlis adam butonu — kırmızımsı */
+#easter-action-btn.yanlis {
+  border-color: rgba(180,60,60,0.5);
+  color: #e07070;
+  background: rgba(180,60,60,0.08);
+}
+
+/* Kehanet butonu — mor/mistik */
+#easter-action-btn.kehanet {
+  border-color: rgba(140,80,200,0.5);
+  color: #b080e0;
+  background: rgba(140,80,200,0.08);
+}
+
+/* Pargalı butonu — sönük, hüzünlü */
+#easter-action-btn.pargali {
+  border-color: rgba(100,120,200,0.3);
+  color: rgba(160,180,220,0.7);
+  background: rgba(100,120,200,0.06);
+  font-style: italic;
+}
+
+/* Evliya butonu — sıcak turuncu */
+#easter-action-btn.evliya {
+  border-color: rgba(200,140,60,0.5);
+  color: #d4a050;
+  background: rgba(200,140,60,0.08);
+}
+
+/* Tarihsel figürler butonu — altın, hafif farklı */
+#easter-action-btn.tarihsel {
+  border-color: rgba(201,162,39,0.6);
+  color: var(--gold);
+  background: rgba(201,162,39,0.1);
+  letter-spacing: 2px;
+}
+
+/* Felaket butonu — kasvetli kırmızı */
+#easter-action-btn.felaket {
+  border-color: rgba(180,40,40,0.5);
+  color: #cc5555;
+  background: rgba(180,40,40,0.1);
+  letter-spacing: 2px;
+}
+
+/* Zaman Yolcusu butonu — modern mavi */
+#easter-action-btn.zaman {
+  border-color: rgba(60,120,220,0.5);
+  color: #6090e0;
+  background: rgba(60,120,220,0.08);
+  letter-spacing: 1px;
+}
+
+/* Mucize butonu — parlak altın */
+#easter-action-btn.mucize {
+  border-color: rgba(201,162,39,0.8);
+  color: #f0d060;
+  background: rgba(201,162,39,0.15);
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(240,208,96,0.5);
+}
+
+/* Yanlış Adam İdam butonu — kırmızı, büyük */
+#easter-action-btn.yanlis_idam {
+  border-color: rgba(200,0,0,0.7);
+  color: #ff4444;
+  background: rgba(200,0,0,0.15);
+  font-size: 15px;
+  letter-spacing: 4px;
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+/* Kan overlay */
+#yanlis-blood-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(140,0,0,0);
+  animation: yanlisBloodFill 2.2s ease forwards;
+  pointer-events: none;
+}
+@keyframes yanlisBloodFill {
+  0%   { background: rgba(140,0,0,0); }
+  40%  { background: rgba(140,0,0,0.6); }
+  100% { background: rgba(10,0,0,0.95); }
+}
+
+/* ════════════════════════════════════════
+   DÖNÜM NOKTASI
+════════════════════════════════════════ */
+#donum-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  z-index: 200; display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+#donum-box {
+  background: #0A0817; border: 1px solid var(--gold-dim); border-radius: 16px;
+  padding: 28px 20px; max-width: 340px; width: 92%;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  text-align: center; animation: iipSlideUp 0.35s cubic-bezier(0.16,1,0.3,1) forwards;
+  box-shadow: 0 0 60px rgba(201,162,39,0.12);
+}
+#donum-ornament { font-size: 16px; color: var(--gold-dim); }
+#donum-title {
+  font-family: 'Cinzel Decorative', serif; font-size: 15px;
+  color: var(--gold); letter-spacing: 3px;
+}
+#donum-divider { width: 60px; height: 1px; background: var(--gold-dim); }
+#donum-text {
+  font-family: 'IM Fell English', serif; font-size: 13px;
+  color: var(--text); line-height: 1.65; opacity: 0.85; font-style: italic;
+}
+#donum-choices { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.donum-btn {
+  width: 100%; padding: 12px 14px; border-radius: 8px; cursor: pointer;
+  background: rgba(201,162,39,0.06); border: 1px solid rgba(201,162,39,0.25);
+  text-align: left; -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, border-color 0.2s;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.donum-btn:active { background: rgba(201,162,39,0.18); border-color: var(--gold); }
+.donum-btn-top {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+}
+.donum-label {
+  font-family: 'Cinzel', serif; font-size: 12px;
+  color: var(--gold); letter-spacing: 0.5px;
+}
+.donum-bar-badge {
+  font-family: 'Cinzel', serif; font-size: 9px;
+  color: rgba(201,162,39,0.55); letter-spacing: 1px;
+  background: rgba(201,162,39,0.08); border: 1px solid rgba(201,162,39,0.2);
+  border-radius: 4px; padding: 1px 6px; flex-shrink: 0;
+}
+.donum-desc {
+  font-family: 'IM Fell English', serif; font-size: 11px;
+  color: rgba(240,230,208,0.6); font-style: italic;
+}
+
+/* Fısıltı kartı stili */
+#easter-action-btn.fisildayan {
+  border-color: rgba(120,80,180,0.4);
+  color: rgba(180,140,220,0.8);
+  background: rgba(120,80,180,0.06);
+  letter-spacing: 6px;
+  font-size: 11px;
+}
+
+/* ════════════════════════════════════════
+   OYUN İÇİ MENÜ BUTONU
+════════════════════════════════════════ */
+#game-menu-btn {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top, 14px));
+  right: 16px;
+  z-index: 20;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: rgba(201,162,39,0.5);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s;
+}
+#game-menu-btn:active { color: var(--gold); transform: scale(0.9); }
+
+#game-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+#game-menu-box {
+  background: #0E0B1A;
+  border: 1px solid var(--gold-dim);
+  border-radius: 12px;
+  padding: 28px 24px;
+  max-width: 280px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+#game-menu-title {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+#game-menu-divider {
+  height: 1px;
+  background: var(--gold-dim);
+  margin: 0;
+}
+.game-menu-option {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  border-radius: 6px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s;
+}
+.game-menu-option.danger {
+  background: rgba(180,30,30,0.15);
+  border: 1px solid rgba(180,30,30,0.4);
+  color: #e05555;
+}
+.game-menu-option.danger:active {
+  background: rgba(180,30,30,0.3);
+}
+.game-menu-option.secondary {
+  background: transparent;
+  border: 1px solid rgba(201,162,39,0.25);
+  color: rgba(201,162,39,0.6);
+}
+.game-menu-option.secondary:active {
+  background: rgba(201,162,39,0.1);
+}
+
+/* ════════════════════════════════════════
+   SULTAN OLAYI KARTI
+════════════════════════════════════════ */
+#sultan-event-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sultanEventIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes sultanEventIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+#sultan-event-box {
+  position: relative;
+  background: radial-gradient(ellipse 90% 80% at 50% 20%, rgba(201,162,39,0.12) 0%, transparent 70%), #0A0817;
+  border: 1px solid var(--gold-dim);
+  border-radius: 16px;
+  padding: 32px 24px 24px;
+  max-width: 320px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(201,162,39,0.18), inset 0 0 40px rgba(201,162,39,0.04);
+  animation: sultanBoxScale 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes sultanBoxScale {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+#sultan-event-img {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  border: 2px solid var(--gold-dim);
+  box-shadow: 0 0 20px rgba(201,162,39,0.3);
+  animation: sultanSealPulse 2.5s ease-in-out infinite;
+}
+@keyframes sultanSealPulse {
+  0%,100% { box-shadow: 0 0 0 4px rgba(201,162,39,0.0), 0 0 20px rgba(201,162,39,0.3); }
+  50%      { box-shadow: 0 0 0 8px rgba(201,162,39,0.15), 0 0 30px rgba(201,162,39,0.5); }
+}
+#sultan-swipe-hint {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(201,162,39,0.3);
+  text-align: center;
+}
+#sultan-event-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: rgba(201,162,39,0.45);
+  text-transform: uppercase;
+}
+#sultan-event-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 16px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  line-height: 1.4;
+}
+#sultan-event-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--gold-dim);
+}
+#sultan-event-text {
+  font-family: 'IM Fell English', serif;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.75;
+  opacity: 0.9;
+  font-style: italic;
+}
+#sultan-event-effect {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+#sultan-event-effect.positive {
+  color: #55dd66;
+  background: rgba(85,221,102,0.1);
+  border: 1px solid rgba(85,221,102,0.25);
+}
+#sultan-event-effect.negative {
+  color: #e05555;
+  background: rgba(224,85,85,0.1);
+  border: 1px solid rgba(224,85,85,0.25);
+}
+#sultan-event-devam {
+  width: 100%;
+  padding: 13px 20px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  background: rgba(201,162,39,0.1);
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+#sultan-event-devam:active {
+  background: rgba(201,162,39,0.22);
+  transform: scale(0.97);
+}
+.sultan-event-effect-box {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+.sultan-event-effect-box.positive {
+  color: #55dd66;
+  background: rgba(85,221,102,0.1);
+  border: 1px solid rgba(85,221,102,0.25);
+}
+.sultan-event-effect-box.negative {
+  color: #e05555;
+  background: rgba(224,85,85,0.1);
+  border: 1px solid rgba(224,85,85,0.25);
+}
+
+/* ════════════════════════════════════════
+   İDAM ANİMASYONU
+════════════════════════════════════════ */
+#execution-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 300;
+  overflow: hidden;
+  transition: opacity 0.5s ease;
+}
+#exec-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(201,162,39,0);
+  animation: execFlash 0.25s ease-in 0.55s forwards;
+  z-index: 2;
+}
+@keyframes execFlash {
+  0%   { background: rgba(201,162,39,0); }
+  50%  { background: rgba(201,162,39,0.55); }
+  100% { background: rgba(180,0,0,0.25); }
+}
+#exec-sword-wrap {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 320px;
+  right: -340px;
+  animation: swordSwipe 0.6s cubic-bezier(0.2,0,0.8,1) 0.3s forwards;
+  z-index: 3;
+}
+#exec-sword { width: 100%; }
+@keyframes swordSwipe {
+  0%   { right: -340px; }
+  100% { right: 108%; }
+}
+#exec-blood-spray {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.exec-drop {
+  position: absolute;
+  border-radius: 50%;
+  background: #cc0000;
+  opacity: 0;
+  animation: execDropFly linear forwards;
+}
+@keyframes execDropFly {
+  0%   { opacity: 0.9; transform: translate(0,0) scale(1); }
+  100% { opacity: 0;   transform: translate(var(--tx), var(--ty)) scale(0.3); }
+}
+
+/* ════════════════════════════════════════
+   ITEM KAZANIM ANİMASYONU
+════════════════════════════════════════ */
+#item-unlock-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.82);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  animation: iuFadeIn 0.3s ease forwards;
+  transition: opacity 0.4s ease;
+}
+#item-unlock-overlay.iu-fade-out { opacity: 0; }
+
+@keyframes iuFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#iu-glow {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,162,39,0.35) 0%, transparent 70%);
+  animation: iuGlowPulse 0.7s ease-in-out infinite alternate;
+}
+@keyframes iuGlowPulse {
+  from { transform: scale(0.9); opacity: 0.6; }
+  to   { transform: scale(1.15); opacity: 1; }
+}
+
+#iu-img {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+
+  filter: drop-shadow(0 0 24px rgba(201,162,39,0.8)) drop-shadow(0 0 8px rgba(255,255,255,0.4));
+  animation: iuItemPop 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes iuItemPop {
+  0%   { transform: scale(0.3) rotate(-8deg); opacity: 0; }
+  60%  { transform: scale(1.15) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg);    opacity: 1; }
+}
+
+#iu-label {
+  position: relative;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  animation: iuLabelIn 0.4s ease 0.3s both;
+}
+@keyframes iuLabelIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════════
+   ITEM BİLGİ POPUP
+════════════════════════════════════════ */
+#item-info-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.25s ease;
+  transition: opacity 0.3s ease;
+}
+#iip-box {
+  background: #0E0B1A;
+  border: 1px solid var(--gold-dim);
+  border-radius: 14px;
+  padding: 24px 20px;
+  max-width: 310px;
+  width: 92%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: iipSlideUp 0.35s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes iipSlideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+#iip-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+#iip-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+
+  filter: drop-shadow(0 0 8px rgba(201,162,39,0.5));
+  flex-shrink: 0;
+}
+#iip-titles { display: flex; flex-direction: column; gap: 4px; }
+#iip-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: rgba(201,162,39,0.45);
+  text-transform: uppercase;
+}
+#iip-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 15px;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+#iip-divider {
+  height: 1px;
+  background: var(--gold-dim);
+}
+#iip-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(201,162,39,0.5);
+  text-transform: uppercase;
+}
+#iip-desc, #iip-how {
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.65;
+  opacity: 0.88;
+}
+#iip-condition {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: rgba(201,162,39,0.45);
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+  border-top: 1px solid rgba(201,162,39,0.1);
+  padding-top: 8px;
+}
+#iip-condition em {
+  font-style: normal;
+  color: rgba(201,162,39,0.7);
+}
+#iip-ok {
+  width: 100%;
+  padding: 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  background: rgba(201,162,39,0.1);
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s;
+  margin-top: 4px;
+}
+#iip-ok:active { background: rgba(201,162,39,0.22); }
+/* ── Sultan Öfkesi ── */
+#sultan-rage {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 2, 12, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: rageFadeIn 0.3s ease forwards;
+  overflow: hidden;
+  border-radius: inherit;
+}
+@keyframes rageFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+#sultan-rage-text {
+  position: relative;
+  z-index: 2;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 16px;
+  color: #f5c0c0;
+  text-align: center;
+  line-height: 1.8;
+  text-shadow: 0 0 20px rgba(200,0,0,0.8), 0 2px 4px rgba(0,0,0,0.9);
+  animation: rageTextIn 0.6s ease 0.6s both;
+  padding: 0 20px;
+  margin-top: 100px;
+}
+#sultan-rage-text em {
+  font-style: normal;
+  color: #ff3333;
+  font-size: 20px;
+  display: block;
+  margin-top: 10px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 30px rgba(255,0,0,1), 0 0 60px rgba(255,0,0,0.5);
+}
+@keyframes rageTextIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes sultanShake {
+  0%,100% { transform: translateX(0); }
+  15%     { transform: translateX(-12px) rotate(-1deg); }
+  30%     { transform: translateX(10px)  rotate(1deg); }
+  45%     { transform: translateX(-8px)  rotate(-0.5deg); }
+  60%     { transform: translateX(6px)   rotate(0.5deg); }
+  75%     { transform: translateX(-4px); }
+  90%     { transform: translateX(3px); }
+}
+.sultan-shake {
+  animation: sultanShake 0.6s ease forwards !important;
+}
+
+/* Altın parıltı köşe efekti */
+#sultan-event-box::before, #sultan-event-box::after {
+  content: '✦';
+  position: absolute;
+  font-size: 12px;
+  color: var(--gold-dim);
+}
+#sultan-event-box::before { top: 12px; left: 16px; }
+#sultan-event-box::after  { top: 12px; right: 16px; }
