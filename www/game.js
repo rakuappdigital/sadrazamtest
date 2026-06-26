@@ -780,6 +780,36 @@ const cardChoices      = document.getElementById("card-choices");
   }); // ★ GOD MODE
 })(); // ★ GOD MODE
 
+// Splash ekranı bitince (3 sn) menü müziğini başlat
+// iOS'ta AudioContext kullanıcı etkileşimi gerektirir — ilk dokunuşta başlat ama splash sonrası hazır ol
+let _menuMusicReady = false;
+let _menuMusicRequested = false;
+
+setTimeout(() => {
+  _menuMusicReady = true;
+  if (_menuMusicRequested) playMenuMusic(); // Kullanıcı zaten dokunmuşsa hemen başlat
+}, 3000);
+
+function _tryStartMenuMusic() {
+  if (_menuMusicReady) {
+    playMenuMusic();
+  } else {
+    _menuMusicRequested = true; // Hazır olunca başlasın
+  }
+}
+
+// İlk kullanıcı etkileşimini yakala (iOS AudioContext için şart)
+document.addEventListener('touchstart', function _firstTouch() {
+  _menuMusicRequested = true;
+  if (_menuMusicReady) playMenuMusic();
+  document.removeEventListener('touchstart', _firstTouch);
+}, { once: true, passive: true });
+document.addEventListener('mousedown', function _firstClick() {
+  _menuMusicRequested = true;
+  if (_menuMusicReady) playMenuMusic();
+  document.removeEventListener('mousedown', _firstClick);
+}, { once: true });
+
 document.getElementById("btn-start").addEventListener("click", () => {
   if (window.playSelectConfirm) playSelectConfirm();
   isPasaMode = false;
@@ -1093,12 +1123,104 @@ function showTutorial(onDone) {
   renderStep();
 }
 
-// ── AMBIENT MÜZİK ─────────────────────────────────────────────────
+// ── MP3 MÜZİK SİSTEMİ ────────────────────────────────────────────
+const MUSIC_VOL  = 0.70;
+const FADE_MS    = 1200;
+let _menuAudio   = null;
+let _gameAudio   = null;
+let _activeMusicTarget = null; // 'menu' | 'game' | null
+
+function _ensureAudio() {
+  if (!_menuAudio) {
+    _menuAudio = new Audio('assets/music/menu.mp3');
+    _menuAudio.volume = 0;
+    _menuAudio._loopFading = false;
+    _menuAudio.addEventListener('timeupdate', function() {
+      if (this._loopFading || !this.duration) return;
+      if (this.currentTime >= this.duration - 2.5) {
+        this._loopFading = true;
+        _fadeVol(this, 0, 2000, () => {
+          this.currentTime = 0;
+          this._loopFading = false;
+          _fadeVol(this, MUSIC_VOL, 1500);
+        });
+      }
+    });
+  }
+  if (!_gameAudio) {
+    _gameAudio = new Audio('assets/music/oyunici.mp3');
+    _gameAudio.volume = 0;
+    _gameAudio._loopFading = false;
+    _gameAudio.addEventListener('timeupdate', function() {
+      if (this._loopFading || !this.duration) return;
+      if (this.currentTime >= this.duration - 2.5) {
+        this._loopFading = true;
+        _fadeVol(this, 0, 2000, () => {
+          this.currentTime = 0;
+          this._loopFading = false;
+          _fadeVol(this, MUSIC_VOL, 1500);
+        });
+      }
+    });
+  }
+}
+
+function _fadeVol(audio, target, duration, callback) {
+  if (!audio) return;
+  clearInterval(audio._fadeInterval);
+  const start = audio.volume;
+  const diff  = target - start;
+  const steps = Math.max(1, Math.round(duration / 30));
+  let count = 0;
+  audio._fadeInterval = setInterval(() => {
+    count++;
+    audio.volume = Math.max(0, Math.min(1, start + (diff / steps) * count));
+    if (count >= steps) {
+      clearInterval(audio._fadeInterval);
+      audio.volume = target;
+      if (target <= 0.001) { audio.pause(); }
+      if (callback) callback();
+    }
+  }, 30);
+}
+
+function _switchMusic(target) {
+  _ensureAudio();
+  if (_activeMusicTarget === target) return;
+  _activeMusicTarget = target;
+
+  const incoming = target === 'menu' ? _menuAudio : _gameAudio;
+  const outgoing  = target === 'menu' ? _gameAudio : _menuAudio;
+
+  // Çıkan müziği fade out et
+  if (outgoing && !outgoing.paused) {
+    _fadeVol(outgoing, 0, FADE_MS, () => { outgoing.pause(); outgoing.currentTime = 0; outgoing._loopFading = false; });
+  }
+
+  // Gelen müziği yarı fade sonra başlat
+  const delay = (outgoing && !outgoing.paused) ? FADE_MS / 2 : 0;
+  setTimeout(() => {
+    incoming.play().catch(() => {});
+    _fadeVol(incoming, MUSIC_VOL, FADE_MS);
+  }, delay);
+}
+
+function playMenuMusic() { _switchMusic('menu'); }
+function playGameMusic()  { _switchMusic('game'); }
+function stopAllMusic() {
+  _activeMusicTarget = null;
+  _ensureAudio();
+  _fadeVol(_menuAudio, 0, FADE_MS, () => { if (_menuAudio) { _menuAudio.pause(); _menuAudio.currentTime = 0; } });
+  _fadeVol(_gameAudio, 0, FADE_MS, () => { if (_gameAudio) { _gameAudio.pause(); _gameAudio.currentTime = 0; } });
+}
+
+// ── AMBIENT MÜZİK (Web Audio — efekt sesleri için korundu) ───────
 let ambientCtx = null;
 let ambientNodes = [];
 let ambientRunning = false;
 
 function startAmbientMusic() {
+  playGameMusic(); // MP3 oyun müziğine geç
   if (ambientRunning) return;
   try {
     ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1258,6 +1380,7 @@ function playAmbientLayer() {
 }
 
 function stopAmbientMusic() {
+  playMenuMusic(); // Game Over / Restart → menü müziğine geri dön
   ambientRunning = false;
   ambientNodes.forEach(n => { try { n.stop(); } catch(e) {} });
   ambientNodes = [];
@@ -2678,6 +2801,9 @@ function updateItemBar() {
       slot.style.borderColor = "";
       slot.classList.add("empty");
       slot.classList.remove("active");
+      // Badge varsa kaldır
+      const oldBadge = slot.querySelector(".item-expiry-badge");
+      if (oldBadge) oldBadge.remove();
     }
   }
 }
@@ -3416,6 +3542,14 @@ function showGameOver(reason) {
   renderDeathArchive();
 
   gameoverScreen.classList.add("visible");
+
+  // Rating prompt — her 3. oyundan sonra, en az 2 yıl hayatta kaldıysa göster
+  const gamesPlayed = parseInt(localStorage.getItem('sadrazam_games_played') || '0') + 1;
+  localStorage.setItem('sadrazam_games_played', String(gamesPlayed));
+  const alreadyRated = localStorage.getItem('sadrazam_rated');
+  if (!alreadyRated && gamesPlayed % 3 === 0 && year >= 2) {
+    setTimeout(() => showRatingPrompt(), 2500);
+  }
 }
 
 function getDynamicDeathTitle(reason) {
@@ -3566,7 +3700,7 @@ document.getElementById("share-btn").addEventListener("click", showShareMenu);
 
 function getShareText() {
   const sultanName = selectedSultan ? selectedSultan.name : "Sultan";
-  return `Sadrazam oyununda ${sultanName} döneminde ${year} yıl ayakta kalabildim! Sen kaç yıl dayanabilirsin? 🗡️\nsadrazam-web.vercel.app`;
+  return `Divan: Sadrazam'da ${sultanName} döneminde ${year} yıl ayakta kalabildim! Sen kaç yıl dayanabilirsin? 🗡️\n\nApp Store'dan İndir!\nhttps://apps.apple.com/tr/app/divan-sadrazam/id6783881003`;
 }
 
 function showShareMenu() {
@@ -3712,7 +3846,7 @@ async function shareFerman() {
   });
 
   // Alt imza
-  drawText("sadrazam-web.vercel.app", 1040, 13, "rgba(201,162,39,0.3)");
+  drawText("App Store'dan İndir · apps.apple.com/tr/app/divan-sadrazam/id6783881003", 1040, 11, "rgba(201,162,39,0.3)");
 
   // Paylaş
   canvas.toBlob(async (blob) => {
@@ -3730,6 +3864,29 @@ async function shareFerman() {
       }
     } catch(e) {}
   }, "image/png");
+}
+
+// ── Rating Prompt ────────────────────────────────────────────────
+function showRatingPrompt() {
+  if (document.getElementById('rating-overlay')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'rating-overlay';
+  overlay.innerHTML = `
+    <div id="rating-box">
+      <div id="rating-stars">⭐⭐⭐⭐⭐</div>
+      <div id="rating-title">Beğendin mi?</div>
+      <div id="rating-text">Değerlendirmeni duymak isteriz. App Store'da puan vermen oyunu büyütmeye yardım ediyor.</div>
+      <button id="rating-yes">Puan Ver ✦</button>
+      <button id="rating-no">Şimdi Değil</button>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  document.getElementById('rating-yes').onclick = () => {
+    localStorage.setItem('sadrazam_rated', '1');
+    overlay.remove();
+    window.open('itms-apps://itunes.apple.com/app/id6783881003?action=write-review', '_blank');
+  };
+  document.getElementById('rating-no').onclick = () => overlay.remove();
 }
 
 // ── Restart ───────────────────────────────────────────────────────

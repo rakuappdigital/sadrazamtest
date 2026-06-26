@@ -321,6 +321,40 @@ html, body {
 .share-opt:active { background: rgba(201,162,39,0.2); }
 .share-opt.ghost { border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); background: transparent; font-size: 11px; }
 
+/* Rating Prompt */
+#rating-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 300; display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+#rating-box {
+  background: #0E0B1A; border: 1px solid var(--gold-dim); border-radius: 14px;
+  padding: 28px 24px; max-width: 290px; width: 88%;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  text-align: center; animation: iipSlideUp 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+#rating-stars { font-size: 24px; letter-spacing: 4px; }
+#rating-title {
+  font-family: 'Cinzel Decorative', serif; font-size: 15px;
+  color: var(--gold); letter-spacing: 2px;
+}
+#rating-text {
+  font-family: 'IM Fell English', serif; font-size: 13px;
+  color: rgba(240,230,208,0.75); line-height: 1.65; font-style: italic;
+}
+#rating-yes {
+  width: 100%; padding: 13px; font-family: 'Cinzel', serif; font-size: 12px;
+  letter-spacing: 2px; color: var(--gold); background: rgba(201,162,39,0.12);
+  border: 1px solid var(--gold); border-radius: 6px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: background 0.2s;
+}
+#rating-yes:active { background: rgba(201,162,39,0.25); }
+#rating-no {
+  font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px;
+  color: rgba(255,255,255,0.25); background: transparent; border: none;
+  cursor: pointer; padding: 4px;
+}
+
 /* ★ GOD MODE badge */
 #god-badge {
   position: fixed; top: 6px; left: 50%; transform: translateX(-50%);
