@@ -776,7 +776,7 @@ const cardChoices      = document.getElementById("card-choices");
     tapCount++; // ★ GOD MODE
     clearTimeout(tapTimer); // ★ GOD MODE
     tapTimer = setTimeout(() => { tapCount = 0; }, 600); // ★ GOD MODE
-    if (tapCount >= 3) { tapCount = 0; toggleGodMode(); } // ★ GOD MODE
+    if (tapCount >= 20) { tapCount = 0; toggleGodMode(); } // ★ GOD MODE
   }); // ★ GOD MODE
 })(); // ★ GOD MODE
 
