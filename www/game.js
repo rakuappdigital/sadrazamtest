@@ -4888,29 +4888,29 @@ function showSettingsOverlay() {
   ov.id = 'settings-overlay';
   ov.innerHTML = `
     <div id="settings-box">
-      <div class="sett-title">⚙ ${isEN ? 'SETTINGS' : 'AYARLAR'}</div>
+      <div class="sett-title">⚙ ${window.t('sett.title')}</div>
       <div class="sett-divider"></div>
       <div class="sett-row">
-        <span class="sett-label">${isEN ? '🎵 Music' : '🎵 Müzik'}</span>
+        <span class="sett-label">${window.t('sett.music')}</span>
         <div class="sett-toggle">
-          <button class="sett-opt ${window.musicEnabled ? 'active' : ''}" id="sett-mus-on">${isEN ? 'On' : 'Açık'}</button>
-          <button class="sett-opt ${!window.musicEnabled ? 'active' : ''}" id="sett-mus-off">${isEN ? 'Off' : 'Kapalı'}</button>
+          <button class="sett-opt ${window.musicEnabled ? 'active' : ''}" id="sett-mus-on">${window.t('sett.on')}</button>
+          <button class="sett-opt ${!window.musicEnabled ? 'active' : ''}" id="sett-mus-off">${window.t('sett.off')}</button>
         </div>
       </div>
       <div class="sett-row">
-        <span class="sett-label">${isEN ? '🔔 Effects' : '🔔 Efektler'}</span>
+        <span class="sett-label">${window.t('sett.effects')}</span>
         <div class="sett-toggle">
-          <button class="sett-opt ${window.sfxEnabled ? 'active' : ''}" id="sett-sfx-on">${isEN ? 'On' : 'Açık'}</button>
-          <button class="sett-opt ${!window.sfxEnabled ? 'active' : ''}" id="sett-sfx-off">${isEN ? 'Off' : 'Kapalı'}</button>
+          <button class="sett-opt ${window.sfxEnabled ? 'active' : ''}" id="sett-sfx-on">${window.t('sett.on')}</button>
+          <button class="sett-opt ${!window.sfxEnabled ? 'active' : ''}" id="sett-sfx-off">${window.t('sett.off')}</button>
         </div>
       </div>
       <div class="sett-divider"></div>
-      <div class="sett-label" style="text-align:center;margin-bottom:8px">🌐 ${isEN ? 'Language' : 'Dil'}</div>
+      <div class="sett-label" style="text-align:center;margin-bottom:8px">${window.t('sett.language')}</div>
       <div class="sett-lang-row">
         <button class="sett-lang-btn ${window.LANG === 'tr' ? 'active' : ''}" id="sett-lang-tr">Türkçe</button>
         <button class="sett-lang-btn ${window.LANG === 'en' ? 'active' : ''}" id="sett-lang-en">English</button>
       </div>
-      <button class="sett-close" id="sett-close">${isEN ? 'CLOSE' : 'KAPAT'}</button>
+      <button class="sett-close" id="sett-close">${window.t('sett.close')}</button>
     </div>`;
   document.body.appendChild(ov);
   const reopen = () => { ov.remove(); showSettingsOverlay(); };
@@ -4927,26 +4927,57 @@ function showSettingsOverlay() {
 function showHaritaOverlay() {
   document.getElementById('harita-overlay')?.remove();
   const isEN = window.LANG === 'en';
-  const title = isEN ? '🗺 EMPIRE MAP' : '🗺 İMPARATORLUK HARİTASI';
+
+  const PROV_ICONS = { rumeli:'⚔', anadolu:'🌾', misir:'💰', dogu:'🛡', akdeniz:'⚓' };
   const rows = PROVINCES.map(p => {
-    const loy = provinceLoyalty[p.id] || 50;
+    const loy = Math.round(provinceLoyalty[p.id] || 50);
     const cls = loy <= 25 ? 'prov-danger' : loy >= 70 ? 'prov-ok' : 'prov-warn';
-    return `<div class="prov-row">
-      <span class="prov-name">${getProvinceLabel(p)}</span>
-      <div class="prov-track"><div class="prov-fill ${cls}" style="width:${loy}%"></div></div>
-      <span class="prov-val">${loy}</span>
+    const badge = loy <= 25 ? '⚠' : loy >= 70 ? '✦' : '';
+    return `<div class="prov-row ${cls}">
+      <span class="prov-icon">${PROV_ICONS[p.id] || '✦'}</span>
+      <div class="prov-info">
+        <div class="prov-header">
+          <span class="prov-name">${getProvinceLabel(p)}</span>
+          <span class="prov-badge">${badge}</span>
+          <span class="prov-val">${loy}</span>
+        </div>
+        <div class="prov-track"><div class="prov-fill" style="width:${loy}%"></div></div>
+      </div>
     </div>`;
   }).join('');
+
+  const overallLoy = Math.round(Object.values(provinceLoyalty).reduce((a,b)=>a+b,0)/5);
+  const statusLabel = overallLoy >= 70
+    ? (isEN ? 'STABLE' : 'KARARLI')
+    : overallLoy >= 40
+    ? (isEN ? 'TENSE' : 'GERGİN')
+    : (isEN ? 'CRITICAL' : 'KRİTİK');
+  const statusCls = overallLoy >= 70 ? 'hs-stable' : overallLoy >= 40 ? 'hs-tense' : 'hs-critical';
+
   const ov = document.createElement('div');
   ov.id = 'harita-overlay';
   ov.innerHTML = `
     <div id="harita-box">
-      <img src="assets/characters/harita-overlay.jpg" class="harita-bg-img" onerror="this.style.display='none'">
-      <div class="harita-content">
-        <div class="harita-title">${title}</div>
-        <div class="harita-divider"></div>
-        <div class="harita-provinces">${rows}</div>
-        <button class="harita-close" id="harita-close-btn">${isEN ? 'Close' : 'Kapat'}</button>
+      <div id="harita-bg" style="background-image:url(assets/characters/harita-overlay.jpg)"></div>
+      <div id="harita-glass">
+        <div id="harita-header">
+          <div id="harita-ornament">✦</div>
+          <div id="harita-title">${isEN ? 'IMPERIAL MAP' : 'İMPARATORLUK HARİTASI'}</div>
+          <div id="harita-status" class="${statusCls}">
+            ${isEN ? 'Empire Status' : 'İmparatorluk Durumu'}: <strong>${statusLabel}</strong>
+          </div>
+        </div>
+        <div id="harita-divider-top"></div>
+        <div id="harita-provinces">${rows}</div>
+        <div id="harita-divider-bot"></div>
+        <div id="harita-footer">
+          <div id="harita-avg">
+            <span class="ha-label">${isEN ? 'Average Loyalty' : 'Ort. Sadakat'}</span>
+            <div class="ha-bar-wrap"><div class="ha-bar" style="width:${overallLoy}%"></div></div>
+            <span class="ha-val">${overallLoy}</span>
+          </div>
+          <button id="harita-close-btn">${isEN ? '× Close' : '× Kapat'}</button>
+        </div>
       </div>
     </div>`;
   document.body.appendChild(ov);
@@ -4963,7 +4994,6 @@ function showGameMenu() {
     <div id="game-menu-box">
       <div id="game-menu-title">${isENMenu ? "PAUSED" : "DURAKLAT"}</div>
       <div id="game-menu-divider"></div>
-      <button class="game-menu-option" id="gm-harita">🗺 ${isENMenu ? "Empire Map" : "Harita"}</button>
       <button class="game-menu-option danger" id="gm-quit">${isENMenu ? "END GAME" : "OYUNU BİTİR"}</button>
       <button class="game-menu-option secondary" id="gm-resume">${isENMenu ? "CONTINUE" : "DEVAM ET"}</button>
     </div>`;
@@ -4991,9 +5021,6 @@ function showGameMenu() {
 
   const doResume = () => { if (!document.body.contains(overlay)) return; overlay.remove(); };
 
-  const doHarita = () => { overlay.remove(); showHaritaOverlay(); };
-  document.getElementById("gm-harita").addEventListener("click",    doHarita);
-  document.getElementById("gm-harita").addEventListener("touchend", doHarita, { passive: true });
   document.getElementById("gm-quit").addEventListener("click",    doQuit);
   document.getElementById("gm-quit").addEventListener("touchend", doQuit, { passive: true });
   document.getElementById("gm-resume").addEventListener("click",    doResume);

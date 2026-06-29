@@ -413,6 +413,25 @@ window.UI_STRINGS = {
     'char.miras':           'Miras Habercisi',
     // Danışman max uyarısı
     'advisor.max_alert':    'En fazla 2 danışman seçebilirsiniz.',
+    // Challenge modu
+    'btn.challenge':        '⚔ CHALLENGE',
+    // Ayarlar
+    'btn.settings':         '⚙ AYARLAR',
+    'sett.title':           'AYARLAR',
+    'sett.music':           '🎵 Müzik',
+    'sett.effects':         '🔔 Efektler',
+    'sett.on':              'Açık',
+    'sett.off':             'Kapalı',
+    'sett.language':        '🌐 Dil',
+    'sett.close':           'KAPAT',
+    // Harita
+    'harita.title':         'İMPARATORLUK HARİTASI',
+    'harita.status':        'İmparatorluk Durumu',
+    'harita.stable':        'KARARLI',
+    'harita.tense':         'GERGİN',
+    'harita.critical':      'KRİTİK',
+    'harita.avg':           'Ort. Sadakat',
+    'harita.close':         '× Kapat',
     // Başarım bildirimi (game over)
     'ach.earned_title':     'KAZANILAN BAŞARIMLAR',
     'ach.secret_toast':     'Gizli Başarım',
@@ -532,6 +551,25 @@ window.UI_STRINGS = {
     'char.miras':           'Legacy Herald',
     // Advisor alert
     'advisor.max_alert':    'You can select at most 2 advisors.',
+    // Challenge mode
+    'btn.challenge':        '⚔ CHALLENGE',
+    // Settings
+    'btn.settings':         '⚙ SETTINGS',
+    'sett.title':           'SETTINGS',
+    'sett.music':           '🎵 Music',
+    'sett.effects':         '🔔 Effects',
+    'sett.on':              'On',
+    'sett.off':             'Off',
+    'sett.language':        '🌐 Language',
+    'sett.close':           'CLOSE',
+    // Map
+    'harita.title':         'IMPERIAL MAP',
+    'harita.status':        'Empire Status',
+    'harita.stable':        'STABLE',
+    'harita.tense':         'TENSE',
+    'harita.critical':      'CRITICAL',
+    'harita.avg':           'Avg. Loyalty',
+    'harita.close':         '× Close',
     // Achievement badge on gameover
     'ach.earned_title':     'ACHIEVEMENTS EARNED',
     'ach.secret_toast':     'Secret Achievement',

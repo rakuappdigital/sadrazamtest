@@ -68,7 +68,7 @@
         </button>
         <button id="btn-challenge" class="mode-btn mode-challenge" onclick="startChallengeMod()">
           <span class="mode-icon">⚔</span>
-          <span class="mode-label">CHALLENGE</span>
+          <span class="mode-label" data-i18n="btn.challenge">CHALLENGE</span>
         </button>
       </div>
 
@@ -81,7 +81,7 @@
         </button>
         <button id="btn-settings" class="util-btn" onclick="showSettingsOverlay()">
           <span class="util-icon">⚙</span>
-          <span class="util-label">AYARLAR</span>
+          <span class="util-label" data-i18n="btn.settings">AYARLAR</span>
         </button>
       </div>
 
@@ -238,6 +238,12 @@
     <div id="header-row">
       <div id="title-label">SADRAZAM</div>
       <div id="year-label">Muharrem 927</div>
+      <button id="harita-btn" onclick="showHaritaOverlay()" title="Harita">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 2.5L5 1l4 2 4-1.5v10L13 13l-4-2-4 2-4-1V2.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+          <path d="M5 1v11M9 3v9" stroke="currentColor" stroke-width="0.9" opacity="0.6"/>
+        </svg>
+      </button>
       <div id="dynamic-subtitle"></div>
       <!-- Sağlık göstergesi — tarih satırının sağında -->
       <div id="health-inline">
