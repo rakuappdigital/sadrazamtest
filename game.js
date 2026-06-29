@@ -1092,6 +1092,7 @@ document.addEventListener('mousedown', function _firstClick() {
 document.getElementById("btn-start").addEventListener("click", () => {
   if (window.playSelectConfirm) playSelectConfirm();
   isPasaMode = false;
+  isChallengeMode = false; // normal mod — challenge kapalı
   introScreen.style.display = "none";
   showSultanScreen();
 });
@@ -1099,6 +1100,7 @@ document.getElementById("btn-start").addEventListener("click", () => {
 document.getElementById("btn-pasa-mode").addEventListener("click", () => {
   if (window.playSelectConfirm) playSelectConfirm();
   isPasaMode = true;
+  isChallengeMode = false; // paşalık modu — challenge kapalı
   introScreen.style.display = "none";
   showSultanScreen();
 });
@@ -5006,6 +5008,11 @@ function restartGame() {
   selectedSultan = null;
   selectedAdvisors = [];
   hideNegotiationPanel();
+  // Challenge panelini temizle, modu sıfırla
+  document.getElementById('challenge-panel')?.remove();
+  isChallengeMode   = false;
+  challengeGoals    = [];
+  challengeComplete = false;
 
   // Clean up extra elements
   ["new-record-banner","death-archive-section","achievements-section"].forEach(id => {
