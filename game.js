@@ -1996,6 +1996,56 @@ function dealNext() {
     displayText += getRakipSuffix();
   }
 
+  // ── Karakter hafızası bazlı dinamik metin ──────────────────────
+  if (key && characterMemory[key]) {
+    const _mem  = characterMemory[key];
+    const _left = _mem.left  || 0;
+    const _rgt  = _mem.right || 0;
+    const _tot  = _left + _rgt;
+
+    // Yeniçeri Ağası — 3+ ret → daha tehditkar ton
+    if (key === '2-yeniceri' && _left >= 3) {
+      displayText += _isEN
+        ? " — His voice was harder this time."
+        : " — Bu kez sesi daha yüksekti.";
+    }
+
+    // Yeniçeri İsyancısı — 2+ ret → isyan tırmandı
+    if (key === '18-yeniceri_isyancisi' && _left >= 2) {
+      displayText += _isEN
+        ? " — The unrest in the barracks had grown."
+        : " — Kışladaki huzursuzluk büyümüştü.";
+    }
+
+    // Rakip Vezir — 4+ ziyaret toplam → gerilim ipucu
+    if (key === '8-rakip-vezir' && _tot >= 4) {
+      displayText += _isEN
+        ? " — His smile had grown more knowing."
+        : " — Gülümsemesi artık daha hesaplıydı.";
+    }
+
+    // Şeyhülislam — 3+ destek (sağ) → güvenli ton
+    if (key === '3-Seyhulislam' && _rgt >= 3) {
+      displayText += _isEN
+        ? " — He spoke with a familiar confidence."
+        : " — Tanıdık bir özgüvenle konuştu.";
+    }
+
+    // Valide Sultan — 3+ destek → daha sahiplenici
+    if (key === '5-valide-sultan' && _rgt >= 3) {
+      displayText += _isEN
+        ? " — She had grown more familiar with you."
+        : " — Size karşı daha sahiplenici bir tavır aldı.";
+    }
+
+    // Halk Temsilcisi — 3+ ret → öfke birikmiş
+    if (key === '15-halk_temsilcisi' && _left >= 3) {
+      displayText += _isEN
+        ? " — There was no patience left in the crowd."
+        : " — Kalabalığın sabrı kalmamıştı.";
+    }
+  }
+
   charName.textContent = (_isEN && c.character_name_en) ? c.character_name_en : (c.character_name || "");
   cardText.textContent = displayText;
   choiceLeft.textContent  = (_isEN && c.left_text_en)  ? c.left_text_en  : (c.left_text  || (_isEN ? "No"  : "Hayır"));
@@ -2182,6 +2232,12 @@ function showEasterCard(c) {
     return;
   }
 
+  // Yıl Özeti
+  if (c.easter_type === 'year_summary') {
+    showYearSummary(c);
+    return;
+  }
+
   // Pargalı özel müzik
   if (isPargali && window.playPargaliSad) playPargaliSad();
 
@@ -2283,6 +2339,74 @@ function showEasterCard(c) {
   easterBtn.onclick = doAction;
 
   animateCardIn();
+}
+
+// ── Yıl Özeti Overlay ────────────────────────────────────────────
+function showYearSummary(c) {
+  const isEN   = window.LANG === 'en';
+  const yr     = c._snap_year;
+  const snap   = c._snap_stats || stats;
+  const months = isEN ? (window.EN_HICRI_MONTHS || []) : HICRI_MONTHS;
+
+  // Stat barları
+  const statDefs = [
+    { key: 'saray',     label: isEN ? 'Palace'   : 'Saray',   icon: '👑' },
+    { key: 'yeniçeri',  label: isEN ? 'Army'     : 'Ordu',    icon: '⚔️' },
+    { key: 'ulema',     label: isEN ? 'Clergy'   : 'Ulema',   icon: '🕌' },
+    { key: 'hazine',    label: isEN ? 'Treasury' : 'Hazine',  icon: '💰' },
+  ];
+
+  const barsHTML = statDefs.map(s => {
+    const val = Math.round(snap[s.key] || 0);
+    const cls = val <= 20 ? 'ys-bar-danger' : val >= 78 ? 'ys-bar-warn' : 'ys-bar-ok';
+    return `<div class="ys-stat-row">
+      <span class="ys-stat-icon">${s.icon}</span>
+      <span class="ys-stat-label">${s.label}</span>
+      <div class="ys-bar-track"><div class="ys-bar-fill ${cls}" style="width:${val}%"></div></div>
+      <span class="ys-stat-val">${val}</span>
+    </div>`;
+  }).join('');
+
+  // En çok görülen karakter
+  let topChar = '', topCount = 0;
+  Object.entries(characterMemory).forEach(([k, m]) => {
+    const t = (m.left || 0) + (m.right || 0);
+    if (t > topCount) { topCount = t; topChar = k; }
+  });
+  const charData = topChar ? (window.allCards || []).find(x => x.character === topChar) : null;
+  const charLabel = charData
+    ? (isEN && charData.character_name_en ? charData.character_name_en : charData.character_name)
+    : '';
+
+  const topCharLine = charLabel
+    ? `<div class="ys-meta">${isEN ? '👥 Most visited' : '👥 En çok gelen'}: <strong>${charLabel}</strong> (${topCount}×)</div>`
+    : '';
+
+  const titleText = isEN ? `YEAR ${yr} COMPLETE` : `${yr}. YIL TAMAMLANDI`;
+  const btnText   = isEN ? 'CONTINUE →'          : 'DEVAM ET →';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'year-summary-overlay';
+  overlay.innerHTML = `
+    <div id="year-summary-box">
+      <div class="ys-ornament">✦</div>
+      <div class="ys-title">${titleText}</div>
+      <div class="ys-divider"></div>
+      <div class="ys-stats">${barsHTML}</div>
+      ${topCharLine}
+      <div class="ys-divider" style="margin-top:14px"></div>
+      <button class="ys-btn">${btnText}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const close = () => {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => { overlay.remove(); advanceEasterCard(c); }, 320);
+  };
+  overlay.querySelector('.ys-btn').addEventListener('click',    close);
+  overlay.querySelector('.ys-btn').addEventListener('touchend', close, { passive: true });
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 }
 
 function showDonumEkrani() {
@@ -3603,13 +3727,70 @@ function onEnd() {
   else snapBack();
 }
 
+function showCardTrail(dir) {
+  const cardEl = document.getElementById('card');
+  if (!cardEl) return;
+  const rect = cardEl.getBoundingClientRect();
+  const isRight = dir === 'right';
+
+  // ── Hayalet (ghost) katmanı ──
+  const ghost = document.createElement('div');
+  ghost.className = 'card-trail-ghost ' + (isRight ? 'trail-right' : 'trail-left');
+  ghost.style.cssText =
+    'position:fixed' +
+    ';left:'  + rect.left   + 'px' +
+    ';top:'   + rect.top    + 'px' +
+    ';width:' + rect.width  + 'px' +
+    ';height:'+ rect.height + 'px' +
+    ';pointer-events:none;z-index:8;border-radius:14px';
+  document.body.appendChild(ghost);
+  ghost.animate(
+    [{ opacity: 0.75 }, { opacity: 0 }],
+    { duration: 520, easing: 'ease-out', fill: 'forwards' }
+  ).finished.then(() => ghost.remove());
+
+  // ── Duman parçacıkları ──
+  const smokeColors = isRight
+    ? ['rgba(212,175,55,0.55)', 'rgba(240,205,90,0.38)', 'rgba(255,240,170,0.22)']
+    : ['rgba(65,85,155,0.48)',  'rgba(85,105,175,0.32)', 'rgba(45,58,100,0.2)'];
+
+  for (let i = 0; i < 7; i++) {
+    const p   = document.createElement('div');
+    const sz  = 20 + Math.random() * 42;
+    const px  = rect.left + rect.width  * (0.18 + Math.random() * 0.64);
+    const py  = rect.top  + rect.height * (0.22 + Math.random() * 0.56);
+    const col = smokeColors[Math.floor(Math.random() * smokeColors.length)];
+    const blr = 6 + Math.random() * 12;
+    p.style.cssText =
+      'position:fixed' +
+      ';left:'  + (px - sz / 2) + 'px' +
+      ';top:'   + (py - sz / 2) + 'px' +
+      ';width:' + sz + 'px;height:' + sz + 'px' +
+      ';border-radius:50%' +
+      ';background:' + col +
+      ';pointer-events:none;z-index:7' +
+      ';filter:blur(' + blr + 'px)';
+    document.body.appendChild(p);
+    const dx   = (Math.random() - 0.5) * 55;
+    const dy   = -(28 + Math.random() * 55);
+    const scl  = 1.3 + Math.random() * 1.4;
+    const dur  = 560 + Math.random() * 360;
+    p.animate([
+      { opacity: 1, transform: 'translate(0,0) scale(1)' },
+      { opacity: 0, transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scl + ')' }
+    ], { duration: dur, easing: 'ease-out', fill: 'forwards' })
+      .finished.then(() => p.remove());
+  }
+}
+
 function flyOff(dir) {
+  showCardTrail(dir);
   const bubble = document.getElementById("speech-bubble");
   if (bubble) bubble.style.opacity = "0";
   if (isAnimating) return;
   isAnimating = true;
-  if (dir === "right") Haptics.swipeRight();
-  else Haptics.swipeLeft();
+  if (dir === "right") { Haptics.swipeRight(); if (window.playSwipeRight) playSwipeRight(); }
+  else                 { Haptics.swipeLeft();  if (window.playSwipeLeft)  playSwipeLeft();  }
   const tx = dir === "left" ? -680 : 680;
   card.style.transition = "transform 0.28s ease-in, opacity 0.22s ease-in";
   card.style.transform = `translateX(${tx}px) rotate(${dir === "left" ? -22 : 22}deg)`;
@@ -3721,6 +3902,22 @@ function advanceYear() {
   if (year % 5 === 0) {
     const vergiEvent = allCards.find(c => c.id === 'event_vergi_reformu');
     if (vergiEvent) forcedQueue.unshift(vergiEvent);
+  }
+
+  // 5 yılda bir yıl özeti kartı (vergi event'inden sonra sıraya girer)
+  if (year % 5 === 0 && year > 0) {
+    forcedQueue.push({
+      id: 'year_summary_' + year,
+      type: 'easter',
+      easter_type: 'year_summary',
+      character: 'year-summary',
+      character_name: '',
+      text: '',
+      button: null,
+      stat_effect: null,
+      _snap_stats: { ...stats },
+      _snap_year: year,
+    });
   }
 
   // Tarihsel olaylar (sultan_specific olmayan, genel)
