@@ -1135,11 +1135,6 @@ document.getElementById("btn-akcesystem").addEventListener("click", () => {
   overlay.addEventListener("click", e => { if(e.target===overlay) close(); });
 });
 
-document.getElementById("btn-howto").addEventListener("click", () => {
-  introScreen.style.display = "none";
-  howtoScreen.classList.add("visible");
-});
-
 document.getElementById("btn-howto-back").addEventListener("click", () => {
   howtoScreen.classList.remove("visible");
   introScreen.style.display = "";
