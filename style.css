@@ -2213,10 +2213,8 @@ html, body {
    OYUN İÇİ MENÜ BUTONU
 ════════════════════════════════════════ */
 #game-menu-btn {
-  position: absolute;
-  top: max(14px, env(safe-area-inset-top, 14px));
-  right: 16px;
-  z-index: 20;
+  position: static; /* flex içinde kalır */
+  z-index: auto;
   width: 32px;
   height: 32px;
   display: flex;
@@ -3244,34 +3242,6 @@ html, body {
 }
 .cp-item.cg-done .cp-tick { color:rgba(80,200,80,0.8); }
 
-/* ── Header Row yeniden düzeni ──────────────────────────────────── */
-#header-row {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  padding: 0 10px;
-  position: relative;
-}
-#title-label {
-  font-family: 'Cinzel', serif;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: rgba(201,162,39,0.55);
-  flex-shrink: 0;
-  margin-right: 8px;
-}
-#year-label {
-  font-size: 11px;
-  color: rgba(220,200,160,0.75);
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-#dynamic-subtitle {
-  display: none; /* subtitle artık kart içinde gösterilir */
-}
 
 /* ── Sağlık Göstergesi (yatay, header-row sağı) ─────────────────── */
 #health-inline {
@@ -3303,31 +3273,6 @@ html, body {
   font-variant-numeric: tabular-nums;
   min-width: 16px;
 }
-
-/* ── Oyun Menü Butonu (☰) — daha görünür ────────────────────────── */
-#game-menu-btn {
-  position: static !important;
-  flex-shrink: 0;
-  background: rgba(201,162,39,0.08);
-  border: 1px solid rgba(201,162,39,0.22);
-  border-radius: 6px;
-  color: rgba(201,162,39,0.7);
-  font-size: 15px;
-  padding: 5px 9px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  min-width: 36px;
-  min-height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#game-menu-btn:hover, #game-menu-btn:active {
-  background: rgba(201,162,39,0.18);
-  border-color: rgba(201,162,39,0.5);
-}
-
 
 
 /* ── Alt ghost butonlar ─────────────────────────────────────────── */
@@ -3411,26 +3356,6 @@ html, body {
 }
 .sett-close:hover { background: rgba(201,162,39,0.2); }
 
-/* ── Harita Butonu (header-row içi) ─────────────────────────────── */
-#harita-btn {
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px;
-  background: rgba(201,162,39,0.06);
-  border: 1px solid rgba(201,162,39,0.2);
-  border-radius: 6px;
-  color: rgba(201,162,39,0.6);
-  cursor: pointer;
-  margin-right: 4px;
-  transition: all 0.2s;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-#harita-btn:hover, #harita-btn:active {
-  background: rgba(201,162,39,0.15);
-  border-color: rgba(201,162,39,0.5);
-  color: rgba(201,162,39,0.9);
-}
 
 /* ── Harita Overlay — Premium ────────────────────────────────────── */
 #harita-overlay {
@@ -3657,4 +3582,115 @@ html, body {
   width: 14px; height: 14px;
   object-fit: contain;
   opacity: 0.65;
+}
+
+/* ── Header Row — kesin düzen ───────────────────────────────────── */
+#header-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  width: 100%;
+  padding: 4px 10px 4px 12px;
+  gap: 0;
+  position: relative;
+  box-sizing: border-box;
+}
+#title-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: rgba(201,162,39,0.45);
+  flex-shrink: 0;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+#year-label {
+  font-size: 11px;
+  color: rgba(220,200,160,0.75);
+  flex: 1;              /* boşluğu doldurur, sağdakileri sağa iter */
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#dynamic-subtitle { display: none; }
+
+/* Sağ grup: health + harita + menu */
+#health-inline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+#health-icon-svg {
+  width: 13px; height: 13px;
+  flex-shrink: 0;
+  color: rgba(201,162,39,0.55);
+}
+#health-fill-h.warn   + * { color: rgba(230,126,34,0.7); }
+#health-fill-h.danger + * { color: rgba(192,57,43,0.85); }
+#health-bar-h {
+  width: 40px; height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+#health-fill-h {
+  height: 100%; width: 90%;
+  border-radius: 2px;
+  background: rgba(39,174,96,0.75);
+  transition: width 0.5s ease, background 0.4s ease;
+}
+#health-fill-h.warn   { background: rgba(230,126,34,0.8); }
+#health-fill-h.danger { background: rgba(192,57,43,0.9); }
+#health-val {
+  font-size: 9px;
+  color: rgba(180,160,120,0.5);
+  min-width: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Harita butonu */
+#harita-btn {
+  position: static !important;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  background: rgba(201,162,39,0.05);
+  border: 1px solid rgba(201,162,39,0.18);
+  border-radius: 6px;
+  color: rgba(201,162,39,0.55);
+  cursor: pointer;
+  margin-right: 4px;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+#harita-btn:hover, #harita-btn:active {
+  background: rgba(201,162,39,0.15);
+  border-color: rgba(201,162,39,0.5);
+  color: rgba(201,162,39,0.9);
+}
+
+/* ☰ Oyun menüsü butonu */
+#game-menu-btn {
+  position: static !important;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 28px;
+  background: rgba(201,162,39,0.07);
+  border: 1px solid rgba(201,162,39,0.2);
+  border-radius: 6px;
+  color: rgba(201,162,39,0.65);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+#game-menu-btn:hover, #game-menu-btn:active {
+  background: rgba(201,162,39,0.18);
+  border-color: rgba(201,162,39,0.5);
+  color: rgba(201,162,39,0.95);
 }

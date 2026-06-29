@@ -3178,12 +3178,16 @@ function updatePortraitExpression() {
 function updateHealthUI() {
   const hfill = document.getElementById("health-fill-h");
   const hval  = document.getElementById("health-val");
+  const hicon = document.getElementById("health-icon-svg");
   if (!hfill) return;
   const h = Math.max(0, Math.min(100, sadrazamHealth));
   hfill.style.width = h + "%";
-  if (h <= 20)      hfill.className = "danger";
-  else if (h <= 40) hfill.className = "warn";
-  else              hfill.className = "";
+  let cls = "";
+  let iconColor = "rgba(39,174,96,0.7)";
+  if (h <= 20)      { cls = "danger"; iconColor = "rgba(192,57,43,0.9)"; }
+  else if (h <= 40) { cls = "warn";   iconColor = "rgba(230,126,34,0.85)"; }
+  hfill.className = cls;
+  if (hicon) hicon.style.color = iconColor;
   if (hval) hval.textContent = h;
 }
 
