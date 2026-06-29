@@ -48,25 +48,25 @@
         <p id="intro-subtitle" data-i18n="intro.subtitle">Osmanlı İmparatorluğu'nda<br/>denge peşindeki bir sadrazamın hikâyesi</p>
       </div>
 
-      <!-- Oyun Modları — stat preview yerinde, eski tarz alt alta -->
+      <!-- Oyun Modları: ikon + metin, tam genişlik, alt alta -->
       <div id="mode-buttons">
-        <button id="btn-start" class="mode-full mode-primary">
-          <span class="mode-full-icon">⚜</span>
-          <span class="mode-full-label" data-i18n="btn.sadrazam_mode">SADRAZAM MODU</span>
+        <button id="btn-start" class="mode-btn mode-primary">
+          <span class="mbtn-icon">⚜</span>
+          <span class="mbtn-label" data-i18n="btn.sadrazam_mode">SADRAZAM MODU</span>
         </button>
-        <button id="btn-pasa-mode" class="mode-full mode-secondary">
-          <span class="mode-full-icon">📜</span>
-          <span class="mode-full-label" data-i18n="btn.pasa_mode">PAŞALIK MODU</span>
+        <button id="btn-pasa-mode" class="mode-btn mode-secondary">
+          <span class="mbtn-icon">📜</span>
+          <span class="mbtn-label" data-i18n="btn.pasa_mode">PAŞALIK MODU</span>
         </button>
-        <button id="btn-challenge" class="mode-full mode-challenge" onclick="startChallengeMod()">
-          <span class="mode-full-icon">⚔</span>
-          <span class="mode-full-label" data-i18n="btn.challenge">CHALLENGE MODU</span>
+        <button id="btn-challenge" class="mode-btn mode-challenge" onclick="startChallengeMod()">
+          <span class="mbtn-icon">⚔</span>
+          <span class="mbtn-label" data-i18n="btn.challenge">CHALLENGE MODU</span>
         </button>
       </div>
 
-      <!-- Yardımcı butonlar — küçük, ikon olarak -->
+      <!-- İkincil butonlar: ikon + yazı, yan yana -->
       <div id="util-buttons">
-        <button id="btn-achievements" class="util-btn">
+        <button id="btn-achievements" class="util-btn" onclick="openAchievementsScreen()">
           <img src="assets/icons/icon-saray.png" class="util-img-icon" alt="">
           <span class="util-label" data-i18n="btn.achievements">BAŞARIMLARIM</span>
           <span id="ach-count-badge"></span>
@@ -75,14 +75,10 @@
           <img src="assets/icons/icon-ulema.png" class="util-img-icon" alt="">
           <span class="util-label" data-i18n="btn.settings">AYARLAR</span>
         </button>
-      </div>
-
-      <!-- Alt ghost butonlar -->
-      <div id="ghost-buttons">
-        <button id="btn-akcesystem" class="intro-btn ghost">
-          <img src="assets/icons/icon-hazine.png" class="ghost-icon-img" alt=""> <span data-i18n="btn.buy_coins">AKÇE AL</span>
+        <button id="btn-akcesystem" class="util-btn">
+          <img src="assets/icons/icon-hazine.png" class="util-img-icon" alt="">
+          <span class="util-label" data-i18n="btn.buy_coins">AKÇE AL</span>
         </button>
-        <button id="btn-howto" class="intro-btn ghost" data-i18n="btn.howto">NASIL OYNANIR?</button>
       </div>
 
     </div>
@@ -229,11 +225,21 @@
     <!-- Kader İpleri -->
     <div id="fate-bar"></div>
 
-    <!-- Üst satır: başlık + yıl + butonlar yan yana -->
+    <!-- Header: sağlık (sol) | tarih (orta, flex:1) | harita+menü (sağ) -->
     <div id="header-row">
-      <div id="title-label">SADRAZAM</div>
+      <!-- Sol: Sağlık barı -->
+      <div id="health-inline">
+        <svg id="health-icon-svg" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 14s-6-3.8-6-8a4 4 0 018 0 4 4 0 018 0c0 4.2-6 8-6 8-1.5.9-2.5.9-4 0z"
+                fill="rgba(201,162,39,0.12)" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+        </svg>
+        <div id="health-bar-h"><div id="health-fill-h"></div></div>
+        <span id="health-val">90</span>
+      </div>
+      <!-- Orta: Tarih + açıklama (SADRAZAM yazısı kaldırıldı) -->
       <div id="year-label">Muharrem 927</div>
       <div id="dynamic-subtitle"></div>
+      <!-- Sağ: Harita + Menü butonları -->
       <div id="header-action-btns">
         <button id="harita-btn" onclick="showHaritaOverlay()">
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -243,15 +249,6 @@
         </button>
         <button id="game-menu-btn" onclick="showGameMenu()">☰</button>
       </div>
-    </div>
-    <!-- Sağlık göstergesi: header altında, sol köşe -->
-    <div id="health-inline">
-      <svg id="health-icon-svg" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 14s-6-3.8-6-8a4 4 0 018 0 4 4 0 018 0c0 4.2-6 8-6 8-1.5.9-2.5.9-4 0z"
-              fill="rgba(201,162,39,0.12)" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
-      </svg>
-      <div id="health-bar-h"><div id="health-fill-h"></div></div>
-      <span id="health-val">90</span>
     </div>
 
     <div id="card-area">
