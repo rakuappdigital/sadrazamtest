@@ -75,7 +75,7 @@
           <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="12" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M12 8.3v7.4M9.8 10l2.2-1.7 2.2 1.7M9.8 14l2.2 1.7 2.2-1.7" stroke="currentColor" stroke-width="0.9" stroke-linecap="round"/></svg>
           <span data-i18n="btn.buy_coins">AKÇE AL</span>
         </button>
-        <button id="btn-settings" class="intro-btn ghost" onclick="showSettingsOverlay()">
+        <button id="btn-settings" class="intro-btn ghost">
           <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M12 3.5v2.2M12 18.3v2.2M18.5 12h2.2M3.3 12h2.2M16.9 7.1l1.5-1.5M5.6 18.4l1.5-1.5M16.9 16.9l1.5 1.5M5.6 5.6l1.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
           <span data-i18n="btn.settings">AYARLAR</span>
         </button>
@@ -87,28 +87,31 @@
   </div>
 
   <!-- ── AYARLAR OVERLAY ── -->
-  <div id="settings-overlay" class="hidden">
-    <div id="settings-content">
-      <h2 class="sel-title" data-i18n="settings.title">AYARLAR</h2>
-      <div class="sel-divider"></div>
-
-      <div class="settings-row">
-        <span data-i18n="settings.music">Müzik</span>
-        <button id="settings-music-toggle" class="settings-toggle" onclick="toggleMusicSetting()">AÇIK</button>
-      </div>
-      <div class="settings-row">
-        <span data-i18n="settings.sfx">Efektler</span>
-        <button id="settings-sfx-toggle" class="settings-toggle" onclick="toggleSfxSetting()">AÇIK</button>
-      </div>
-      <div class="settings-row">
-        <span data-i18n="settings.language">Dil</span>
-        <div class="settings-lang-group">
-          <button data-lang-btn="tr" onclick="setLang('tr')" class="lang-btn lang-active">TR</button>
-          <button data-lang-btn="en" onclick="setLang('en')" class="lang-btn">EN</button>
+  <div id="settings-overlay" style="display:none">
+    <div id="settings-box">
+      <div class="sett-title" data-i18n="sett.title">AYARLAR</div>
+      <div class="sett-divider"></div>
+      <div class="sett-row">
+        <span class="sett-label" data-i18n="sett.music">🎵 Müzik</span>
+        <div class="sett-toggle">
+          <button class="sett-opt" id="sett-mus-on">Açık</button>
+          <button class="sett-opt" id="sett-mus-off">Kapalı</button>
         </div>
       </div>
-
-      <button id="btn-settings-back" class="intro-btn secondary" style="margin-top:20px" onclick="hideSettingsOverlay()" data-i18n="ach.btn_back">← GERİ</button>
+      <div class="sett-row">
+        <span class="sett-label" data-i18n="sett.effects">🔔 Efektler</span>
+        <div class="sett-toggle">
+          <button class="sett-opt" id="sett-sfx-on">Açık</button>
+          <button class="sett-opt" id="sett-sfx-off">Kapalı</button>
+        </div>
+      </div>
+      <div class="sett-divider"></div>
+      <div class="sett-label" style="text-align:center;margin-bottom:8px" data-i18n="sett.language">🌐 Dil</div>
+      <div class="sett-lang-row">
+        <button class="sett-lang-btn" id="sett-lang-tr">Türkçe</button>
+        <button class="sett-lang-btn" id="sett-lang-en">English</button>
+      </div>
+      <button class="sett-close" id="sett-close" data-i18n="sett.close">KAPAT</button>
     </div>
   </div>
 
@@ -252,11 +255,12 @@
     <div id="fate-bar"></div>
 
     <div id="header-row">
-      <div id="title-label">SADRAZAM</div>
-      <div id="year-label">Muharrem 927</div>
-      <div id="dynamic-subtitle"></div>
+      <div id="header-left">
+        <div id="year-label">Muharrem 927</div>
+        <div id="dynamic-subtitle"></div>
+      </div>
+      <button id="game-menu-btn" onclick="showGameMenu()">☰</button>
     </div>
-    <button id="game-menu-btn" onclick="showGameMenu()">☰</button>
 
     <div id="card-area">
       <div id="swipe-hint-left" class="swipe-hint" data-i18n="hint.left">← Hayır</div>

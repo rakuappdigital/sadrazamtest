@@ -1115,6 +1115,9 @@ document.getElementById("btn-pasa-mode").addEventListener("click", () => {
   showSultanScreen();
 });
 
+document.getElementById("btn-settings").addEventListener("click",    showSettingsOverlay);
+document.getElementById("btn-settings").addEventListener("touchend", showSettingsOverlay, { passive: true });
+
 document.getElementById("btn-akcesystem").addEventListener("click", () => {
   const overlay = document.createElement("div");
   overlay.id = "akcesystem-overlay";
@@ -4888,56 +4891,39 @@ function restartGame() {
 // ── Oyun İçi Menü ────────────────────────────────────────────────
 // ── Harita Overlay ────────────────────────────────────────────────
 // ── Ayarlar Overlay ───────────────────────────────────────────────
-function showSettingsOverlay() {
-  document.getElementById('settings-overlay')?.remove();
+const _settOv = document.getElementById('settings-overlay');
+
+function _settUpdateUI() {
+  document.getElementById('sett-mus-on').classList.toggle('active', window.musicEnabled !== false);
+  document.getElementById('sett-mus-off').classList.toggle('active', window.musicEnabled === false);
+  document.getElementById('sett-sfx-on').classList.toggle('active', window.sfxEnabled !== false);
+  document.getElementById('sett-sfx-off').classList.toggle('active', window.sfxEnabled === false);
+  document.getElementById('sett-lang-tr').classList.toggle('active', window.LANG !== 'en');
+  document.getElementById('sett-lang-en').classList.toggle('active', window.LANG === 'en');
   const isEN = window.LANG === 'en';
-  const ov = document.createElement('div');
-  ov.id = 'settings-overlay';
-  ov.innerHTML = `
-    <div id="settings-box">
-      <div class="sett-title">⚙ ${window.t('sett.title')}</div>
-      <div class="sett-divider"></div>
-      <div class="sett-row">
-        <span class="sett-label">${window.t('sett.music')}</span>
-        <div class="sett-toggle">
-          <button class="sett-opt ${window.musicEnabled ? 'active' : ''}" id="sett-mus-on">${window.t('sett.on')}</button>
-          <button class="sett-opt ${!window.musicEnabled ? 'active' : ''}" id="sett-mus-off">${window.t('sett.off')}</button>
-        </div>
-      </div>
-      <div class="sett-row">
-        <span class="sett-label">${window.t('sett.effects')}</span>
-        <div class="sett-toggle">
-          <button class="sett-opt ${window.sfxEnabled ? 'active' : ''}" id="sett-sfx-on">${window.t('sett.on')}</button>
-          <button class="sett-opt ${!window.sfxEnabled ? 'active' : ''}" id="sett-sfx-off">${window.t('sett.off')}</button>
-        </div>
-      </div>
-      <div class="sett-divider"></div>
-      <div class="sett-label" style="text-align:center;margin-bottom:8px">${window.t('sett.language')}</div>
-      <div class="sett-lang-row">
-        <button class="sett-lang-btn ${window.LANG === 'tr' ? 'active' : ''}" id="sett-lang-tr">Türkçe</button>
-        <button class="sett-lang-btn ${window.LANG === 'en' ? 'active' : ''}" id="sett-lang-en">English</button>
-      </div>
-      <button class="sett-close" id="sett-close">${window.t('sett.close')}</button>
-    </div>`;
-  document.body.appendChild(ov);
-  // Overlay kapatıp açmak yerine in-place güncelle (flash olmaz)
-  function updateSettingsUI() {
-    document.getElementById('sett-mus-on').classList.toggle('active', window.musicEnabled !== false);
-    document.getElementById('sett-mus-off').classList.toggle('active', window.musicEnabled === false);
-    document.getElementById('sett-sfx-on').classList.toggle('active', window.sfxEnabled !== false);
-    document.getElementById('sett-sfx-off').classList.toggle('active', window.sfxEnabled === false);
-    document.getElementById('sett-lang-tr').classList.toggle('active', window.LANG === 'tr');
-    document.getElementById('sett-lang-en').classList.toggle('active', window.LANG === 'en');
-  }
-  document.getElementById('sett-mus-on').onclick  = () => { window.musicEnabled = true;  localStorage.setItem('sadrazam_music','on');  playMenuMusic(); updateSettingsUI(); };
-  document.getElementById('sett-mus-off').onclick = () => { window.musicEnabled = false; localStorage.setItem('sadrazam_music','off'); stopAllMusic();  updateSettingsUI(); };
-  document.getElementById('sett-sfx-on').onclick  = () => { window.sfxEnabled = true;  localStorage.setItem('sadrazam_sfx','on');  updateSettingsUI(); };
-  document.getElementById('sett-sfx-off').onclick = () => { window.sfxEnabled = false; localStorage.setItem('sadrazam_sfx','off'); updateSettingsUI(); };
-  document.getElementById('sett-lang-tr').onclick = () => { setLang('tr'); updateSettingsUI(); window.applyI18nHTML && window.applyI18nHTML(); };
-  document.getElementById('sett-lang-en').onclick = () => { setLang('en'); updateSettingsUI(); window.applyI18nHTML && window.applyI18nHTML(); };
-  document.getElementById('sett-close').onclick = () => ov.remove();
-  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  document.getElementById('sett-mus-on').textContent  = isEN ? 'On'  : 'Açık';
+  document.getElementById('sett-mus-off').textContent = isEN ? 'Off' : 'Kapalı';
+  document.getElementById('sett-sfx-on').textContent  = isEN ? 'On'  : 'Açık';
+  document.getElementById('sett-sfx-off').textContent = isEN ? 'Off' : 'Kapalı';
 }
+
+function showSettingsOverlay() {
+  _settUpdateUI();
+  _settOv.style.display = 'flex';
+}
+
+function hideSettingsOverlay() {
+  _settOv.style.display = 'none';
+}
+
+document.getElementById('sett-mus-on').addEventListener('click',  () => { window.musicEnabled = true;  localStorage.setItem('sadrazam_music','on');  playMenuMusic(); _settUpdateUI(); });
+document.getElementById('sett-mus-off').addEventListener('click', () => { window.musicEnabled = false; localStorage.setItem('sadrazam_music','off'); stopAllMusic();  _settUpdateUI(); });
+document.getElementById('sett-sfx-on').addEventListener('click',  () => { window.sfxEnabled = true;  localStorage.setItem('sadrazam_sfx','on');  _settUpdateUI(); });
+document.getElementById('sett-sfx-off').addEventListener('click', () => { window.sfxEnabled = false; localStorage.setItem('sadrazam_sfx','off'); _settUpdateUI(); });
+document.getElementById('sett-lang-tr').addEventListener('click', () => { setLang('tr'); _settUpdateUI(); window.applyI18nHTML && window.applyI18nHTML(); });
+document.getElementById('sett-lang-en').addEventListener('click', () => { setLang('en'); _settUpdateUI(); window.applyI18nHTML && window.applyI18nHTML(); });
+document.getElementById('sett-close').addEventListener('click',   hideSettingsOverlay);
+_settOv.addEventListener('click', e => { if (e.target === _settOv) hideSettingsOverlay(); });
 
 function showHaritaOverlay() {
   document.getElementById('harita-overlay')?.remove();
