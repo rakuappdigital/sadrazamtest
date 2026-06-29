@@ -48,46 +48,40 @@
         <p id="intro-subtitle" data-i18n="intro.subtitle">Osmanlı İmparatorluğu'nda<br/>denge peşindeki bir sadrazamın hikâyesi</p>
       </div>
 
-      <!-- Stat önizleme -->
-      <div id="intro-stats-preview">
-        <div class="isp"><img src="assets/icons/icon-saray.png" alt="Saray"><span data-i18n="stat.saray">Saray</span></div>
-        <div class="isp"><img src="assets/icons/icon-ordu.png" alt="Ordu"><span data-i18n="stat.ordu">Ordu</span></div>
-        <div class="isp"><img src="assets/icons/icon-ulema.png" alt="Ulema"><span data-i18n="stat.ulema">Ulema</span></div>
-        <div class="isp"><img src="assets/icons/icon-hazine.png" alt="Hazine"><span data-i18n="stat.hazine">Hazine</span></div>
-      </div>
-
-      <!-- Oyun Modları (yatay 3'lü) -->
+      <!-- Oyun Modları — stat preview yerinde, eski tarz alt alta -->
       <div id="mode-buttons">
-        <button id="btn-start" class="mode-btn mode-primary">
-          <span class="mode-icon">⚜</span>
-          <span class="mode-label" data-i18n="btn.sadrazam_mode">SADRAZAM MODU</span>
+        <button id="btn-start" class="mode-full mode-primary">
+          <span class="mode-full-icon">⚜</span>
+          <span class="mode-full-label" data-i18n="btn.sadrazam_mode">SADRAZAM MODU</span>
         </button>
-        <button id="btn-pasa-mode" class="mode-btn mode-secondary">
-          <span class="mode-icon">📜</span>
-          <span class="mode-label" data-i18n="btn.pasa_mode">PAŞALIK MODU</span>
+        <button id="btn-pasa-mode" class="mode-full mode-secondary">
+          <span class="mode-full-icon">📜</span>
+          <span class="mode-full-label" data-i18n="btn.pasa_mode">PAŞALIK MODU</span>
         </button>
-        <button id="btn-challenge" class="mode-btn mode-challenge" onclick="startChallengeMod()">
-          <span class="mode-icon">⚔</span>
-          <span class="mode-label" data-i18n="btn.challenge">CHALLENGE</span>
+        <button id="btn-challenge" class="mode-full mode-challenge" onclick="startChallengeMod()">
+          <span class="mode-full-icon">⚔</span>
+          <span class="mode-full-label" data-i18n="btn.challenge">CHALLENGE MODU</span>
         </button>
       </div>
 
-      <!-- Yardımcı butonlar (kare, yan yana) -->
+      <!-- Yardımcı butonlar — küçük, ikon olarak -->
       <div id="util-buttons">
         <button id="btn-achievements" class="util-btn">
-          <span class="util-icon">🏆</span>
+          <img src="assets/icons/icon-saray.png" class="util-img-icon" alt="">
           <span class="util-label" data-i18n="btn.achievements">BAŞARIMLARIM</span>
           <span id="ach-count-badge"></span>
         </button>
         <button id="btn-settings" class="util-btn" onclick="showSettingsOverlay()">
-          <span class="util-icon">⚙</span>
+          <img src="assets/icons/icon-ulema.png" class="util-img-icon" alt="">
           <span class="util-label" data-i18n="btn.settings">AYARLAR</span>
         </button>
       </div>
 
       <!-- Alt ghost butonlar -->
       <div id="ghost-buttons">
-        <button id="btn-akcesystem" class="intro-btn ghost" data-i18n="btn.buy_coins">🪙 AKÇE AL</button>
+        <button id="btn-akcesystem" class="intro-btn ghost">
+          <img src="assets/icons/icon-hazine.png" class="ghost-icon-img" alt=""> <span data-i18n="btn.buy_coins">AKÇE AL</span>
+        </button>
         <button id="btn-howto" class="intro-btn ghost" data-i18n="btn.howto">NASIL OYNANIR?</button>
       </div>
 

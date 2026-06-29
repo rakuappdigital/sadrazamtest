@@ -4913,13 +4913,21 @@ function showSettingsOverlay() {
       <button class="sett-close" id="sett-close">${window.t('sett.close')}</button>
     </div>`;
   document.body.appendChild(ov);
-  const reopen = () => { ov.remove(); showSettingsOverlay(); };
-  document.getElementById('sett-mus-on').onclick  = () => { window.musicEnabled = true;  localStorage.setItem('sadrazam_music','on');  playMenuMusic(); reopen(); };
-  document.getElementById('sett-mus-off').onclick = () => { window.musicEnabled = false; localStorage.setItem('sadrazam_music','off'); stopAllMusic(); reopen(); };
-  document.getElementById('sett-sfx-on').onclick  = () => { window.sfxEnabled = true;  localStorage.setItem('sadrazam_sfx','on');  reopen(); };
-  document.getElementById('sett-sfx-off').onclick = () => { window.sfxEnabled = false; localStorage.setItem('sadrazam_sfx','off'); reopen(); };
-  document.getElementById('sett-lang-tr').onclick = () => { setLang('tr'); reopen(); };
-  document.getElementById('sett-lang-en').onclick = () => { setLang('en'); reopen(); };
+  // Overlay kapatıp açmak yerine in-place güncelle (flash olmaz)
+  function updateSettingsUI() {
+    document.getElementById('sett-mus-on').classList.toggle('active', window.musicEnabled !== false);
+    document.getElementById('sett-mus-off').classList.toggle('active', window.musicEnabled === false);
+    document.getElementById('sett-sfx-on').classList.toggle('active', window.sfxEnabled !== false);
+    document.getElementById('sett-sfx-off').classList.toggle('active', window.sfxEnabled === false);
+    document.getElementById('sett-lang-tr').classList.toggle('active', window.LANG === 'tr');
+    document.getElementById('sett-lang-en').classList.toggle('active', window.LANG === 'en');
+  }
+  document.getElementById('sett-mus-on').onclick  = () => { window.musicEnabled = true;  localStorage.setItem('sadrazam_music','on');  playMenuMusic(); updateSettingsUI(); };
+  document.getElementById('sett-mus-off').onclick = () => { window.musicEnabled = false; localStorage.setItem('sadrazam_music','off'); stopAllMusic();  updateSettingsUI(); };
+  document.getElementById('sett-sfx-on').onclick  = () => { window.sfxEnabled = true;  localStorage.setItem('sadrazam_sfx','on');  updateSettingsUI(); };
+  document.getElementById('sett-sfx-off').onclick = () => { window.sfxEnabled = false; localStorage.setItem('sadrazam_sfx','off'); updateSettingsUI(); };
+  document.getElementById('sett-lang-tr').onclick = () => { setLang('tr'); updateSettingsUI(); window.applyI18nHTML && window.applyI18nHTML(); };
+  document.getElementById('sett-lang-en').onclick = () => { setLang('en'); updateSettingsUI(); window.applyI18nHTML && window.applyI18nHTML(); };
   document.getElementById('sett-close').onclick = () => ov.remove();
   ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
 }
