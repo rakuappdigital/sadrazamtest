@@ -3108,14 +3108,15 @@ function checkSultanSabir() {
 function showGucUyarisi() {
   const overlay = document.createElement("div");
   overlay.id = "guc-uyarisi-overlay";
+  const _isENgu = window.LANG === 'en';
   overlay.innerHTML = `
     <div id="guc-uyarisi-box">
-      <div id="guc-uyarisi-label">BİLİNMEYEN BİR EL'DEN</div>
+      <div id="guc-uyarisi-label">${_isENgu ? 'FROM AN UNKNOWN HAND' : "BİLİNMEYEN BİR EL'DEN"}</div>
       <img id="guc-uyarisi-img" src="assets/characters/mysterious-letter.jpg" alt="Mektup" onerror="this.style.display='none'">
       <div id="guc-uyarisi-divider"></div>
-      <div id="guc-uyarisi-text">"Gölgeniz fazla uzuyor, Paşa. Bazı gölgeler çok büyüyünce sahibini yer. Dikkat edin."</div>
-      <div id="guc-uyarisi-imza">— İsmini bilmenize gerek yok</div>
-      <button id="guc-uyarisi-kapat">Mektubu Yak</button>
+      <div id="guc-uyarisi-text">${_isENgu ? '"Your shadow grows too long, Pasha. Some shadows, when they grow too large, devour their owner. Be careful."' : '"Gölgeniz fazla uzuyor, Paşa. Bazı gölgeler çok büyüyünce sahibini yer. Dikkat edin."'}</div>
+      <div id="guc-uyarisi-imza">${_isENgu ? '— You need not know the name' : '— İsmini bilmenize gerek yok'}</div>
+      <button id="guc-uyarisi-kapat">${_isENgu ? 'Burn the Letter' : 'Mektubu Yak'}</button>
     </div>`;
   document.body.appendChild(overlay);
   Haptics.crisisCard();
