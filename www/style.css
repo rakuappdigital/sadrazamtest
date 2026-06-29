@@ -829,26 +829,19 @@ html, body {
 /* Header Row (Title + Year) */
 #header-row {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
+  justify-content: center;
+  gap: 4px;
+  margin: 2px 0 8px;
   position: relative;
   z-index: 1;
-}
-#header-action-btns {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
 }
 
 #title-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
-  letter-spacing: 2px;
+  font-size: 11px;
   color: rgba(201,162,39,0.45);
-  flex-shrink: 0;
   letter-spacing: 4px;
   font-weight: normal;
   text-transform: uppercase;
@@ -856,14 +849,9 @@ html, body {
 
 #year-label {
   font-family: 'Cinzel Decorative', serif;
-  font-size: 12px;
+  font-size: 16px;
   color: var(--gold);
-  letter-spacing: 1px;
-  flex: 1;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  letter-spacing: 2px;
 }
 
 #dynamic-subtitle {
@@ -3137,14 +3125,47 @@ html, body {
 .lang-btn.lang-active { border-color: rgba(201,162,39,0.8); color: rgb(201,162,39); background: rgba(201,162,39,0.08); }
 .lang-sep { color: rgba(201,162,39,0.3); font-size: 12px; }
 
+/* ── Ana Menü Butonları ── */
+#mode-buttons { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-bottom: 12px; }
+.mode-full {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 13px 16px; border-radius: 12px; cursor: pointer; border: 1px solid;
+  transition: all 0.2s ease; -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; text-align: left;
+}
+.mode-full-icon { font-size: 18px; flex-shrink: 0; }
+.mode-full-label { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1.5px; flex: 1; }
+.mode-full.mode-primary { background: rgba(201,162,39,0.1); border-color: rgba(201,162,39,0.4); color: #C9A227; }
+.mode-full.mode-primary:active { background: rgba(201,162,39,0.2); }
+.mode-full.mode-secondary { background: rgba(255,255,255,0.03); border-color: rgba(201,162,39,0.2); color: rgba(220,200,158,0.8); }
+.mode-full.mode-secondary:active { background: rgba(255,255,255,0.07); }
+.mode-full.mode-challenge { background: rgba(142,68,173,0.1); border-color: rgba(142,68,173,0.4); color: rgba(200,150,220,0.9); }
+.mode-full.mode-challenge:active { background: rgba(142,68,173,0.2); }
 
+/* ── Yardımcı Butonlar ── */
+#util-buttons { display: flex; gap: 8px; width: 100%; }
+.util-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 9px 10px; border-radius: 10px; cursor: pointer;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(201,162,39,0.18);
+  color: rgba(200,175,135,0.7); transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.util-btn:active { background: rgba(255,255,255,0.07); border-color: rgba(201,162,39,0.38); }
+.util-img-icon { width: 20px; height: 20px; object-fit: contain; opacity: 0.75; flex-shrink: 0; }
+.util-label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.8px; }
+#ghost-buttons { display: flex; gap: 8px; width: 100%; }
+#ghost-buttons .intro-btn { flex: 1; text-align: center; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.ghost-icon-img { width: 14px; height: 14px; object-fit: contain; opacity: 0.65; }
 
 /* ── Oyun İçi: Sağlık barı (absolute, sol köşe, layout bozmaz) ── */
 #health-inline {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
+  position: absolute;
+  left: 12px;
+  top: max(52px, calc(env(safe-area-inset-top, 0px) + 48px));
+  display: flex; align-items: center; gap: 4px;
+  z-index: 19;
+  pointer-events: none;
 }
 #health-icon-svg { width: 12px; height: 12px; color: rgba(201,162,39,0.55); flex-shrink: 0; }
 #health-bar-h { width: 36px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
@@ -3289,109 +3310,3 @@ html, body {
 .cp-tick { font-size:12px; width:14px; text-align:center; color:rgba(142,68,173,0.7); }
 .cp-item.cg-done .cp-tick { color:rgba(80,200,80,0.8); }
 .challenge-btn { background:linear-gradient(135deg,rgba(142,68,173,0.15),rgba(192,57,43,0.1)) !important; border-color:rgba(142,68,173,0.5) !important; color:rgba(200,160,220,0.9) !important; }
-
-#header-action-btns button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
-  border: 1px solid rgba(201,162,39,0.25);
-  background: rgba(201,162,39,0.06);
-  color: rgba(201,162,39,0.65);
-  cursor: pointer;
-  font-size: 14px;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  transition: all 0.2s;
-}
-#header-action-btns button:active {
-  background: rgba(201,162,39,0.18);
-  border-color: rgba(201,162,39,0.55);
-}
-
-
-/* ── Giriş Ekranı Butonları ─────────────────────────────────────── */
-
-/* Mod butonları: tam genişlik, ikon + metin, alt alta */
-#mode-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  width: 100%;
-  margin-bottom: 10px;
-}
-.mode-btn {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 14px 18px;
-  border-radius: 12px;
-  cursor: pointer;
-  border: 1px solid;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  transition: opacity 0.15s;
-}
-.mode-btn:active { opacity: 0.75; }
-.mbtn-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-  line-height: 1;
-}
-.mbtn-label {
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
-  letter-spacing: 1.5px;
-}
-.mode-btn.mode-primary  { background: rgba(201,162,39,0.1);  border-color: rgba(201,162,39,0.45); color: #C9A227; }
-.mode-btn.mode-secondary { background: rgba(255,255,255,0.03); border-color: rgba(201,162,39,0.2);  color: rgba(220,200,158,0.82); }
-.mode-btn.mode-challenge { background: rgba(142,68,173,0.1);  border-color: rgba(142,68,173,0.45); color: rgba(200,150,220,0.9); }
-
-/* İkincil butonlar: küçük kare ikonlar yan yana */
-#util-buttons {
-  display: flex;
-  gap: 9px;
-  width: 100%;
-}
-.util-btn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 11px 6px;
-  border-radius: 10px;
-  cursor: pointer;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(201,162,39,0.2);
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  transition: opacity 0.15s;
-  position: relative;
-}
-.util-label {
-  font-family: 'Cinzel', serif;
-  font-size: 8px;
-  letter-spacing: 0.5px;
-  color: rgba(200,175,135,0.65);
-  text-align: center;
-  line-height: 1.2;
-}
-.util-btn:active { opacity: 0.7; }
-.util-img-icon {
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-  opacity: 0.8;
-}
-#ach-count-badge {
-  position: absolute;
-  top: 5px;
-  right: 6px;
-  font-size: 8px;
-  color: rgba(201,162,39,0.7);
-}

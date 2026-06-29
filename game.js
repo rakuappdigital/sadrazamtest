@@ -1635,10 +1635,6 @@ function checkResumeAvailable() {
   try {
     const s = JSON.parse(raw);
     if (!s.v || s.v < 2) { clearSave(); return; }
-    // Eski CARDS_PER_YEAR=10 kayıtları temizle (yeni=24)
-    if (s.cardsPlayed > 0 && s.year > 0 && (s.cardsPlayed / s.year) < 15) {
-      clearSave(); return; // 10 kart/yıl sisteminden kalma kayıt
-    }
     // Resume banner göster
     const banner = document.createElement('div');
     banner.id = 'resume-banner';
