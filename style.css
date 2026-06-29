@@ -70,7 +70,7 @@ html, body {
 
 /* ── SHARED SCREEN ── */
 #intro-screen, #howto-screen, #game, #gameover-screen,
-#sultan-screen, #advisor-screen, #achievements-screen {
+#sultan-screen, #advisor-screen, #achievements-screen, #settings-overlay {
   position: fixed;
   inset: 0;
   display: flex;
@@ -3104,3 +3104,84 @@ html, body {
   cursor: pointer; transition: background 0.2s, border-color 0.2s;
 }
 .ys-btn:hover { background: rgba(201,162,39,0.2); border-color: rgba(201,162,39,0.7); }
+
+/* ── Yeni: özel SVG ikonlar, ghost-buttons-row, ayarlar overlay ── */
+.btn-icon-svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+#ghost-buttons-row {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 4px;
+}
+#ghost-buttons-row .intro-btn.ghost {
+  flex: 1;
+  max-width: none;
+}
+
+#settings-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 36px 24px 48px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+}
+
+.settings-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'IM Fell English', serif;
+  font-size: 14px;
+  color: rgba(240,230,208,0.85);
+}
+
+.settings-toggle {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  background: rgba(201,162,39,0.15);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  cursor: pointer;
+}
+.settings-toggle.settings-toggle-off {
+  background: transparent;
+  border-color: rgba(201,162,39,0.25);
+  color: rgba(201,162,39,0.4);
+}
+
+.settings-lang-group {
+  display: flex;
+  gap: 6px;
+}
+.settings-lang-group .lang-btn {
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(201,162,39,0.25);
+  background: transparent;
+  color: rgba(201,162,39,0.5);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  cursor: pointer;
+}
+.settings-lang-group .lang-btn.lang-active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(201,162,39,0.15);
+}

@@ -919,7 +919,7 @@ document.getElementById("btn-akcesystem").addEventListener("click", () => {
   overlay.addEventListener("click", e => { if(e.target===overlay) close(); });
 });
 
-document.getElementById("btn-howto").addEventListener("click", () => {
+document.getElementById("btn-howto")?.addEventListener("click", () => {
   introScreen.style.display = "none";
   howtoScreen.classList.add("visible");
 });
@@ -1332,8 +1332,8 @@ function _switchMusic(target) {
   }, delay);
 }
 
-function playMenuMusic() { _switchMusic('menu'); }
-function playGameMusic()  { _switchMusic('game'); }
+function playMenuMusic() { if (window.musicEnabled !== false) _switchMusic('menu'); }
+function playGameMusic()  { if (window.musicEnabled !== false) _switchMusic('game'); }
 function stopAllMusic() {
   _activeMusicTarget = null;
   _ensureAudio();
@@ -4634,6 +4634,54 @@ document.getElementById("btn-ach-back")?.addEventListener("click", () => {
   const badge = document.getElementById("ach-count-badge");
   if (badge && unlocked.length > 0) badge.textContent = `${unlocked.length}/${ACHIEVEMENTS.length}`;
 })();
+
+// ── Ayarlar (müzik / efekt / dil) ───────────────────────────────────
+window.musicEnabled = localStorage.getItem("sadrazam_music") !== "off";
+window.sfxEnabled = localStorage.getItem("sadrazam_sfx") !== "off";
+
+function updateSettingsUI() {
+  const isEN = window.LANG === 'en';
+  const musicBtn = document.getElementById("settings-music-toggle");
+  const sfxBtn = document.getElementById("settings-sfx-toggle");
+  if (musicBtn) {
+    musicBtn.textContent = window.musicEnabled ? (isEN ? "ON" : "AÇIK") : (isEN ? "OFF" : "KAPALI");
+    musicBtn.classList.toggle("settings-toggle-off", !window.musicEnabled);
+  }
+  if (sfxBtn) {
+    sfxBtn.textContent = window.sfxEnabled ? (isEN ? "ON" : "AÇIK") : (isEN ? "OFF" : "KAPALI");
+    sfxBtn.classList.toggle("settings-toggle-off", !window.sfxEnabled);
+  }
+}
+
+function toggleMusicSetting() {
+  window.musicEnabled = !window.musicEnabled;
+  localStorage.setItem("sadrazam_music", window.musicEnabled ? "on" : "off");
+  if (window.musicEnabled) {
+    if (gameScreen && !gameScreen.classList.contains("hidden")) { if (window.playGameMusic) playGameMusic(); }
+    else { if (window.playMenuMusic) playMenuMusic(); }
+  } else {
+    if (window.stopAllMusic) stopAllMusic();
+  }
+  updateSettingsUI();
+}
+
+function toggleSfxSetting() {
+  window.sfxEnabled = !window.sfxEnabled;
+  localStorage.setItem("sadrazam_sfx", window.sfxEnabled ? "on" : "off");
+  updateSettingsUI();
+}
+
+function showSettingsOverlay() {
+  const overlay = document.getElementById("settings-overlay");
+  if (!overlay) return;
+  updateSettingsUI();
+  overlay.classList.remove("hidden");
+}
+
+function hideSettingsOverlay() {
+  const overlay = document.getElementById("settings-overlay");
+  if (overlay) overlay.classList.add("hidden");
+}
 
 // ── Init ──────────────────────────────────────────────────────────
 updateStatUI();
