@@ -164,8 +164,8 @@ const ADVISORS = [
     name: "Piri Reis",
     icon: '<img src="assets/advisors/advisor-piri-reis.png" alt="Piri Reis">',
     title: "Kaptan-ı Derya",
-    desc: "Her yıl Hazine +6",
-    effect: "hazine_per_year_6"
+    desc: "Her yıl Hazine +8",
+    effect: "hazine_per_year_8"
   },
   {
     id: "sinan",
@@ -3510,7 +3510,7 @@ function advanceYear() {
   if (window.playYearAdvance) playYearAdvance();
 
   if (hasAdvisor("piri_reis")) {
-    stats.hazine = Math.min(100, stats.hazine + 6);
+    stats.hazine = Math.min(100, stats.hazine + 8);
   }
 
   stats.hazine = Math.max(0, stats.hazine - PASSIVE_HAZINE_DRAIN);
