@@ -865,8 +865,11 @@ function startChallengeMod() {
   isChallengeMode = true;
   challengeGoals  = pickChallengeGoals();
   challengeComplete = false;
-  // Normal oyun akışını başlat
-  document.getElementById('btn-start')?.click();
+  isPasaMode = false;
+  // btn-start.click() YAPMA — o listener isChallengeMode=false yapar
+  if (window.playSelectConfirm) playSelectConfirm();
+  introScreen.style.display = "none";
+  showSultanScreen();
 }
 
 function updateChallengeUI() {
