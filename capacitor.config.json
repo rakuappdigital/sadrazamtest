@@ -4,7 +4,7 @@
   "webDir": "www",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 3000,
+      "launchShowDuration": 5000,
       "backgroundColor": "#080612",
       "showSpinner": false
     },

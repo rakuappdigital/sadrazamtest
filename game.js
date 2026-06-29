@@ -481,26 +481,16 @@ function getFisildayanCard() {
 }
 
 const ZAMAN_TEXTS = [
-  "Otonom araçlar piyasayı süpürüyor Paşam. Arabalar kendi kendine gidiyor. Sürücü içinde uyuyor.",
-  "Bir hastalık çıktı, tüm dünya evine kapandı. İki yıl boyunca. Veba bu kadar bile yapamamıştı.",
-  "Bir adam 280 milyon kişinin buluştuğu meydanı satın aldı ve adını değiştirdi.",
-  "Yapay zeka şiir yazıyor, resim çiziyor, hukuk danışmanlığı yapıyor. İnsanlar ne iş yapacak bilmiyor.",
-  "Tesla denen adam arabayı, roketi ve beyni icat etti. Aynı adam. Şimdi beynini de satmak istiyor.",
-  "İnsanlar telefona bakarak yürüyor. Direğe çarpıyor, nehre düşüyor. Kimse durmuyor, Paşam.",
-  "Kripto para denen şey icat ettiler — görünmez, elle tutulmaz, ama insanlar servetini verdi.",
-  "Bir kadın dans videosu çekiyor, milyonlar seyrediyor, bu işten para kazanıyor. Mesleği bu.",
-  "Uzaya tur satılıyor Paşam. Padişah değil, zengin vatandaş gidiyor.",
-  "ChatGPT denen şey ödev yazıyor, şiir yazıyor, sınava giriyor, doktoru geçiyor. Hani bu Divan'da işe yarar.",
-  "İnsanlar eve kapanınca 'binge watch' denen şeyi icat ettiler — on saatte on bölüm dizi.",
-  "Bir adam saçını mora boyadı, koluna dövme vurdu ve ünlü oldu. Mesleği bu, Paşam.",
-  "Amazon denen tüccar her şeyi satıyor — yiyecek, giysi, ilaç, kanepe. Çarşılar kapandı.",
-  "İnsanlar bilek saatiyle uyku takip ediyor. Kaç saat uyudum diye kontrol ediyor. Uyku artık bir görev.",
-  "Seçimler sosyal medyadan kazanılıyor. Miting yok, meydan yok — ekrandan iktidar, Paşam.",
-  "İklim değişiyor diyorlar. Kış gelmiyor, yazlar çok sıcak. Paşam, bizden mi kaldı bu?",
-  "Metaverse denen sanal dünya kurdular. İnsanlar oraya taşınıyor. Gerçek dünya ısıya bırakılıyor.",
-  "Çocuklar ekrana bakarak büyüyor. Kitap nedir bilmiyor, Divan şiiri hiç bilmiyor tabii.",
-  "Yapay zeka müzik yapıyor, sanat sergisi açıyor ve eleştirmen ödülü kazanıyor. Üstelik imzasız.",
-  "Filistin'de hâlâ savaş var. Osmanlı zamanında da vardı. Bazı şeyler değişmiyor, Paşam."
+  "Paşam, insanlar cebinde bir şey taşıyor — telefon diyorlar. Tüm kütüphane içinde. Ama 'selam nasılsın' mesajına iki günde cevap veriyorlar.",
+  "Bir hastalık çıktı, tüm dünya evine kapandı. İki yıl. Veba bu kadar bile yapamamıştı. Üstelik ekmek maya stokları tükendi önce.",
+  "Yapay zeka icat ettiler. Şiir yazıyor, resim çiziyor, sadrazam bile olabilir. Sizi tehdit etmesini istedim ama reddetti, 'etik kaygılarım var' dedi.",
+  "Paşam, bir adam 'influencer' oluyor — yani hiçbir şey yapmadan güzel görünerek para kazanıyor. Divan'da neden böyle bir kadro yok anlamıyorum.",
+  "Kripto para denen görünmez altın icat ettiler. Değeri bir gecede yarıya indi. İnsanlar yine de aldı. Hazinedar olsaydınız ağlardınız.",
+  "Uzaya tur satılıyor Paşam. Padişah değil, sıradan zengin gidiyor. Yedi kat semaya çıkıyorlar, sonra dönüyorlar ve bunu herkese anlatıyorlar.",
+  "Sosyal medya var, milyonlar birbirine bakıyor. Bir kedi videosu Divan fermanından daha fazla insan görüyor. Kedi ünlü, sizin adınızı bilmiyor.",
+  "İnsanlar telefona bakarak yürüyor, direğe çarpıyor, nehre düşüyor. Kimse durmuyor çünkü herkes telefona bakıyor. Şehir böyle işliyor.",
+  "Paşam, seçimler var — her vatandaş oy kullanıyor. Siz de Divan'da böyle yapmayı düşündünüz mü? Neyse, tavsiye etmiyorum.",
+  "Bir adam internette 'benim günlük rutinom' diye video çekiyor — sabah kahvesi, spor, öğle yemeği. Bunu milyonlar izliyor. Ben de izledim, itiraf ediyorum."
 ];
 let _zamanIdx = 0;
 function getZamanCard() {
@@ -659,14 +649,15 @@ let maxHazine = 0;
 let minAnyStat = 100;
 
 // Easter egg sayaçları (oyun başında sıfırlanır)
-let _easterKediNext    = 75;
-let _easterYanlisNext  = 60;
+let _easterKediNext    = 65;
+let _easterYanlisNext  = 55;
 let _easterYanlisCount = 0;
-let _easterKehanetNext = 65;
+let _easterKehanetNext = 60;
+let _easterEvliyaNext  = 45;
 let _easterPargaliDone = false;
-let _easterHistNext    = 80;  // Barbaros / Leonardo / Mahidevran
+let _easterHistNext    = 70;  // Barbaros / Leonardo / Mahidevran
 let _easterHistIdx     = 0;
-let _easterZamanNext   = 90;  // Zaman Yolcusu
+let _easterZamanNext   = 80;  // Zaman Yolcusu
 let consecutiveSameDir = 0;
 let lastDir = null;
 let cursedEver = false;
@@ -964,15 +955,19 @@ function startGame() {
   characterMemory = {};
 
   // Easter egg sayaçları sıfırla
-  _easterKediNext    = 75;
-  _easterYanlisNext  = 60;
+  _easterKediNext    = 65;
+  _easterYanlisNext  = 55;
   _easterYanlisCount = 0;
-  _easterKehanetNext = 65;
+  _easterKehanetNext = 60;
+  _easterEvliyaNext  = 45;
   _easterPargaliDone = false;
-  _easterHistNext    = 80;
+  _padisahZiyaretiNext  = 50;
+  _padisahZiyaretiCount = 0;
+  _sultanWarningShown   = false;
+  _easterHistNext    = 70;
   _easterHistIdx     = 0;
-  _easterZamanNext   = 90;
-  _easterFisildayanNext = 110;
+  _easterZamanNext   = 80;
+  _easterFisildayanNext = 95;
   _fisildayanIdx     = 0;
   _donumNextCard     = 42;
   _donumShownThisGame = false;
@@ -1142,6 +1137,7 @@ function _ensureAudio() {
         _fadeVol(this, 0, 2000, () => {
           this.currentTime = 0;
           this._loopFading = false;
+          this.play().catch(() => {});
           _fadeVol(this, MUSIC_VOL, 1500);
         });
       }
@@ -1158,6 +1154,7 @@ function _ensureAudio() {
         _fadeVol(this, 0, 2000, () => {
           this.currentTime = 0;
           this._loopFading = false;
+          this.play().catch(() => {});
           _fadeVol(this, MUSIC_VOL, 1500);
         });
       }
@@ -1213,6 +1210,22 @@ function stopAllMusic() {
   _fadeVol(_menuAudio, 0, FADE_MS, () => { if (_menuAudio) { _menuAudio.pause(); _menuAudio.currentTime = 0; } });
   _fadeVol(_gameAudio, 0, FADE_MS, () => { if (_gameAudio) { _gameAudio.pause(); _gameAudio.currentTime = 0; } });
 }
+
+// Uygulama background'a geçince müziği duraklat, geri gelince devam et
+document.addEventListener('visibilitychange', () => {
+  if (!_menuAudio && !_gameAudio) return;
+  if (document.hidden) {
+    if (_menuAudio && !_menuAudio.paused) { _menuAudio.pause(); _menuAudio._wasPlaying = true; }
+    if (_gameAudio && !_gameAudio.paused) { _gameAudio.pause(); _gameAudio._wasPlaying = true; }
+  } else {
+    if (_activeMusicTarget === 'menu' && _menuAudio && _menuAudio._wasPlaying) {
+      _menuAudio.play().catch(() => {}); _menuAudio._wasPlaying = false;
+    }
+    if (_activeMusicTarget === 'game' && _gameAudio && _gameAudio._wasPlaying) {
+      _gameAudio.play().catch(() => {}); _gameAudio._wasPlaying = false;
+    }
+  }
+});
 
 // ── AMBIENT MÜZİK (Web Audio — efekt sesleri için korundu) ───────
 let ambientCtx = null;
@@ -1402,6 +1415,7 @@ function saveGameState() {
       stats, year, cardsPlayed, hicriYear, hicriMonth,
       activeFlags: Object.keys(activeFlags),
       isNight, sultanSabir, currentTitle, isPasaMode, pasaPromoted,
+      sultanWarningShown: _sultanWarningShown,
       playerItems, playerItemExpiry, selectedSultanId: selectedSultan?.id,
       selectedAdvisorIds: selectedAdvisors.map(a => a.id),
       characterMemory, factionFavors, factionPressureSent,
@@ -1481,6 +1495,7 @@ function loadGameState(s) {
   hiddenTraitor = s.hiddenTraitor;
   scheduledCards = s.scheduledCards || [];
   forcedQueue = (s.forcedQueueIds || []).map(id => allCards.find(c => c.id === id)).filter(Boolean);
+  _sultanWarningShown = s.sultanWarningShown || false;
   isGameOver = false;
   activeArcs = {};
   triggeredArcs = {};
@@ -1695,6 +1710,42 @@ function weightedPick(cards) {
 // ── Card Display ──────────────────────────────────────────────────
 let currentCard = null;
 
+// Karakter görsel versiyonu sistemi
+// MADDE 7: Belli karakterler yıllar içinde görsel değiştiriyor (v2 dosyası gerekir)
+// MADDE 8: Vatandaş (halk_temsilcisi) için farklı görseller rastgele seçilir
+const CHARACTER_EVOLUTIONS = {
+  // 50+ kartta görsel değişiyor (assets/characters/9-cellat_v2.jpg gerekir)
+  "9-cellat":   { threshold: 50, version: "9-cellat_v2" },
+  // 50+ kartta görsel değişiyor (assets/characters/2-yeniceri_v2.jpg gerekir)
+  "2-yeniceri": { threshold: 50, version: "2-yeniceri_v2" },
+};
+
+// Vatandaş için birden fazla görsel (2-3-4 eklenebilir)
+const HALK_TEMSILCISI_VARIANTS = [
+  "15-halk_temsilcisi",
+  "15-halk_temsilcisi_2",
+  "15-halk_temsilcisi_3",
+  "15-halk_temsilcisi_4",
+];
+// Oyun boyunca her vatandaş kartında rastgele bir görsel seç
+let _halkTemsilcisiCurrent = 0;
+
+function getCharacterImageName(key) {
+  // Vatandaş: görseller arasında döner
+  if (key === "15-halk_temsilcisi") {
+    const idx = Math.floor(Math.random() * HALK_TEMSILCISI_VARIANTS.length);
+    return HALK_TEMSILCISI_VARIANTS[idx];
+  }
+
+  // Karakter evrimi: yeterli kart oynanmışsa v2'yi dene
+  const evo = CHARACTER_EVOLUTIONS[key];
+  if (evo && cardsPlayed >= evo.threshold) {
+    return evo.version; // Dosya yoksa preload.onerror gizler, sorun yok
+  }
+
+  return key;
+}
+
 function dealNext() {
   if (isGameOver) return;
 
@@ -1714,7 +1765,13 @@ function dealNext() {
   }
 
   // Her kart geçişinde no-swipe ve artık görünmemesi gereken panelleri temizle
-  card.classList.remove("no-swipe");
+  card.classList.remove("no-swipe", "pargali-ghost");
+  if (card._ghostTimer) { clearTimeout(card._ghostTimer); card._ghostTimer = null; }
+  if (card._ghostReveal) {
+    card.removeEventListener("touchstart", card._ghostReveal);
+    card.removeEventListener("mousedown",  card._ghostReveal);
+    card._ghostReveal = null;
+  }
   const chancePanel = document.getElementById("chance-panel");
   if (chancePanel) chancePanel.classList.add("hidden");
   const devamBtn = document.getElementById("letter-devam-btn");
@@ -1787,7 +1844,7 @@ function dealNext() {
   const key = c.character || "";
   deathCharacterKey = key;
 
-  const imgName = key + ".jpg";
+  const imgName = getCharacterImageName(key) + ".jpg";
   const imgPath = "assets/characters/" + encodeURIComponent(imgName);
 
   // Gizli hain hint
@@ -2014,16 +2071,14 @@ function showEasterCard(c) {
   // Pargalı ghost efekti
   if (isPargali) {
     card.classList.add("pargali-ghost");
-    // Dokunca 2 sn blur kalkar, sonra geri gelir
-    let _ghostTimer = null;
+    // Dokunca 2 sn blur kalkar, sonra geri gelir — timer card üzerinde saklanır, dealNext temizler
     const _ghostReveal = () => {
       card.classList.remove("pargali-ghost");
-      clearTimeout(_ghostTimer);
-      _ghostTimer = setTimeout(() => card.classList.add("pargali-ghost"), 2000);
+      clearTimeout(card._ghostTimer);
+      card._ghostTimer = setTimeout(() => card.classList.add("pargali-ghost"), 2000);
     };
     card.addEventListener("touchstart", _ghostReveal, { passive: true, once: false });
     card.addEventListener("mousedown",  _ghostReveal, { once: false });
-    // Kart geçince listener'ları temizle
     card._ghostReveal = _ghostReveal;
   } else {
     card.classList.remove("pargali-ghost");
@@ -2159,6 +2214,77 @@ function triggerYanlisIdam() {
   }, 2200);
 }
 
+// ── Padişah Ziyareti — bizzat gelip konuşur, reddedince ölürsün ──
+let _padisahZiyaretiNext = 50; // ilk ziyaret ~50. kartta
+let _padisahZiyaretiCount = 0;
+
+const PADISAH_ZIYARET_TEXTS = [
+  { text: "Sadrazam. Seninle yüz yüze konuşmak istedim. Osmanlı'ya olan bağlılığın sürecek mi?", evet: "Canım ve kanım Devlet'e feda, Hünkarım.", hayir_trigger: true },
+  { text: "Divan'dan haberler geldi. Seni doğrudan sormak istedim — bana sadık mısın?", evet: "Sadakatimden şüphe etmeyin Padişahım.", hayir_trigger: true },
+  { text: "Vezirler hakkında söylentiler dolaşıyor. Sen bu söylentilerin dışında mısın, Sadrazam?", evet: "Evet Efendim, her zaman hizmetinizdeyim.", hayir_trigger: true },
+  { text: "Bu gece sarayda kalmam gerekiyordu. Seninle oturup düşündüm. Seçimlerinden memnun musun?", evet: "Her kararım Devlet'in hayrınadır, Sultanım.", hayir_trigger: true },
+  { text: "Topkapı'nın duvarları çok şey duyar. Ve ben çok şey bilirim. Anlıyor musun beni, Sadrazam?", evet: "Her zaman anlıyorum Efendim. Emrinizdeyim.", hayir_trigger: true },
+];
+
+function tryPadisahZiyareti() {
+  if (isGameOver) return;
+  if (cardsPlayed < _padisahZiyaretiNext) return;
+  if (year < 3) return; // İlk 3 yıl gelmesin
+  _padisahZiyaretiNext = cardsPlayed + Math.round(45 * (0.75 + Math.random() * 0.5));
+  _padisahZiyaretiCount++;
+  showPadisahZiyareti();
+}
+
+function showPadisahZiyareti() {
+  const data = PADISAH_ZIYARET_TEXTS[Math.floor(Math.random() * PADISAH_ZIYARET_TEXTS.length)];
+
+  hideNegotiationPanel();
+  Haptics.crisisCard();
+  if (window.playLetterArrival) playLetterArrival();
+
+  // Normal kart boyutunda göster — sultan görseli tam ekran
+  cardImage.removeAttribute("src");
+  cardImage.style.visibility = "hidden";
+  const preload = new Image();
+  preload.onload = () => { cardImage.src = "assets/characters/1-sultan.jpg"; cardImage.style.visibility = ""; };
+  preload.onerror = () => { cardImage.style.visibility = "hidden"; };
+  preload.src = "assets/characters/1-sultan.jpg";
+
+  charName.textContent = "Padişahım";
+  cardText.textContent = data.text;
+  choiceLeft.textContent  = "Reddet";
+  choiceRight.textContent = "Biat Et";
+  choiceLeft.style.opacity  = "0";
+  choiceRight.style.opacity = "0";
+  overlayL.style.opacity = "0";
+  overlayR.style.opacity = "0";
+  card.classList.remove("letter-card", "no-swipe", "pargali-ghost");
+
+  // Kart tipini özel olarak işaretle — decide() bu tipi yakalar
+  currentCard = { type: "padisah_ziyaret", character: "padisah-ziyaret", _data: data };
+  deathCharacterKey = "1-sultan";
+
+  // Onay butonu
+  let easterBtn = document.getElementById("easter-action-btn");
+  if (!easterBtn) {
+    easterBtn = document.createElement("button");
+    easterBtn.id = "easter-action-btn";
+    document.getElementById("card-bottom").appendChild(easterBtn);
+  }
+  easterBtn.textContent = data.evet;
+  easterBtn.className = "easter-btn padisah-ziyaret";
+  easterBtn.classList.remove("hidden");
+  easterBtn.onclick = () => {
+    easterBtn.classList.add("hidden");
+    flyOff("right");
+  };
+
+  const invBtn = document.getElementById("investigate-btn");
+  if (invBtn) invBtn.classList.add("hidden");
+
+  animateCardIn();
+}
+
 // ── Sultan Olay Kartı ─────────────────────────────────────────────
 function showSultanEventCard(c) {
   hideNegotiationPanel();
@@ -2190,7 +2316,7 @@ function showSultanEventCard(c) {
   const effectLabel = isPositive ? "Tüm güçler +20" : "Tüm güçler −10";
   const effectClass = isPositive ? "positive" : "negative";
 
-  // Overlay
+  // Overlay — sadece onay butonu, swipe/ret yok
   const overlay = document.createElement("div");
   overlay.id = "sultan-event-overlay";
   overlay.innerHTML = `
@@ -2201,7 +2327,6 @@ function showSultanEventCard(c) {
       <div id="sultan-event-divider"></div>
       <div id="sultan-event-text">${eventText}</div>
       <div id="sultan-event-effect" class="sultan-event-effect-box ${effectClass}">${effectLabel}</div>
-      <div id="sultan-swipe-hint">← Reddet &nbsp;&nbsp; Kabul et →</div>
       <button id="sultan-event-devam">Başüstüne Hünkarım</button>
     </div>`;
 
@@ -2210,10 +2335,8 @@ function showSultanEventCard(c) {
   const box = document.getElementById("sultan-event-box");
   let fired = false;
 
-  // Kabul — normal efekt
   const doAccept = () => {
     if (fired) return; fired = true;
-    window._sultanAccept = null; window._sultanReject = null;
     box.style.transition = "transform 0.3s ease, opacity 0.3s ease";
     box.style.transform = "translateX(120%) rotate(12deg)";
     box.style.opacity = "0";
@@ -2223,78 +2346,7 @@ function showSultanEventCard(c) {
     }, 320);
   };
 
-  // Ret — rage + oyun biter
-  const doReject = () => {
-    if (fired) return; fired = true;
-    window._sultanAccept = null; window._sultanReject = null;
-
-    // Arkadaki kart alanını hemen gizle (flash engellemek için)
-    gameScreen.style.pointerEvents = "none";
-    card.style.opacity = "0";
-
-    box.style.transition = "transform 0.3s ease, opacity 0.3s ease";
-    box.style.transform = "translateX(-120%) rotate(-12deg)";
-    box.style.opacity = "0";
-
-    const SULTAN_DEATH_MESSAGES = [
-      "Başın gövdenden ayrıldı. Topkapı'nın taş avlusunda celladın kılıcı tek vuruşta işini bitirdi.",
-      "Boğaz'ın soğuk sularına çuval içinde atıldın. Sultan kıyıdan seyretti.",
-      "Sarayın karanlık koridorlarında hançerle can verdin. Kimse sormadı, kimse aramadı.",
-      "Zehirli şerbet içirildi. Sabah namazında uyandıramadılar seni.",
-      "Yeniçeriler tarafından saray avlusunda taşlandın. Hünkarın buyruğuyla."
-    ];
-    const msg = SULTAN_DEATH_MESSAGES[Math.floor(Math.random() * SULTAN_DEATH_MESSAGES.length)];
-    deathCharacterKey = "1-sultan";
-
-    setTimeout(() => {
-      triggerSultanRage(overlay, () => {
-        overlay.remove();
-        showExecutionAnimation(() => {
-          gameScreen.style.pointerEvents = "";
-          card.style.opacity = "";
-          triggerGameOver(msg);
-        });
-      });
-    }, 320);
-  };
-
-  // Global erişim (keyboard için)
-  window._sultanAccept = doAccept;
-  window._sultanReject = doReject;
-
-  // Buton
-  const devamBtn = document.getElementById("sultan-event-devam");
-  devamBtn.onclick = doAccept;
-
-  // Swipe desteği
-  let startX = 0, dragging = false;
-  box.addEventListener("mousedown",  e => { startX = e.clientX; dragging = true; box.style.transition = "none"; });
-  box.addEventListener("touchstart", e => { startX = e.touches[0].clientX; dragging = true; box.style.transition = "none"; }, { passive: true });
-
-  window.addEventListener("mousemove", e => {
-    if (!dragging) return;
-    const dx = e.clientX - startX;
-    box.style.transform = `translateX(${dx}px) rotate(${dx * 0.05}deg)`;
-  });
-  window.addEventListener("touchmove", e => {
-    if (!dragging) return;
-    const dx = e.touches[0].clientX - startX;
-    box.style.transform = `translateX(${dx}px) rotate(${dx * 0.05}deg)`;
-  }, { passive: true });
-
-  const onSwipeEnd = (clientX) => {
-    if (!dragging) return;
-    dragging = false;
-    const dx = clientX - startX;
-    if (dx > 90)       doAccept();
-    else if (dx < -90) doReject();
-    else {
-      box.style.transition = "transform 0.35s cubic-bezier(0.34,1.56,0.64,1)";
-      box.style.transform = "translateX(0) rotate(0deg)";
-    }
-  };
-  window.addEventListener("mouseup",  e => onSwipeEnd(e.clientX));
-  window.addEventListener("touchend", e => onSwipeEnd(e.changedTouches[0].clientX), { passive: true });
+  document.getElementById("sultan-event-devam").onclick = doAccept;
 }
 
 function applySultanEffect(positive, c, dir) {
@@ -2537,8 +2589,11 @@ function updateStatUI() {
     const fill = document.getElementById("fill-" + id);
     if (!fill) continue;
     fill.style.width = val + "%";
-    fill.className = "stat-fill" + (val <= 20 || val >= 80 ? " danger" : val <= 35 || val >= 65 ? " warn" : "");
-    if (val <= 20 || val >= 80) anyDanger = true;
+    if (val <= 15)       fill.className = "stat-fill danger";
+    else if (val >= 80)  fill.className = "stat-fill success";
+    else if (val <= 30 || val >= 68) fill.className = "stat-fill warn";
+    else                 fill.className = "stat-fill";
+    if (val <= 15 || val >= 80) anyDanger = true;
   }
 
   // Danger pulse
@@ -2871,13 +2926,120 @@ function applyEffects(effects) {
   checkGameOver();
 }
 
+let _sultanWarningShown = false; // Çok güçlenince uyarı mektubu
+
 function checkSultanSabir() {
   if (isGameOver) return;
   if (sultanSabir <= 0) {
     triggerGameOver("Sultan seni azletti. Hac yolculuğuna — sürgün olarak — gönderildin.");
+  } else if (sultanSabir >= 85 && !_sultanWarningShown) {
+    _sultanWarningShown = true;
+    showGucUyarisi();
   } else if (sultanSabir >= 100) {
-    triggerGameOver("Sultan'ın gözünde fazla güçlendin. Gece yarısı cellat geldi.");
+    triggerSultanGucOlumu();
   }
+}
+
+function showGucUyarisi() {
+  const overlay = document.createElement("div");
+  overlay.id = "guc-uyarisi-overlay";
+  overlay.innerHTML = `
+    <div id="guc-uyarisi-box">
+      <div id="guc-uyarisi-label">BİLİNMEYEN BİR EL'DEN</div>
+      <img id="guc-uyarisi-img" src="assets/characters/mysterious-letter.jpg" alt="Mektup" onerror="this.style.display='none'">
+      <div id="guc-uyarisi-divider"></div>
+      <div id="guc-uyarisi-text">"Gölgeniz fazla uzuyor, Paşa. Bazı gölgeler çok büyüyünce sahibini yer. Dikkat edin."</div>
+      <div id="guc-uyarisi-imza">— İsmini bilmenize gerek yok</div>
+      <button id="guc-uyarisi-kapat">Mektubu Yak</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  Haptics.crisisCard();
+  setTimeout(() => {
+    const btn = document.getElementById("guc-uyarisi-kapat");
+    if (btn) btn.onclick = () => { overlay.style.opacity = "0"; overlay.style.transition = "opacity 0.3s"; setTimeout(() => overlay.remove(), 320); };
+  }, 200);
+}
+
+function triggerSultanGucOlumu() {
+  if (isGameOver) return;
+  isGameOver = true;
+  stopAllMusic();
+  if (window.playCinematicDeath) playCinematicDeath();
+  Haptics.gameOver();
+
+  // Göz kırpma — 2 kez kapanıp açılır, 3. açılışta cellatlar görünür
+  const eyeEl = document.createElement("div");
+  eyeEl.id = "eye-blink-overlay";
+  document.body.appendChild(eyeEl);
+
+  let blinkCount = 0;
+  const doNextBlink = () => {
+    eyeEl.classList.add("blink-closed");
+    setTimeout(() => {
+      eyeEl.classList.remove("blink-closed");
+      blinkCount++;
+      if (blinkCount < 2) {
+        setTimeout(doNextBlink, 650);
+      } else {
+        // Son açılış: urgan animasyonu başlasın
+        setTimeout(() => {
+          eyeEl.remove();
+          showHangingAnimation(() => {
+            triggerGameOver("Sarayın en güçlü sadrazamıydın. Bu yüzden urganı iki cellat getirdi.");
+          });
+        }, 500);
+      }
+    }, 220);
+  };
+
+  eyeEl.classList.add("blink-closed");
+  setTimeout(doNextBlink, 500);
+}
+
+function showHangingAnimation(onDone) {
+  const el = document.createElement("div");
+  el.id = "hanging-overlay";
+  el.innerHTML = `
+    <div id="hang-flash"></div>
+    <svg id="hang-svg" viewBox="0 0 320 520" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <!-- Sol maskeli cellat -->
+      <g class="hang-cellat" id="hang-left">
+        <path d="M68,520 L32,215 Q52,145 68,133 Q84,145 104,215 Z" fill="#0d0808"/>
+        <ellipse cx="68" cy="120" rx="28" ry="33" fill="#0d0808"/>
+        <rect x="55" y="109" width="11" height="6" rx="3" fill="rgba(170,8,8,0.8)"/>
+        <rect x="72" y="109" width="11" height="6" rx="3" fill="rgba(170,8,8,0.8)"/>
+        <rect x="53" y="127" width="30" height="4" rx="2" fill="rgba(40,0,0,0.5)"/>
+        <path d="M93,175 Q132,188 156,210" stroke="#0d0808" stroke-width="19" fill="none" stroke-linecap="round"/>
+      </g>
+      <!-- Sağ maskeli cellat -->
+      <g class="hang-cellat" id="hang-right">
+        <path d="M252,520 L216,215 Q236,145 252,133 Q268,145 288,215 Z" fill="#0d0808"/>
+        <ellipse cx="252" cy="120" rx="28" ry="33" fill="#0d0808"/>
+        <rect x="239" y="109" width="11" height="6" rx="3" fill="rgba(170,8,8,0.8)"/>
+        <rect x="256" y="109" width="11" height="6" rx="3" fill="rgba(170,8,8,0.8)"/>
+        <rect x="237" y="127" width="30" height="4" rx="2" fill="rgba(40,0,0,0.5)"/>
+        <path d="M227,175 Q188,188 164,210" stroke="#0d0808" stroke-width="19" fill="none" stroke-linecap="round"/>
+      </g>
+      <!-- Urgan (yukarıdan düşüyor, ilik düğümü) -->
+      <g id="hang-rope-wrap">
+        <line x1="160" y1="0" x2="160" y2="215" stroke="#7a5615" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M160,215 Q178,222 181,238 Q184,256 170,263 Q156,271 142,263 Q128,255 131,238 Q134,222 160,215 Z"
+              stroke="#7a5615" stroke-width="4.5" fill="none"/>
+        <path d="M142,263 Q130,280 137,292 Q144,305 160,302 Q176,305 183,292 Q190,280 178,263"
+              stroke="#7a5615" stroke-width="4" fill="none"/>
+      </g>
+    </svg>`;
+  document.body.appendChild(el);
+
+  // Urgan ses efekti (mevcut sistemi kullan)
+  if (window.playGameOver) playGameOver();
+
+  setTimeout(() => {
+    onDone();
+    el.style.opacity = "0";
+    el.style.transition = "opacity 0.7s ease";
+    setTimeout(() => el.remove(), 720);
+  }, 2800);
 }
 
 function checkGameOver() {
@@ -2929,6 +3091,31 @@ function triggerCurse() {
 // ── Karar ─────────────────────────────────────────────────────────
 function decide(dir) {
   if (!currentCard) return;
+
+  // Padişah bizzat ziyaret — sağ = kabul, sol = ölüm
+  if (currentCard.type === "padisah_ziyaret") {
+    const btn = document.getElementById("easter-action-btn");
+    if (btn) btn.classList.add("hidden");
+    if (dir === "right") {
+      sultanSabir = Math.min(100, sultanSabir + 5);
+      cardsPlayed++;
+      advanceHicriMonth();
+      if (cardsPlayed % CARDS_PER_YEAR === 0) advanceYear();
+      if (!isGameOver) { saveGameState(); setTimeout(dealNext, 200); }
+    } else {
+      deathCharacterKey = "1-sultan";
+      const rageOvl = document.createElement("div");
+      rageOvl.style.cssText = "position:fixed;inset:0;z-index:100;";
+      document.body.appendChild(rageOvl);
+      triggerSultanRage(rageOvl, () => {
+        rageOvl.remove();
+        showExecutionAnimation(() => {
+          triggerGameOver("Sen bana nasıl karşı gelirsin BRE DEYYUS! — Son sözlerin bunlar oldu.");
+        });
+      });
+    }
+    return;
+  }
 
   // İnvestigating state temizle - sultanSabir cezası
   if (isInvestigating) {
@@ -3044,41 +3231,45 @@ function decide(dir) {
       forcedQueue.unshift(fn()); // ★ GOD MODE
     } // ★ GOD MODE
 
-    // Saray Kedisi: her 75 kartta 1
+    // Rastgele varyasyon: hedef aralığın ±%25'i
+    const _rndIv = (base) => Math.round(base * (0.75 + Math.random() * 0.5));
+
+    // Saray Kedisi: ortalama 65 kart, aralık 49-81
     if (cardsPlayed >= _easterKediNext) {
-      _easterKediNext = cardsPlayed + 75;
+      _easterKediNext = cardsPlayed + _rndIv(65);
       forcedQueue.push({ ...EASTER_CARDS.saray_kedisi });
     }
-    // Yanlış Adam: her 60 kartta 1
+    // Yanlış Adam: ortalama 55 kart, aralık 41-69
     if (cardsPlayed >= _easterYanlisNext) {
-      _easterYanlisNext = cardsPlayed + 60;
+      _easterYanlisNext = cardsPlayed + _rndIv(55);
       _easterYanlisCount++;
       const yanlis = { ...EASTER_CARDS.yanlis_adam };
       if (_easterYanlisCount >= 3) yanlis.easter_type = "yanlis_idam";
       forcedQueue.push(yanlis);
     }
-    // Tarihsel Kehanet: her 65 kartta 1
+    // Tarihsel Kehanet: ortalama 60 kart, aralık 45-75
     if (cardsPlayed >= _easterKehanetNext) {
-      _easterKehanetNext = cardsPlayed + 65;
+      _easterKehanetNext = cardsPlayed + _rndIv(60);
       forcedQueue.push(getKehanetCard());
     }
-    // Evliya Çelebi: her 50 kartta 1
-    if (cardsPlayed > 0 && cardsPlayed % 50 === 0) {
+    // Evliya Çelebi: ortalama 45 kart, aralık 34-56
+    if (cardsPlayed > 0 && cardsPlayed >= _easterEvliyaNext) {
+      _easterEvliyaNext = cardsPlayed + _rndIv(45);
       forcedQueue.push(getEvliyaCard());
     }
-    // Tarihsel figürler (Barbaros / Leonardo / Mahidevran): her 80 kartta 1
+    // Tarihsel figürler (Barbaros / Leonardo / Mahidevran): ortalama 70 kart, aralık 53-88
     if (cardsPlayed >= _easterHistNext) {
-      _easterHistNext = cardsPlayed + 80;
+      _easterHistNext = cardsPlayed + _rndIv(70);
       forcedQueue.push(getNextHistoricalCard());
     }
-    // Zaman Yolcusu: her 90 kartta 1
+    // Zaman Yolcusu: ortalama 80 kart, aralık 60-100
     if (cardsPlayed >= _easterZamanNext) {
-      _easterZamanNext = cardsPlayed + 90;
+      _easterZamanNext = cardsPlayed + _rndIv(80);
       forcedQueue.push(getZamanCard());
     }
-    // Fısıltı karakteri: her 110 kartta 1, sadece gece
+    // Fısıltı karakteri: ortalama 95 kart, aralık 71-119, sadece gece
     if (isNight && cardsPlayed >= _easterFisildayanNext) {
-      _easterFisildayanNext = cardsPlayed + 110;
+      _easterFisildayanNext = cardsPlayed + _rndIv(95);
       forcedQueue.push(getFisildayanCard());
     }
     // Dönüm Noktası: oyun başına 1 kez, 42. kartta
@@ -3107,6 +3298,9 @@ function decide(dir) {
     } else if (_avgStat <= 40 && Math.random() < 0.06) {
       forcedQueue.unshift(getMucizeCard());
     }
+
+    // Padişah ziyareti: her ~45 kartta 1, yıl 3+
+    tryPadisahZiyareti();
   }
 
   if (!isGameOver) {

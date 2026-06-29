@@ -7,8 +7,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        showRakuSplash()
         return true
+    }
+
+    private func showRakuSplash() {
+        guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? UIApplication.shared.windows.first else { return }
+
+        let splash = UIView(frame: window.bounds)
+        splash.backgroundColor = .white
+
+        let logo = UIImageView(image: UIImage(named: "RakuLogo"))
+        logo.contentMode = .scaleAspectFit
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        splash.addSubview(logo)
+
+        NSLayoutConstraint.activate([
+            logo.centerXAnchor.constraint(equalTo: splash.centerXAnchor),
+            logo.centerYAnchor.constraint(equalTo: splash.centerYAnchor),
+            logo.widthAnchor.constraint(equalTo: splash.widthAnchor, multiplier: 0.6),
+            logo.heightAnchor.constraint(equalTo: logo.widthAnchor)
+        ])
+
+        window.addSubview(splash)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            UIView.animate(withDuration: 0.3, animations: {
+                splash.alpha = 0
+            }, completion: { _ in
+                splash.removeFromSuperview()
+            })
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
