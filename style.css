@@ -829,19 +829,26 @@ html, body {
 /* Header Row (Title + Year) */
 #header-row {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin: 2px 0 8px;
+  gap: 6px;
+  padding: 4px 10px;
   position: relative;
   z-index: 1;
+}
+#header-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
 }
 
 #title-label {
   font-family: 'Cinzel', serif;
-  font-size: 11px;
+  font-size: 10px;
+  letter-spacing: 2px;
   color: rgba(201,162,39,0.45);
+  flex-shrink: 0;
   letter-spacing: 4px;
   font-weight: normal;
   text-transform: uppercase;
@@ -849,9 +856,13 @@ html, body {
 
 #year-label {
   font-family: 'Cinzel Decorative', serif;
-  font-size: 16px;
+  font-size: 13px;
   color: var(--gold);
-  letter-spacing: 2px;
+  letter-spacing: 1px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #dynamic-subtitle {
@@ -3162,7 +3173,7 @@ html, body {
 #health-inline {
   position: absolute;
   left: 12px;
-  top: max(52px, calc(env(safe-area-inset-top, 0px) + 48px));
+  top: max(68px, calc(env(safe-area-inset-top, 0px) + 64px));
   display: flex; align-items: center; gap: 4px;
   z-index: 19;
   pointer-events: none;
@@ -3310,3 +3321,29 @@ html, body {
 .cp-tick { font-size:12px; width:14px; text-align:center; color:rgba(142,68,173,0.7); }
 .cp-item.cg-done .cp-tick { color:rgba(80,200,80,0.8); }
 .challenge-btn { background:linear-gradient(135deg,rgba(142,68,173,0.15),rgba(192,57,43,0.1)) !important; border-color:rgba(142,68,173,0.5) !important; color:rgba(200,160,220,0.9) !important; }
+
+#header-action-btns button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid rgba(201,162,39,0.25);
+  background: rgba(201,162,39,0.06);
+  color: rgba(201,162,39,0.65);
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: all 0.2s;
+}
+#header-action-btns button:active {
+  background: rgba(201,162,39,0.18);
+  border-color: rgba(201,162,39,0.55);
+}
+
+/* header içinde flex item olarak butonlar */
+#game-menu-btn, #harita-btn {
+  position: static !important;
+}

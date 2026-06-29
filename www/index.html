@@ -229,12 +229,22 @@
     <!-- Kader İpleri -->
     <div id="fate-bar"></div>
 
+    <!-- Üst satır: başlık + yıl + butonlar yan yana -->
     <div id="header-row">
       <div id="title-label">SADRAZAM</div>
       <div id="year-label">Muharrem 927</div>
       <div id="dynamic-subtitle"></div>
+      <div id="header-action-btns">
+        <button id="harita-btn" onclick="showHaritaOverlay()">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 2.5L5 1l4 2 4-1.5v10L13 13l-4-2-4 2-4-1V2.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>
+            <path d="M5 1v11M9 3v9" stroke="currentColor" stroke-width="0.9" opacity="0.5"/>
+          </svg>
+        </button>
+        <button id="game-menu-btn" onclick="showGameMenu()">☰</button>
+      </div>
     </div>
-    <!-- Sol: Sağlık göstergesi (tarih satırı hizasında, sol köşe) -->
+    <!-- Sağlık göstergesi: header altında, sol köşe -->
     <div id="health-inline">
       <svg id="health-icon-svg" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M8 14s-6-3.8-6-8a4 4 0 018 0 4 4 0 018 0c0 4.2-6 8-6 8-1.5.9-2.5.9-4 0z"
@@ -243,14 +253,6 @@
       <div id="health-bar-h"><div id="health-fill-h"></div></div>
       <span id="health-val">90</span>
     </div>
-    <!-- Sağ: Harita butonu (game-menu-btn solunda) -->
-    <button id="harita-btn" onclick="showHaritaOverlay()">
-      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 2.5L5 1l4 2 4-1.5v10L13 13l-4-2-4 2-4-1V2.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>
-        <path d="M5 1v11M9 3v9" stroke="currentColor" stroke-width="0.9" opacity="0.5"/>
-      </svg>
-    </button>
-    <button id="game-menu-btn" onclick="showGameMenu()">☰</button>
 
     <div id="card-area">
       <div id="swipe-hint-left" class="swipe-hint" data-i18n="hint.left">← Hayır</div>
