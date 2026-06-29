@@ -215,16 +215,7 @@
         <span class="stat-label" data-i18n="stat.hazine">Hazine</span>
         <div class="stat-track"><div class="stat-fill" id="fill-hazine"></div></div>
       </div>
-      <!-- Sağlık barı (dikey kavuk) -->
-      <div id="health-bar-wrap">
-        <div id="health-kavuk">🪖</div>
-        <div id="health-track">
-          <div id="health-fill"></div>
-        </div>
-        <div id="health-val">90</div>
-      </div>
     </div>
-
 
     <!-- Kader İpleri -->
     <div id="fate-bar"></div>
@@ -233,9 +224,13 @@
       <div id="title-label">SADRAZAM</div>
       <div id="year-label">Muharrem 927</div>
       <div id="dynamic-subtitle"></div>
+      <!-- Sağlık göstergesi — tarih satırının sağında -->
+      <div id="health-inline">
+        <div id="health-bar-h"><div id="health-fill-h"></div></div>
+        <span id="health-val">90</span>
+      </div>
+      <button id="game-menu-btn" onclick="showGameMenu()">☰</button>
     </div>
-    <button id="harita-btn" onclick="showHaritaOverlay()">🗺</button>
-<button id="game-menu-btn" onclick="showGameMenu()">☰</button>
 
     <div id="card-area">
       <div id="swipe-hint-left" class="swipe-hint" data-i18n="hint.left">← Hayır</div>

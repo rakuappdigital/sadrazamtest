@@ -3169,11 +3169,11 @@ function updatePortraitExpression() {
 }
 
 function updateHealthUI() {
-  const hfill = document.getElementById("health-fill");
+  const hfill = document.getElementById("health-fill-h");
   const hval  = document.getElementById("health-val");
   if (!hfill) return;
   const h = Math.max(0, Math.min(100, sadrazamHealth));
-  hfill.style.height = h + "%";
+  hfill.style.width = h + "%";
   if (h <= 20)      hfill.className = "danger";
   else if (h <= 40) hfill.className = "warn";
   else              hfill.className = "";
@@ -4912,6 +4912,7 @@ function showGameMenu() {
     <div id="game-menu-box">
       <div id="game-menu-title">${isENMenu ? "PAUSED" : "DURAKLAT"}</div>
       <div id="game-menu-divider"></div>
+      <button class="game-menu-option" id="gm-harita">🗺 ${isENMenu ? "Empire Map" : "Harita"}</button>
       <button class="game-menu-option danger" id="gm-quit">${isENMenu ? "END GAME" : "OYUNU BİTİR"}</button>
       <button class="game-menu-option secondary" id="gm-resume">${isENMenu ? "CONTINUE" : "DEVAM ET"}</button>
     </div>`;
@@ -4939,6 +4940,9 @@ function showGameMenu() {
 
   const doResume = () => { if (!document.body.contains(overlay)) return; overlay.remove(); };
 
+  const doHarita = () => { overlay.remove(); showHaritaOverlay(); };
+  document.getElementById("gm-harita").addEventListener("click",    doHarita);
+  document.getElementById("gm-harita").addEventListener("touchend", doHarita, { passive: true });
   document.getElementById("gm-quit").addEventListener("click",    doQuit);
   document.getElementById("gm-quit").addEventListener("touchend", doQuit, { passive: true });
   document.getElementById("gm-resume").addEventListener("click",    doResume);

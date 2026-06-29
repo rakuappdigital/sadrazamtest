@@ -3105,53 +3105,6 @@ html, body {
 }
 .ys-btn:hover { background: rgba(201,162,39,0.2); border-color: rgba(201,162,39,0.7); }
 
-/* ── Sağlık Barı (Dikey Kavuk) ──────────────────────────────────── */
-#stats-bar {
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
-}
-#stats-bar .stat {
-  flex: 1;
-}
-#health-bar-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
-  width: 22px;
-  padding-bottom: 2px;
-}
-#health-kavuk {
-  font-size: 13px;
-  line-height: 1;
-}
-#health-track {
-  width: 7px;
-  height: 44px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 4px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-#health-fill {
-  width: 100%;
-  height: 90%;
-  background: linear-gradient(to top, #27ae60, #52c97a);
-  border-radius: 4px;
-  transition: height 0.5s ease, background 0.4s ease;
-}
-#health-fill.warn   { background: linear-gradient(to top, #e67e22, #f39c12); }
-#health-fill.danger { background: linear-gradient(to top, #c0392b, #e74c3c); }
-#health-val {
-  font-size: 8px;
-  color: rgba(200,180,130,0.55);
-  letter-spacing: 0;
-  line-height: 1;
-}
 
 /* ── Hekimbaşı Dinlenme Overlay ─────────────────────────────────── */
 #hekim-dinlenme-overlay {
@@ -3218,17 +3171,6 @@ html, body {
 .sm-c { background:rgba(142,68,173,0.1); border:1px solid rgba(142,68,173,0.35); color:#8e44ad; }
 .sm-c:hover { background:rgba(142,68,173,0.2); }
 
-/* ── Harita Butonu ──────────────────────────────────────────────── */
-#harita-btn {
-  position:absolute; right:44px; top:0;
-  background:none; border:none; cursor:pointer;
-  font-size:18px; padding:8px 4px;
-  animation: harita-glow 2.5s ease-in-out infinite;
-}
-@keyframes harita-glow {
-  0%,100%{ filter: drop-shadow(0 0 3px rgba(201,162,39,0.3)); }
-  50%    { filter: drop-shadow(0 0 8px rgba(201,162,39,0.8)); }
-}
 
 /* ── Harita Overlay ─────────────────────────────────────────────── */
 #harita-overlay {
@@ -3341,3 +3283,87 @@ html, body {
   color:rgba(142,68,173,0.7);
 }
 .cp-item.cg-done .cp-tick { color:rgba(80,200,80,0.8); }
+
+/* ── Header Row yeniden düzeni ──────────────────────────────────── */
+#header-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 10px;
+  position: relative;
+}
+#title-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(201,162,39,0.55);
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+#year-label {
+  font-size: 11px;
+  color: rgba(220,200,160,0.75);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#dynamic-subtitle {
+  display: none; /* subtitle artık kart içinde gösterilir */
+}
+
+/* ── Sağlık Göstergesi (yatay, header-row sağı) ─────────────────── */
+#health-inline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+#health-bar-h {
+  width: 44px;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+#health-fill-h {
+  height: 100%;
+  width: 90%;
+  border-radius: 2px;
+  background: rgba(39,174,96,0.75);
+  transition: width 0.5s ease, background 0.4s ease;
+}
+#health-fill-h.warn   { background: rgba(230,126,34,0.8); }
+#health-fill-h.danger { background: rgba(192,57,43,0.9); }
+#health-val {
+  font-size: 9px;
+  color: rgba(180,160,120,0.55);
+  font-variant-numeric: tabular-nums;
+  min-width: 16px;
+}
+
+/* ── Oyun Menü Butonu (☰) — daha görünür ────────────────────────── */
+#game-menu-btn {
+  position: static !important;
+  flex-shrink: 0;
+  background: rgba(201,162,39,0.08);
+  border: 1px solid rgba(201,162,39,0.22);
+  border-radius: 6px;
+  color: rgba(201,162,39,0.7);
+  font-size: 15px;
+  padding: 5px 9px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-width: 36px;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#game-menu-btn:hover, #game-menu-btn:active {
+  background: rgba(201,162,39,0.18);
+  border-color: rgba(201,162,39,0.5);
+}
