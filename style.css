@@ -3311,10 +3311,6 @@ html, body {
   border-color: rgba(201,162,39,0.55);
 }
 
-/* header içinde flex item olarak butonlar */
-#game-menu-btn, #harita-btn {
-  position: static !important;
-}
 
 /* ── Giriş Ekranı Butonları ─────────────────────────────────────── */
 
