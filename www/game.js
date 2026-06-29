@@ -453,7 +453,14 @@ const FELAKET_TEXTS = [
   "Saray yangını, hazine kayıpları, yeniçeri huzursuzluğu. Tanrı bu devleti sınamaktadır.",
   "Deprem Konstantiniyye'yi sarstı. Her şey bir anda değişti.",
   "Düşman saldırısı, salgın ve sel felaketi birlikte geldi. Divan dağıldı.",
-  "Hazine yağmalandı, surlar çatladı, ulema kriz ilan etti. Kaçış yok."
+  "Hazine yağmalandı, surlar çatladı, ulema kriz ilan etti. Kaçış yok.",
+  "Büyük İstanbul depremi. Yüzlerce yapı yıkıldı, halk sokaklara döküldü. Her şey bir anda değişti.",
+  "Çarşı yangını gecenin karanlığında başladı, sabaha dek durdurulamadı. Yüzlerce esnaf mahvoldu.",
+  "Nil'den gelen kuraklık haberleri Mısır'ı yutacak. Hazine akışı tehlikede.",
+  "Doğu sınırından büyük göç dalgası geliyor. Şehirler dolup taşıyor, halk ayakta.",
+  "Osmanlı filosunun yarısı fırtınada kayboldu. Akdeniz kontrolü sarsıldı.",
+  "Sarayda suikast girişimi önlendi — ama fail belli değil. Herkes herkesten şüpheleniyor.",
+  "Veba ve kıtlık aynı anda iki vilayeti vurdu. Kaçacak hiçbir şey kalmadı."
 ];
 const MUCIZE_TEXTS = [
   "Beklenmedik bir zafer haberi. İmparatorluk nefes aldı, her şey yoluna girdi.",
