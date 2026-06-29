@@ -3367,3 +3367,178 @@ html, body {
   background: rgba(201,162,39,0.18);
   border-color: rgba(201,162,39,0.5);
 }
+
+/* ── Oyun Modu Butonları (yatay 3'lü) ──────────────────────────── */
+#intro-buttons { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+
+#mode-buttons {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.mode-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 6px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.mode-icon { font-size: 20px; line-height: 1; }
+.mode-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  line-height: 1.3;
+  text-align: center;
+}
+.mode-primary {
+  background: rgba(201,162,39,0.12);
+  border-color: rgba(201,162,39,0.45);
+  color: #C9A227;
+}
+.mode-primary:hover, .mode-primary:active {
+  background: rgba(201,162,39,0.22);
+  border-color: rgba(201,162,39,0.7);
+}
+.mode-secondary {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(201,162,39,0.22);
+  color: rgba(220,195,150,0.8);
+}
+.mode-secondary:hover, .mode-secondary:active {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(201,162,39,0.45);
+}
+.mode-challenge {
+  background: rgba(142,68,173,0.12);
+  border-color: rgba(142,68,173,0.45);
+  color: rgba(200,150,220,0.9);
+}
+.mode-challenge:hover, .mode-challenge:active {
+  background: rgba(142,68,173,0.22);
+  border-color: rgba(142,68,173,0.7);
+}
+
+/* ── Yardımcı Kare Butonlar (Başarımlar + Ayarlar) ──────────────── */
+#util-buttons {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.util-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 12px 6px;
+  border-radius: 12px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,162,39,0.2);
+  color: rgba(200,180,140,0.75);
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.util-btn:hover, .util-btn:active {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(201,162,39,0.4);
+}
+.util-icon { font-size: 18px; line-height: 1; }
+.util-label {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* ── Alt ghost butonlar ─────────────────────────────────────────── */
+#ghost-buttons {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+#ghost-buttons .intro-btn {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+}
+
+/* ── Ayarlar Overlay ────────────────────────────────────────────── */
+#settings-overlay {
+  position: fixed; inset: 0;
+  background: rgba(5,3,12,0.92);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; animation: ys-fade-in 0.3s ease;
+}
+#settings-box {
+  background: linear-gradient(160deg, #0e0b1e, #060412);
+  border: 1px solid rgba(201,162,39,0.35);
+  border-radius: 16px; padding: 26px 22px 20px;
+  width: min(320px, 88vw);
+  box-shadow: 0 0 50px rgba(201,162,39,0.08);
+}
+.sett-title {
+  text-align: center; font-family: 'Cinzel', serif;
+  font-size: 15px; letter-spacing: 2.5px; color: #C9A227;
+  margin-bottom: 4px;
+}
+.sett-divider { height: 1px; background: rgba(201,162,39,0.2); margin: 14px 0 12px; }
+.sett-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.sett-row:last-of-type { border-bottom: none; }
+.sett-label {
+  font-size: 13px; color: rgba(215,195,155,0.85);
+}
+.sett-toggle {
+  display: flex; gap: 6px;
+}
+.sett-opt {
+  padding: 5px 12px; border-radius: 6px; cursor: pointer;
+  font-size: 11px; letter-spacing: 0.5px;
+  transition: all 0.2s;
+  border: 1px solid rgba(201,162,39,0.25);
+  color: rgba(180,155,110,0.6);
+  background: none;
+}
+.sett-opt.active {
+  background: rgba(201,162,39,0.18);
+  border-color: rgba(201,162,39,0.6);
+  color: #C9A227;
+}
+.sett-lang-row {
+  display: flex; gap: 8px; justify-content: center; margin-top: 12px;
+}
+.sett-lang-btn {
+  flex: 1; padding: 10px; border-radius: 8px; cursor: pointer;
+  font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1.5px;
+  border: 1px solid rgba(201,162,39,0.25);
+  color: rgba(180,155,110,0.6); background: none;
+  transition: all 0.2s;
+}
+.sett-lang-btn.active {
+  background: rgba(201,162,39,0.15);
+  border-color: rgba(201,162,39,0.6);
+  color: #C9A227;
+}
+.sett-close {
+  display: block; width: 100%; margin-top: 16px;
+  padding: 11px; border-radius: 8px; cursor: pointer;
+  background: rgba(201,162,39,0.1);
+  border: 1px solid rgba(201,162,39,0.35);
+  color: #C9A227; font-family: 'Cinzel', serif;
+  font-size: 12px; letter-spacing: 1.5px;
+}
+.sett-close:hover { background: rgba(201,162,39,0.2); }

@@ -327,7 +327,7 @@ window.EN_ACHIEVEMENTS = {
 window.UI_STRINGS = {
   tr: {
     // Intro
-    'intro.subtitle':       "Osmanlı İmparatorluğu'nda<br/>denge peşindeki bir vezirin hikâyesi",
+    'intro.subtitle':       "Osmanlı İmparatorluğu'nda<br/>denge peşindeki bir sadrazamın hikâyesi",
     // Stat isimleri (görsel)
     'stat.saray':           'Saray',
     'stat.ordu':            'Ordu',

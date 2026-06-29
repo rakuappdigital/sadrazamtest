@@ -1059,33 +1059,40 @@ const cardChoices      = document.getElementById("card-choices");
   }); // ★ GOD MODE
 })(); // ★ GOD MODE
 
-// Splash ekranı bitince (3 sn) menü müziğini başlat
-// iOS'ta AudioContext kullanıcı etkileşimi gerektirir — ilk dokunuşta başlat ama splash sonrası hazır ol
-let _menuMusicReady = false;
+// ── Ses Ayarları ──────────────────────────────────────────────────
+window.musicEnabled = localStorage.getItem('sadrazam_music') !== 'off';
+window.sfxEnabled   = localStorage.getItem('sadrazam_sfx')   !== 'off';
+
+// Müzik on/off kontrolü — tüm müzik çağrılarını sarar
+const _origPlayMenuMusic = () => _switchMusic('menu');
+const _origPlayGameMusic = () => _switchMusic('game');
+const _origStopAll       = stopAllMusic;
+
+// Müzik auto-başlatma — etkileşim olmadan da dene (Capacitor için)
+let _menuMusicReady    = false;
 let _menuMusicRequested = false;
 
-setTimeout(() => {
-  _menuMusicReady = true;
-  if (_menuMusicRequested) playMenuMusic(); // Kullanıcı zaten dokunmuşsa hemen başlat
-}, 3000);
-
 function _tryStartMenuMusic() {
-  if (_menuMusicReady) {
-    playMenuMusic();
-  } else {
-    _menuMusicRequested = true; // Hazır olunca başlasın
-  }
+  if (!window.musicEnabled) return;
+  if (_menuMusicReady) playMenuMusic();
+  else _menuMusicRequested = true;
 }
 
-// İlk kullanıcı etkileşimini yakala (iOS AudioContext için şart)
+// Sayfa yüklenince hemen dene (Capacitor/iOS native'de çalışır)
+setTimeout(() => {
+  _menuMusicReady = true;
+  if (window.musicEnabled) playMenuMusic(); // Etkileşim beklemeden başlat
+}, 500);
+
+// Web browser fallback — ilk dokunuşta başlat
 document.addEventListener('touchstart', function _firstTouch() {
   _menuMusicRequested = true;
-  if (_menuMusicReady) playMenuMusic();
+  if (_menuMusicReady && window.musicEnabled) playMenuMusic();
   document.removeEventListener('touchstart', _firstTouch);
 }, { once: true, passive: true });
 document.addEventListener('mousedown', function _firstClick() {
   _menuMusicRequested = true;
-  if (_menuMusicReady) playMenuMusic();
+  if (_menuMusicReady && window.musicEnabled) playMenuMusic();
   document.removeEventListener('mousedown', _firstClick);
 }, { once: true });
 
@@ -1540,8 +1547,8 @@ function _switchMusic(target) {
   }, delay);
 }
 
-function playMenuMusic() { _switchMusic('menu'); }
-function playGameMusic()  { _switchMusic('game'); }
+function playMenuMusic() { if (window.musicEnabled !== false) _switchMusic('menu'); }
+function playGameMusic()  { if (window.musicEnabled !== false) _switchMusic('game'); }
 function stopAllMusic() {
   _activeMusicTarget = null;
   _ensureAudio();
@@ -4873,6 +4880,50 @@ function restartGame() {
 
 // ── Oyun İçi Menü ────────────────────────────────────────────────
 // ── Harita Overlay ────────────────────────────────────────────────
+// ── Ayarlar Overlay ───────────────────────────────────────────────
+function showSettingsOverlay() {
+  document.getElementById('settings-overlay')?.remove();
+  const isEN = window.LANG === 'en';
+  const ov = document.createElement('div');
+  ov.id = 'settings-overlay';
+  ov.innerHTML = `
+    <div id="settings-box">
+      <div class="sett-title">⚙ ${isEN ? 'SETTINGS' : 'AYARLAR'}</div>
+      <div class="sett-divider"></div>
+      <div class="sett-row">
+        <span class="sett-label">${isEN ? '🎵 Music' : '🎵 Müzik'}</span>
+        <div class="sett-toggle">
+          <button class="sett-opt ${window.musicEnabled ? 'active' : ''}" id="sett-mus-on">${isEN ? 'On' : 'Açık'}</button>
+          <button class="sett-opt ${!window.musicEnabled ? 'active' : ''}" id="sett-mus-off">${isEN ? 'Off' : 'Kapalı'}</button>
+        </div>
+      </div>
+      <div class="sett-row">
+        <span class="sett-label">${isEN ? '🔔 Effects' : '🔔 Efektler'}</span>
+        <div class="sett-toggle">
+          <button class="sett-opt ${window.sfxEnabled ? 'active' : ''}" id="sett-sfx-on">${isEN ? 'On' : 'Açık'}</button>
+          <button class="sett-opt ${!window.sfxEnabled ? 'active' : ''}" id="sett-sfx-off">${isEN ? 'Off' : 'Kapalı'}</button>
+        </div>
+      </div>
+      <div class="sett-divider"></div>
+      <div class="sett-label" style="text-align:center;margin-bottom:8px">🌐 ${isEN ? 'Language' : 'Dil'}</div>
+      <div class="sett-lang-row">
+        <button class="sett-lang-btn ${window.LANG === 'tr' ? 'active' : ''}" id="sett-lang-tr">Türkçe</button>
+        <button class="sett-lang-btn ${window.LANG === 'en' ? 'active' : ''}" id="sett-lang-en">English</button>
+      </div>
+      <button class="sett-close" id="sett-close">${isEN ? 'CLOSE' : 'KAPAT'}</button>
+    </div>`;
+  document.body.appendChild(ov);
+  const reopen = () => { ov.remove(); showSettingsOverlay(); };
+  document.getElementById('sett-mus-on').onclick  = () => { window.musicEnabled = true;  localStorage.setItem('sadrazam_music','on');  playMenuMusic(); reopen(); };
+  document.getElementById('sett-mus-off').onclick = () => { window.musicEnabled = false; localStorage.setItem('sadrazam_music','off'); stopAllMusic(); reopen(); };
+  document.getElementById('sett-sfx-on').onclick  = () => { window.sfxEnabled = true;  localStorage.setItem('sadrazam_sfx','on');  reopen(); };
+  document.getElementById('sett-sfx-off').onclick = () => { window.sfxEnabled = false; localStorage.setItem('sadrazam_sfx','off'); reopen(); };
+  document.getElementById('sett-lang-tr').onclick = () => { setLang('tr'); reopen(); };
+  document.getElementById('sett-lang-en').onclick = () => { setLang('en'); reopen(); };
+  document.getElementById('sett-close').onclick = () => ov.remove();
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+}
+
 function showHaritaOverlay() {
   document.getElementById('harita-overlay')?.remove();
   const isEN = window.LANG === 'en';
