@@ -3,8 +3,30 @@
 // ═══════════════════════════════════════════════════════════════════
 
 
-const CARDS_PER_YEAR = 10;
-const PASSIVE_HAZINE_DRAIN = 2;
+const CARDS_PER_YEAR = 24;       // 24 kart = 1 oyun yılı
+const SEASON_CARDS   = 8;        // 8 kartta 1 mevsim değişimi
+const PASSIVE_HAZINE_DRAIN = 2;  // yıl başına hazine drain (değişmedi)
+
+// ── Mevsim Sistemi ────────────────────────────────────────────────
+const SEASONS_TR = ["Kış", "İlkbahar", "Yaz", "Sonbahar"];
+const SEASONS_EN = ["Winter", "Spring", "Summer", "Autumn"];
+
+// Mevsim index'i: her SEASON_CARDS kartta döngüsel artar
+function getCurrentSeason() {
+  return Math.floor(cardsPlayed / SEASON_CARDS) % 4;
+}
+function getSeasonLabel() {
+  const idx = getCurrentSeason();
+  return (window.LANG === 'en' ? SEASONS_EN : SEASONS_TR)[idx];
+}
+
+// Mevsim bazlı efekt katsayıları (1.0 = normal)
+const SEASON_EFFECTS = {
+  0: { military: 0.8, economic: 1.2, religious: 1.0, social: 0.9 },   // Kış
+  1: { military: 1.2, economic: 1.0, religious: 1.0, social: 1.1 },   // İlkbahar
+  2: { military: 1.1, economic: 1.1, religious: 0.9, social: 1.0 },   // Yaz
+  3: { military: 0.9, economic: 1.0, religious: 1.2, social: 1.1 },   // Sonbahar
+};
 
 // ── Osmanlı Takvimi ───────────────────────────────────────────────
 const HICRI_MONTHS = [
@@ -289,7 +311,7 @@ const DONUM_CHOICES = [
   { bar: "hazine",   barLabel: "Hazine ↑",  label: "Hazineyi büyüttüm",           desc: "Devlet kasasını doldurdum, ticareti canlandırdım." }
 ];
 
-let _donumNextCard = 42;
+let _donumNextCard = 80; // ~yıl 3 (24×3=72) civarı
 let _donumShownThisGame = false;
 
 function getDonumCard() {
@@ -449,11 +471,13 @@ function getHalitCard() {
 
 // ── Felaket / Mucize Kartları ─────────────────────────────────────
 const FELAKET_TEXTS = [
+  // Mevcut 5
   "Doğu'dan korkunç haberler geldi — veba, kıtlık ve isyan, hepsi aynı anda.",
   "Saray yangını, hazine kayıpları, yeniçeri huzursuzluğu. Tanrı bu devleti sınamaktadır.",
   "Deprem Konstantiniyye'yi sarstı. Her şey bir anda değişti.",
   "Düşman saldırısı, salgın ve sel felaketi birlikte geldi. Divan dağıldı.",
   "Hazine yağmalandı, surlar çatladı, ulema kriz ilan etti. Kaçış yok.",
+  // Yeni 7
   "Büyük İstanbul depremi. Yüzlerce yapı yıkıldı, halk sokaklara döküldü. Her şey bir anda değişti.",
   "Çarşı yangını gecenin karanlığında başladı, sabaha dek durdurulamadı. Yüzlerce esnaf mahvoldu.",
   "Nil'den gelen kuraklık haberleri Mısır'ı yutacak. Hazine akışı tehlikede.",
@@ -703,6 +727,186 @@ let allCards = [];
 let stats = { saray: 50, "yeniçeri": 50, ulema: 50, hazine: 50 };
 let year = 1;
 let cardsPlayed = 0;
+let sadrazamHealth = 90;  // Sağlık barı (0-100)
+
+// ── Zincirleme Karar Sistemi (Chain Events) ───────────────────────
+const CHAIN_RULES = [
+  // [flagSet, delayCards, scheduledCardId, description]
+  // Yeniçeri maaşı gecikmesi 2x → kışla huzursuzluğu
+  { flag: 'yeni_kışla_reddedildi',    delay: 18, cardId: 'kışla_sonuç',         once: true  },
+  // Venedik ittifak reddi → Venedik rakiple görüşüyor
+  { flag: 'venedik_1_sinirlendi',     delay: 24, cardId: 'venedik_geri_dondu',   once: true  },
+  // Defterdar borç alındı → vade sonucu
+  { flag: 'defterdar_borc_alındı',    delay: 32, cardId: 'maaş_isyan_tehlikesi', once: true  },
+  // Casuslar operasyonu → sonuç kartı
+  { flag: 'casuslar_op_baslatildi',   delay: 16, cardId: 'operasyon_başarı',     once: true  },
+  // Veba 2x görmezden gelindi → tam salgın
+  { flag: 'veba_gormezden_gelindi_2', delay: 12, cardId: 'kriz_veba',            once: true  },
+  // Şehzade affedildi → güç kazandı
+  { flag: 'sehzade_affedildi',        delay: 36, cardId: 'sehzade_avcisi_2',     once: true  },
+  // Kaptan filo izni → deniz savaşı sonucu
+  { flag: 'kaptan_filo_izni',         delay: 20, cardId: 'savaş_zafer',          once: true  },
+];
+
+function checkChainTriggers(flagsSet) {
+  for (const rule of CHAIN_RULES) {
+    if (!flagsSet.includes(rule.flag)) continue;
+    const alreadyScheduled = scheduledCards.some(sc => sc.cardId === rule.cardId);
+    if (alreadyScheduled) continue;
+    scheduledCards.push({
+      cardId: rule.cardId,
+      afterCardsPlayed: cardsPlayed + rule.delay,
+    });
+  }
+}
+
+// ── Eyalet (Province) Sistemi ─────────────────────────────────────
+const PROVINCES = [
+  { id: 'rumeli',   label_tr: 'Rumeli',       label_en: 'Rumelia',       categories: ['military','political'],  stat: 'yeniçeri' },
+  { id: 'anadolu',  label_tr: 'Anadolu',       label_en: 'Anatolia',      categories: ['social','economic'],     stat: 'ulema'    },
+  { id: 'misir',    label_tr: 'Mısır',         label_en: 'Egypt',         categories: ['economic','treasury'],   stat: 'hazine'   },
+  { id: 'dogu',     label_tr: 'Doğu Sınırı',   label_en: 'Eastern Border',categories: ['military','diplomatic'], stat: 'yeniçeri' },
+  { id: 'akdeniz',  label_tr: 'Akdeniz',       label_en: 'Mediterranean', categories: ['diplomatic','intrigue'], stat: 'saray'    },
+];
+let provinceLoyalty = { rumeli:50, anadolu:50, misir:50, dogu:50, akdeniz:50 };
+
+function getProvinceLabel(p) {
+  return window.LANG === 'en' ? p.label_en : p.label_tr;
+}
+function updateProvince(id, delta) {
+  provinceLoyalty[id] = Math.max(0, Math.min(100, (provinceLoyalty[id] || 50) + delta));
+  // Düşen eyalet komşusunu etkiler (domino)
+  if (provinceLoyalty[id] < 25) {
+    const domino = { rumeli:'anadolu', anadolu:'dogu', misir:'akdeniz', dogu:'anadolu', akdeniz:'misir' };
+    const neighbor = domino[id];
+    if (neighbor) provinceLoyalty[neighbor] = Math.max(0, (provinceLoyalty[neighbor]||50) - 3);
+  }
+  // 0'a düşerse kriz
+  if (provinceLoyalty[id] <= 0) triggerProvinceKriz(id);
+}
+function triggerProvinceKriz(id) {
+  const p = PROVINCES.find(x => x.id === id);
+  if (!p) return;
+  const isEN = window.LANG === 'en';
+  const label = getProvinceLabel(p);
+  forcedQueue.push({
+    id: 'province_kriz_' + id + '_' + cardsPlayed,
+    type: 'easter',
+    easter_type: 'felaket',
+    character: 'kader-felaket',
+    character_name: isEN ? 'Fate' : 'Kader',
+    text: isEN
+      ? `${label} has fallen into complete disorder. The empire's control there is shattered.`
+      : `${label} tam bir kargaşaya sürüklendi. İmparatorluğun oradaki hâkimiyeti çöktü.`,
+    button: isEN ? 'So be it' : 'Pekâlâ',
+    stat_effect: () => {
+      stats[p.stat] = Math.max(5, (stats[p.stat]||50) - 18);
+      updateStatUI();
+      provinceLoyalty[id] = 20; // sıfırdan kurtarma
+    }
+  });
+}
+function applyProvinceEffect(card, dir) {
+  // Kart kategorisine göre ilgili eyaleti etkile
+  const cat = card.category || '';
+  PROVINCES.forEach(p => {
+    if (p.categories.includes(cat)) {
+      const effects = dir === 'right' ? card.right_effects : card.left_effects;
+      const delta = effects && effects[p.stat] ? Math.round(effects[p.stat] * 0.3) : 0;
+      if (delta !== 0) updateProvince(p.id, delta);
+    }
+  });
+  // Güçlü eyalet (70+) zayıfa destek verir
+  PROVINCES.forEach(p => {
+    if ((provinceLoyalty[p.id]||50) >= 70) {
+      const weak = PROVINCES.find(q => q.id !== p.id && (provinceLoyalty[q.id]||50) < 35);
+      if (weak) provinceLoyalty[weak.id] = Math.min(100, (provinceLoyalty[weak.id]||50) + 1);
+    }
+  });
+}
+
+// ── Şehzade Sistemi ───────────────────────────────────────────────
+let sehzadePower       = 0;
+let _sehzadeChecked    = false;
+const SEHZADE_MIN_CARDS = 30;
+
+// ── Challenge Modu ────────────────────────────────────────────────
+let isChallengeMode  = false;
+let challengeGoals   = [];   // [{id, label_tr, label_en, check, done}]
+let challengeComplete = false;
+
+const CHALLENGE_POOL = [
+  { id:'yeni_ret_4',    label_tr:'Yeniçeri Ağası\'nı 4 kez reddet',         label_en:'Refuse the Janissary Commander 4 times',        check: s => (s.characterMemory['2-yeniceri']?.left||0) >= 4 },
+  { id:'seyh_des_3',   label_tr:'Şeyhülislam\'ı 3 kez destekle',            label_en:'Support the Şeyhülislam 3 times',               check: s => (s.characterMemory['3-Seyhulislam']?.right||0) >= 3 },
+  { id:'haz_min_30',   label_tr:'Hazine hiç 30\'un altına düşmesin',         label_en:'Keep treasury above 30 throughout',             check: s => s.minHazine >= 30 },
+  { id:'rakip_4',      label_tr:'Rakip Vezir ile 4 kez yüzleş',              label_en:'Confront the Rival Vizier 4 times',             check: s => ((s.characterMemory['8-rakip-vezir']?.left||0)+(s.characterMemory['8-rakip-vezir']?.right||0)) >= 4 },
+  { id:'10_yil',       label_tr:'10 yıl hayatta kal',                        label_en:'Survive for 10 years',                          check: s => s.year >= 10 },
+  { id:'valide_all',   label_tr:'Valide Sultan\'ın tüm isteklerini kabul et', label_en:'Accept all of the Valide Sultan\'s requests',  check: s => (s.characterMemory['5-valide-sultan']?.left||0) === 0 && (s.characterMemory['5-valide-sultan']?.right||0) >= 3 },
+  { id:'no_borc',      label_tr:'Hiç borçlanma kararı alma',                  label_en:'Never take a loan',                            check: s => !s.activeFlags?.defterdar_borc_alındı },
+  { id:'no_savas',     label_tr:'Hiç savaş fermanı çıkarma',                  label_en:'Never declare war',                            check: s => !s.activeFlags?.savaş_ilani },
+  { id:'hekim_3',      label_tr:'Hekimbaşı\'na 3 kez evet de',               label_en:'Accept the Physician\'s advice 3 times',        check: s => (s.hekimYes||0) >= 3 },
+  { id:'miras',        label_tr:'Miras kartını tetikle',                      label_en:'Trigger the Legacy card',                      check: s => !!localStorage.getItem('sadrazam_miras_bar') },
+  { id:'saray_80',     label_tr:'Saray statını 80\'e çıkar',                  label_en:'Raise the Palace stat to 80',                  check: s => s.maxSaray >= 80 },
+  { id:'elci_4',       label_tr:'Yabancı Elçi ile 4 kez müzakere yap',       label_en:'Negotiate with the Foreign Ambassador 4 times', check: s => ((s.characterMemory['7-yabanci-elci']?.left||0)+(s.characterMemory['7-yabanci-elci']?.right||0)) >= 4 },
+];
+
+function pickChallengeGoals() {
+  const pool = [...CHALLENGE_POOL];
+  const picked = [];
+  while (picked.length < 3 && pool.length > 0) {
+    const i = Math.floor(Math.random() * pool.length);
+    picked.push({ ...pool[i], done: false });
+    pool.splice(i, 1);
+  }
+  return picked;
+}
+
+function startChallengeMod() {
+  isChallengeMode = true;
+  challengeGoals  = pickChallengeGoals();
+  challengeComplete = false;
+  isPasaMode = false;
+  // btn-start.click() YAPMA — o listener isChallengeMode=false yapar
+  if (window.playSelectConfirm) playSelectConfirm();
+  introScreen.style.display = "none";
+  showSultanScreen();
+}
+
+function updateChallengeUI() {
+  const panel = document.getElementById('challenge-panel');
+  if (!panel || !isChallengeMode) return;
+  const isEN = window.LANG === 'en';
+  const state = buildAchievementState('');
+  challengeGoals.forEach((g, i) => {
+    if (!g.done) {
+      try { g.done = g.check(state); } catch(e) {}
+    }
+    const el = document.getElementById('cg-item-' + i);
+    if (el) el.classList.toggle('cg-done', g.done);
+    const tick = document.getElementById('cg-tick-' + i);
+    if (tick) tick.textContent = g.done ? '✓' : '○';
+  });
+  if (challengeGoals.every(g => g.done) && !challengeComplete) {
+    challengeComplete = true;
+    showItemToast(isEN ? '⚔ All 3 challenge goals completed!' : '⚔ 3 hedefin tamamı tamamlandı!');
+  }
+}
+
+function buildChallengePanel() {
+  if (!isChallengeMode) return;
+  const isEN = window.LANG === 'en';
+  const panel = document.createElement('div');
+  panel.id = 'challenge-panel';
+  panel.innerHTML = `
+    <div class="cp-title">${isEN ? '⚔ CHALLENGE' : '⚔ CHALLENGE'}</div>
+    ${challengeGoals.map((g, i) => `
+      <div class="cp-item" id="cg-item-${i}">
+        <span class="cp-tick" id="cg-tick-${i}">○</span>
+        <span class="cp-label">${isEN ? g.label_en : g.label_tr}</span>
+      </div>`).join('')}`;
+  const hrow = document.getElementById('header-row');
+  if (hrow) hrow.parentNode.insertBefore(panel, hrow.nextSibling);
+}
 let activeFlags = {};
 let isGameOver = false;
 let playCounts = {};
@@ -858,39 +1062,47 @@ const cardChoices      = document.getElementById("card-choices");
   }); // ★ GOD MODE
 })(); // ★ GOD MODE
 
-// Splash ekranı bitince (3 sn) menü müziğini başlat
-// iOS'ta AudioContext kullanıcı etkileşimi gerektirir — ilk dokunuşta başlat ama splash sonrası hazır ol
-let _menuMusicReady = false;
+// ── Ses Ayarları ──────────────────────────────────────────────────
+window.musicEnabled = localStorage.getItem('sadrazam_music') !== 'off';
+window.sfxEnabled   = localStorage.getItem('sadrazam_sfx')   !== 'off';
+
+// Müzik on/off kontrolü — tüm müzik çağrılarını sarar
+const _origPlayMenuMusic = () => _switchMusic('menu');
+const _origPlayGameMusic = () => _switchMusic('game');
+const _origStopAll       = stopAllMusic;
+
+// Müzik auto-başlatma — etkileşim olmadan da dene (Capacitor için)
+let _menuMusicReady    = false;
 let _menuMusicRequested = false;
 
-setTimeout(() => {
-  _menuMusicReady = true;
-  if (_menuMusicRequested) playMenuMusic(); // Kullanıcı zaten dokunmuşsa hemen başlat
-}, 3000);
-
 function _tryStartMenuMusic() {
-  if (_menuMusicReady) {
-    playMenuMusic();
-  } else {
-    _menuMusicRequested = true; // Hazır olunca başlasın
-  }
+  if (!window.musicEnabled) return;
+  if (_menuMusicReady) playMenuMusic();
+  else _menuMusicRequested = true;
 }
 
-// İlk kullanıcı etkileşimini yakala (iOS AudioContext için şart)
+// Sayfa yüklenince hemen dene (Capacitor/iOS native'de çalışır)
+setTimeout(() => {
+  _menuMusicReady = true;
+  if (window.musicEnabled) playMenuMusic(); // Etkileşim beklemeden başlat
+}, 500);
+
+// Web browser fallback — ilk dokunuşta başlat
 document.addEventListener('touchstart', function _firstTouch() {
   _menuMusicRequested = true;
-  if (_menuMusicReady) playMenuMusic();
+  if (_menuMusicReady && window.musicEnabled) playMenuMusic();
   document.removeEventListener('touchstart', _firstTouch);
 }, { once: true, passive: true });
 document.addEventListener('mousedown', function _firstClick() {
   _menuMusicRequested = true;
-  if (_menuMusicReady) playMenuMusic();
+  if (_menuMusicReady && window.musicEnabled) playMenuMusic();
   document.removeEventListener('mousedown', _firstClick);
 }, { once: true });
 
 document.getElementById("btn-start").addEventListener("click", () => {
   if (window.playSelectConfirm) playSelectConfirm();
   isPasaMode = false;
+  isChallengeMode = false; // normal mod — challenge kapalı
   introScreen.style.display = "none";
   showSultanScreen();
 });
@@ -898,6 +1110,7 @@ document.getElementById("btn-start").addEventListener("click", () => {
 document.getElementById("btn-pasa-mode").addEventListener("click", () => {
   if (window.playSelectConfirm) playSelectConfirm();
   isPasaMode = true;
+  isChallengeMode = false; // paşalık modu — challenge kapalı
   introScreen.style.display = "none";
   showSultanScreen();
 });
@@ -1044,6 +1257,9 @@ function startGame() {
 
   year = 1;
   cardsPlayed = 0;
+  sadrazamHealth = 90;
+  sehzadePower   = 0;
+  _sehzadeChecked = false;
   activeFlags = {};
   isGameOver = false;
   playCounts = {};
@@ -1058,7 +1274,7 @@ function startGame() {
   _easterKehanetNext = 60;
   _easterEvliyaNext  = 45;
   _easterPargaliDone = false;
-  _padisahZiyaretiNext  = 50;
+  _padisahZiyaretiNext  = 100; // ilk ziyaret ~yıl 4
   _padisahZiyaretiCount = 0;
   _sultanWarningShown   = false;
   _easterHistNext    = 70;
@@ -1066,7 +1282,7 @@ function startGame() {
   _easterZamanNext   = 80;
   _easterFisildayanNext = 95;
   _fisildayanIdx     = 0;
-  _donumNextCard     = 42;
+  _donumNextCard     = 80;
   _donumShownThisGame = false;
   _evliyaTextIdx     = 0;
   _initZamanShuffle();
@@ -1132,6 +1348,8 @@ function startGame() {
   ensureFateBar();
 
   gameScreen.classList.remove("hidden");
+
+  if (isChallengeMode) buildChallengePanel();
 
   dealNext();
 
@@ -1332,8 +1550,8 @@ function _switchMusic(target) {
   }, delay);
 }
 
-function playMenuMusic() { _switchMusic('menu'); }
-function playGameMusic()  { _switchMusic('game'); }
+function playMenuMusic() { if (window.musicEnabled !== false) _switchMusic('menu'); }
+function playGameMusic()  { if (window.musicEnabled !== false) _switchMusic('game'); }
 function stopAllMusic() {
   _activeMusicTarget = null;
   _ensureAudio();
@@ -1363,175 +1581,20 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // ── AMBIENT MÜZİK (Web Audio — efekt sesleri için korundu) ───────
+// Ambient Web Audio kaldırıldı — sadece MP3 müzik kullanılıyor
 let ambientCtx = null;
 let ambientNodes = [];
 let ambientRunning = false;
 
 function startAmbientMusic() {
-  playGameMusic(); // MP3 oyun müziğine geç
-  if (ambientRunning) return;
-  try {
-    ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
-    ambientRunning = true;
-    // iOS/Chrome: context suspend'den çık
-    const resumeAndPlay = () => {
-      ambientCtx.resume().then(() => playAmbientLayer());
-    };
-    if (ambientCtx.state === 'suspended') {
-      resumeAndPlay();
-    } else {
-      playAmbientLayer();
-    }
-  } catch(e) {}
+  playGameMusic(); // MP3 oyun müziğine geç — başka ses üretilmez
 }
 
-function playAmbientLayer() {
-  if (!ambientCtx || !ambientRunning) return;
-  if (ambientCtx.state === 'suspended') { ambientCtx.resume(); return; }
-
-  const c = ambientCtx;
-  const now = c.currentTime;
-  const DUR = 14; // saniye
-  const nodes = [];
-
-  // Reverb (window.createReverb sounds.js'de global olarak tanımlı)
-  const rev = (window.createReverb ? window.createReverb(c, 2.5, 2.5) : null) || c.createGain();
-  rev.connect(c.destination);
-
-  // ── 1. NEY DRONE ──────────────────────────────────────────────────
-  // Hicaz makamı: gündüz D3 (146.83), gece C3 (130.81) temel
-  const neyBase = isNight ? 130.81 : 146.83;
-
-  const neyOsc = c.createOscillator();
-  neyOsc.type = 'triangle';
-  neyOsc.frequency.value = neyBase;
-
-  // Vibrato (ney titreşimi)
-  const vibOsc = c.createOscillator();
-  vibOsc.frequency.value = 5.5;
-  const vibGain = c.createGain();
-  vibGain.gain.value = 2.5;
-  vibOsc.connect(vibGain);
-  vibGain.connect(neyOsc.frequency);
-
-  // Nefes sesi (ney'in hava sesi)
-  const noiseBuf = c.createBuffer(1, c.sampleRate, c.sampleRate);
-  const nd = noiseBuf.getChannelData(0);
-  for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
-  const noiseSrc = c.createBufferSource();
-  noiseSrc.buffer = noiseBuf; noiseSrc.loop = true;
-  const noiseBp = c.createBiquadFilter();
-  noiseBp.type = 'bandpass'; noiseBp.frequency.value = neyBase * 3; noiseBp.Q.value = 10;
-  const noiseGain = c.createGain();
-  noiseGain.gain.value = 0.008;
-  noiseSrc.connect(noiseBp); noiseBp.connect(noiseGain);
-
-  const neyMaster = c.createGain();
-  neyMaster.gain.setValueAtTime(0, now);
-  neyMaster.gain.linearRampToValueAtTime(0.07, now + 2);
-  neyMaster.gain.setValueAtTime(0.1, now + DUR - 2);
-  neyMaster.gain.linearRampToValueAtTime(0, now + DUR);
-
-  neyOsc.connect(neyMaster); noiseGain.connect(neyMaster);
-  neyMaster.connect(rev); neyMaster.connect(c.destination);
-  neyOsc.start(now); vibOsc.start(now); noiseSrc.start(now);
-  nodes.push(neyOsc, vibOsc, noiseSrc);
-
-  // ── 2. HİCAZ MAKAM MELODİSİ ─────────────────────────────────────
-  // D Hicaz: D Eb F# G A Bb C D
-  const HICAZ = [
-    neyBase,            // D
-    neyBase * 1.0595,   // Eb (minor second)
-    neyBase * 1.2599,   // F# (augmented second — karakteristik Hicaz aralığı)
-    neyBase * 1.3348,   // G
-    neyBase * 1.4983,   // A
-    neyBase * 1.5874,   // Bb
-    neyBase * 1.7818,   // C
-    neyBase * 2         // D (üst oktav)
-  ];
-
-  const noteCount = 3 + Math.floor(Math.random() * 3);
-  for (let i = 0; i < noteCount; i++) {
-    const t = now + 2.5 + Math.random() * (DUR - 5);
-    const freq = HICAZ[Math.floor(Math.random() * HICAZ.length)];
-    const useHighOct = Math.random() < 0.25;
-
-    const mOsc = c.createOscillator();
-    mOsc.type = 'triangle';
-    mOsc.frequency.value = freq * (useHighOct ? 2 : 1);
-
-    const mVib = c.createOscillator();
-    mVib.frequency.value = 5 + Math.random() * 1.2;
-    const mVibG = c.createGain();
-    mVibG.gain.value = 3;
-    mVib.connect(mVibG); mVibG.connect(mOsc.frequency);
-
-    const mGain = c.createGain();
-    const noteDur = 0.6 + Math.random() * 0.8;
-    mGain.gain.setValueAtTime(0, t);
-    mGain.gain.linearRampToValueAtTime(0.055, t + 0.12);
-    mGain.gain.exponentialRampToValueAtTime(0.001, t + noteDur);
-
-    mOsc.connect(mGain); mGain.connect(rev); mGain.connect(c.destination);
-    mOsc.start(t); mVib.start(t);
-    mOsc.stop(t + noteDur + 0.1); mVib.stop(t + noteDur + 0.1);
-    nodes.push(mOsc, mVib);
-  }
-
-  // ── 3. DEF (Çerçeve davulu) — gündüz, %60 olasılık ──────────────
-  if (!isNight && Math.random() < 0.6) {
-    // Basit usul: düm tek tek düm tek
-    const defPattern = [0, 0.75, 1.1, 1.5, 2.25, 2.6, 3.0, 3.75, 4.1];
-    const defStart = now + 3;
-    defPattern.forEach(offset => {
-      const t = defStart + offset;
-      const isDum = offset % 1.5 < 0.2; // güçlü vuruş
-      const dOsc = c.createOscillator();
-      dOsc.type = 'sine';
-      dOsc.frequency.setValueAtTime(isDum ? 170 : 120, t);
-      dOsc.frequency.exponentialRampToValueAtTime(isDum ? 55 : 70, t + 0.09);
-      const dGain = c.createGain();
-      dGain.gain.setValueAtTime(isDum ? 0.04 : 0.025, t);
-      dGain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-      dOsc.connect(dGain); dGain.connect(c.destination);
-      dOsc.start(t); dOsc.stop(t + 0.15);
-      nodes.push(dOsc);
-    });
-  }
-
-  // ── 4. TAMBUR TELI — yumuşak, sporadic ───────────────────────────
-  if (Math.random() < 0.4) {
-    const tamburFreqs = [HICAZ[0], HICAZ[2], HICAZ[4], HICAZ[7]];
-    const t = now + 5 + Math.random() * 4;
-    const freq = tamburFreqs[Math.floor(Math.random() * tamburFreqs.length)];
-    const tOsc = c.createOscillator();
-    tOsc.type = 'sawtooth';
-    tOsc.frequency.value = freq;
-    const tFilter = c.createBiquadFilter();
-    tFilter.type = 'lowpass'; tFilter.frequency.value = 800;
-    const tGain = c.createGain();
-    tGain.gain.setValueAtTime(0.06, t);
-    tGain.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
-    tOsc.connect(tFilter); tFilter.connect(tGain);
-    tGain.connect(rev); tGain.connect(c.destination);
-    tOsc.start(t); tOsc.stop(t + 1.3);
-    nodes.push(tOsc);
-  }
-
-  ambientNodes = nodes;
-
-  setTimeout(() => {
-    nodes.forEach(n => { try { n.stop(); } catch(e) {} });
-    ambientNodes = [];
-    if (ambientRunning && !isGameOver) setTimeout(playAmbientLayer, 400);
-  }, DUR * 1000);
-}
+function playAmbientLayer() { /* Kaldırıldı — sadece MP3 müzik kullanılıyor */ }
 
 function stopAmbientMusic() {
-  playMenuMusic(); // Game Over / Restart → menü müziğine geri dön
+  playMenuMusic(); // Game Over / Restart → MP3 menü müziğine geri dön
   ambientRunning = false;
-  ambientNodes.forEach(n => { try { n.stop(); } catch(e) {} });
-  ambientNodes = [];
 }
 
 // ── Boot ──────────────────────────────────────────────────────────
@@ -1658,7 +1721,8 @@ function updateYearLabel() {
   if (!yearLabel) return;
   const months = (window.LANG === 'en' && window.EN_HICRI_MONTHS) ? window.EN_HICRI_MONTHS : HICRI_MONTHS;
   const monthName = months[hicriMonth % 12];
-  yearLabel.textContent = `${monthName} ${hicriYear}`;
+  const seasonLabel = getSeasonLabel();
+  yearLabel.textContent = `${monthName} ${hicriYear} · ${seasonLabel}`;
 }
 
 function advanceHicriMonth() {
@@ -1835,10 +1899,17 @@ function passesFilters(c) {
 }
 
 function weightedPick(cards) {
-  const total = cards.reduce((s, c) => s + (c.weight || 10), 0);
+  const seasonFx = SEASON_EFFECTS[getCurrentSeason()] || {};
+  const getW = (c) => {
+    const base = c.weight || 10;
+    const cat  = c.category || '';
+    const fx   = seasonFx[cat] || 1.0;
+    return Math.max(1, Math.round(base * fx));
+  };
+  const total = cards.reduce((s, c) => s + getW(c), 0);
   let roll = Math.random() * total;
   for (const c of cards) {
-    roll -= (c.weight || 10);
+    roll -= getW(c);
     if (roll <= 0) { playCounts[c.id] = (playCounts[c.id] || 0) + 1; return c; }
   }
   const last = cards[cards.length - 1];
@@ -2036,6 +2107,13 @@ function dealNext() {
       displayText += _isEN
         ? " — He spoke with a familiar confidence."
         : " — Tanıdık bir özgüvenle konuştu.";
+    }
+
+    // Şehzade güç ipuçları (power 30+, genel atmosfer)
+    if (sehzadePower >= 50 && sehzadePower < 70 && Math.random() < 0.25) {
+      displayText += _isEN
+        ? " — A distant shadow seemed to watch from the corridor."
+        : " — Koridorun karanlığından bir gölge izliyor gibiydi.";
     }
 
     // Valide Sultan — 3+ destek → daha sahiplenici
@@ -2245,6 +2323,24 @@ function showEasterCard(c) {
     return;
   }
 
+  // Divan Sahnesi
+  if (c.easter_type === 'divan_sahnesi') {
+    showDivanSahnesi(c);
+    return;
+  }
+
+  // Hekimbaşı Dinlenme
+  if (c.easter_type === 'hekim_dinlenme') {
+    showHekimDinlenme(c);
+    return;
+  }
+
+  // Şehzade Meydan Okuma
+  if (c.easter_type === 'sehzade_meydan') {
+    showSehzadeMeydan(c);
+    return;
+  }
+
   // Pargalı özel müzik
   if (isPargali && window.playPargaliSad) playPargaliSad();
 
@@ -2416,6 +2512,231 @@ function showYearSummary(c) {
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 }
 
+// ── Divan Sahnesi ─────────────────────────────────────────────────
+const DIVAN_SCENARIOS = [
+  {
+    conflict_tr: "Yeniçeri Ağası ile Şeyhülislam Divan'da karşı karşıya. Biri savaş, diğeri barış istiyor. Hünkarım, karar sizin.",
+    conflict_en: "The Janissary Commander and the Şeyhülislam stand face to face in the Divan. One demands war, the other peace. The decision is yours, Grand Vizier.",
+    opt_a_tr: "Orduyu destekle (Ordu +12, Ulema −8)",  opt_a_en: "Support the army (Army +12, Clergy −8)",
+    opt_b_tr: "Ulemayı destekle (Ulema +12, Ordu −8)", opt_b_en: "Support the clergy (Clergy +12, Army −8)",
+    opt_c_tr: "Uzlaştır (her ikisi +4, sen −5 Saray)", opt_c_en: "Mediate (both +4, Palace −5 for you)",
+    fx_a: {yeniçeri:12, ulema:-8}, fx_b: {ulema:12, "yeniçeri":-8}, fx_c: {ulema:4,"yeniçeri":4,saray:-5},
+  },
+  {
+    conflict_tr: "Defterdar vergi artışı istiyor. Halk Temsilcisi buna karşı çıkıyor. Divan bekliyor.",
+    conflict_en: "The Treasurer demands a tax increase. The People's Representative objects. The Divan waits.",
+    opt_a_tr: "Vergi artışını onayla (Hazine +15, Halk −10)", opt_a_en: "Approve the increase (Treasury +15, Clergy −10)",
+    opt_b_tr: "Halkı koru (Saray −8, Hazine −8)",            opt_b_en: "Protect the people (Palace −8, Treasury −8)",
+    opt_c_tr: "Ertelee (Hazine −5, Saray +6)",               opt_c_en: "Delay (Treasury −5, Palace +6)",
+    fx_a: {hazine:15, ulema:-10}, fx_b: {saray:-8, hazine:-8}, fx_c: {hazine:-5, saray:6},
+  },
+  {
+    conflict_tr: "Kaptan-ı Derya yeni gemi istiyor. Rakip Vezir bunu hazine israfı sayıyor. Divan ikiye bölündü.",
+    conflict_en: "The Admiral wants new warships. The Rival Vizier calls it a waste of treasury. The Divan is split.",
+    opt_a_tr: "Donanmayı destekle (Ordu +10, Hazine −14)", opt_a_en: "Support the fleet (Army +10, Treasury −14)",
+    opt_b_tr: "Hazineyi koru (Hazine +8, Ordu −6)",        opt_b_en: "Protect the treasury (Treasury +8, Army −6)",
+    opt_c_tr: "Kısmi yatırım (Hazine −7, Ordu +6)",        opt_c_en: "Partial investment (Treasury −7, Army +6)",
+    fx_a: {"yeniçeri":10, hazine:-14}, fx_b: {hazine:8,"yeniçeri":-6}, fx_c: {hazine:-7,"yeniçeri":6},
+  },
+];
+
+function showDivanSahnesi(c) {
+  const isEN = window.LANG === 'en';
+  const yr   = c._divan_year || year;
+  const sc   = DIVAN_SCENARIOS[(yr / 5 - 1) % DIVAN_SCENARIOS.length];
+  const title = isEN ? `YEAR ${yr} — DIVAN CONVENES` : `${yr}. YIL — DİVAN TOPLANDI`;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'divan-overlay';
+  overlay.innerHTML = `
+    <div id="divan-box">
+      <img src="assets/characters/divan-toplantisi.jpg" class="divan-bg" onerror="this.style.display='none'">
+      <div class="divan-content">
+        <div class="divan-ornament">✦ ✦ ✦</div>
+        <div class="divan-title">${title}</div>
+        <div class="divan-divider"></div>
+        <div class="divan-conflict">${isEN ? sc.conflict_en : sc.conflict_tr}</div>
+        <div class="divan-opts">
+          <button class="divan-btn" id="dv-a">${isEN ? sc.opt_a_en : sc.opt_a_tr}</button>
+          <button class="divan-btn" id="dv-b">${isEN ? sc.opt_b_en : sc.opt_b_tr}</button>
+          <button class="divan-btn" id="dv-c">${isEN ? sc.opt_c_en : sc.opt_c_tr}</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const applyAndClose = (fx) => {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.35s';
+    setTimeout(() => {
+      overlay.remove();
+      Object.entries(fx).forEach(([k, v]) => {
+        stats[k] = Math.max(5, Math.min(95, (stats[k] || 50) + v));
+      });
+      updateStatUI();
+      advanceEasterCard(c);
+    }, 350);
+  };
+  document.getElementById('dv-a').onclick = () => applyAndClose(sc.fx_a);
+  document.getElementById('dv-b').onclick = () => applyAndClose(sc.fx_b);
+  document.getElementById('dv-c').onclick = () => applyAndClose(sc.fx_c);
+}
+
+// ── Şehzade Sistemi ───────────────────────────────────────────────
+function updateSehzadePower(delta) {
+  sehzadePower = Math.max(0, Math.min(100, sehzadePower + delta));
+}
+
+function trySehzadeMeydanOkuma() {
+  if (cardsPlayed < SEHZADE_MIN_CARDS || isGameOver) return;
+  if (sehzadePower < 70) return;
+  // Olasılık: power 70→%40, 85→%65, 100→%90 — her 20 kartta bir kontrol
+  if (cardsPlayed % 20 !== 0) return;
+  const chance = 0.40 + (sehzadePower - 70) / 100;
+  if (Math.random() > chance) return;
+  _sehzadeChecked = true;
+  const isEN = window.LANG === 'en';
+  forcedQueue.push({
+    id: 'sehzade_meydan_' + cardsPlayed,
+    type: 'easter',
+    easter_type: 'sehzade_meydan',
+    character: 'sehzade-kart',
+    character_name: isEN ? 'The Prince' : 'Şehzade',
+    text: isEN
+      ? "You have held power long enough, Grand Vizier. The palace whispers your name — but not in reverence. I have come to propose terms."
+      : "Yeterince uzun süre güç tuttunuz, Sadrazam. Saray sizin adınızı fısıldıyor — ama saygıyla değil. Şartlarımı sunmaya geldim.",
+    button: null,
+    stat_effect: null,
+    _sehzade_power: sehzadePower,
+  });
+}
+
+function showSehzadeMeydan(c) {
+  const isEN = window.LANG === 'en';
+  const pow = c._sehzade_power || sehzadePower;
+  const overlay = document.createElement('div');
+  overlay.id = 'sehzade-meydan-overlay';
+  overlay.innerHTML = `
+    <div id="sm-box">
+      <div class="sm-threat-bar" style="width:${pow}%"></div>
+      <div class="sm-char-wrap">
+        <img src="assets/characters/sehzade-kart.jpg" class="sm-img" onerror="this.style.display='none'">
+      </div>
+      <div class="sm-title">${isEN ? '⚔ CHALLENGE' : '⚔ MEYDAN OKUMA'}</div>
+      <div class="sm-text">${c.text}</div>
+      <div class="sm-choices">
+        <button class="sm-btn sm-a" id="sm-btn-a">
+          ${isEN ? '🤝 Negotiate — share power' : '🤝 Uzlaş — gücü paylaş'}
+          <span class="sm-hint">${isEN ? 'Saray −20, Prince power −40' : 'Saray −20, Güç −40'}</span>
+        </button>
+        <button class="sm-btn sm-b" id="sm-btn-b">
+          ${isEN ? '⚔ Show force — silence him' : '⚔ Güç göster — sustur'}
+          <span class="sm-hint">${isEN ? 'Army −20, Treasury −15, Prince power −60' : 'Ordu −20, Hazine −15, Güç −60'}</span>
+        </button>
+        <button class="sm-btn sm-c" id="sm-btn-c">
+          ${isEN ? '🎲 Gamble — all or nothing' : '🎲 Risk al — ya hep ya hiç'}
+          <span class="sm-hint">${isEN ? '50%: Prince defeated / 50%: You die' : '%50: Şehzade yenilir / %50: Ölürsün'}</span>
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const close = (fn) => {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.3s';
+    setTimeout(() => { overlay.remove(); fn(); advanceEasterCard(c); }, 320);
+  };
+
+  document.getElementById('sm-btn-a').onclick = () => close(() => {
+    updateSehzadePower(-40);
+    stats.saray = Math.max(5, (stats.saray || 50) - 20);
+    updateStatUI();
+  });
+  document.getElementById('sm-btn-b').onclick = () => close(() => {
+    updateSehzadePower(-60);
+    stats["yeniçeri"] = Math.max(5, (stats["yeniçeri"] || 50) - 20);
+    stats.hazine = Math.max(5, (stats.hazine || 50) - 15);
+    updateStatUI();
+  });
+  document.getElementById('sm-btn-c').onclick = () => close(() => {
+    if (Math.random() < 0.5) {
+      updateSehzadePower(-100);
+      stats.saray = Math.min(95, (stats.saray || 50) + 15);
+      updateStatUI();
+    } else {
+      const isEN2 = window.LANG === 'en';
+      triggerGameOver(isEN2
+        ? "The Prince's gambit succeeded. You were removed from power."
+        : "Şehzadenin hamlesi tuttu. İktidardan uzaklaştırıldınız.");
+    }
+  });
+}
+
+// ── Hekimbaşı Dinlenme Kartı ──────────────────────────────────────
+let _hekimDinlenmeShown = false;
+
+function tryHekimDinlenme() {
+  if (_hekimDinlenmeShown || sadrazamHealth > 40 || isGameOver) return;
+  _hekimDinlenmeShown = true;
+  forcedQueue.push({
+    id: 'hekim_dinlenme_' + cardsPlayed,
+    type: 'easter',
+    easter_type: 'hekim_dinlenme',
+    character: '10-hekimbasi',
+    character_name: window.LANG === 'en' ? 'Chief Physician' : 'Hekimbaşı',
+    text: window.LANG === 'en'
+      ? "Grand Vizier, your body gives warning signs. If you do not rest, the consequences will be severe. What do you decide?"
+      : "Paşam, bedeniniz uyarı işaretleri veriyor. Dinlenmezseniz sonuçları ağır olur. Ne buyurursunuz?",
+    button: null,
+    stat_effect: null,
+  });
+}
+
+function showHekimDinlenme(c) {
+  const isEN = window.LANG === 'en';
+  const overlay = document.createElement('div');
+  overlay.id = 'hekim-dinlenme-overlay';
+  overlay.innerHTML = `
+    <div id="hd-box">
+      <div class="hd-ornament">⚕</div>
+      <div class="hd-title">${isEN ? 'REST OR REFUSE?' : 'DİNLENİN Mİ?'}</div>
+      <div class="hd-divider"></div>
+      <div class="hd-text">${c.text}</div>
+      <div class="hd-btns">
+        <button class="hd-btn hd-yes" id="hd-yes">${isEN ? 'Rest (+20 ❤, all stats −5)' : 'Dinleneyim (+20 ❤, tüm güçler −5)'}</button>
+        <button class="hd-btn hd-no"  id="hd-no">${isEN ? 'No rest (−12 ❤)' : 'Reddediyorum (−12 ❤)'}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  document.getElementById('hd-yes').onclick = () => {
+    overlay.remove();
+    changeHealth(+20);
+    for (const k of Object.keys(stats)) stats[k] = Math.max(5, stats[k] - 5);
+    updateStatUI();
+    // 1 tur boş geç
+    forcedQueue.unshift({
+      id: 'hekim_dinlenme_bos',
+      type: 'easter',
+      easter_type: 'hekim_dinlenme_bos',
+      character: '10-hekimbasi',
+      character_name: isEN ? 'Chief Physician' : 'Hekimbaşı',
+      text: isEN ? 'Rest well, Grand Vizier. The empire can wait one day.' : 'Dinlenin Sadrazamım... İmparatorluk bir gün bekleyebilir.',
+      button: isEN ? 'I feel better' : 'Dinlendim',
+      stat_effect: null,
+    });
+    advanceEasterCard(c);
+    _hekimDinlenmeShown = false; // tekrar tetiklenebilsin 30 kart sonra
+    setTimeout(() => { tryHekimDinlenme._cooldown = cardsPlayed + 30; }, 0);
+  };
+  document.getElementById('hd-no').onclick = () => {
+    overlay.remove();
+    changeHealth(-12);
+    advanceEasterCard(c);
+    _hekimDinlenmeShown = false;
+  };
+}
+
 function showDonumEkrani() {
   _donumShownThisGame = true;
   const overlay = document.createElement("div");
@@ -2485,7 +2806,7 @@ function triggerYanlisIdam() {
 }
 
 // ── Padişah Ziyareti — bizzat gelip konuşur, reddedince ölürsün ──
-let _padisahZiyaretiNext = 50; // ilk ziyaret ~50. kartta
+let _padisahZiyaretiNext = 100; // ilk ziyaret ~yıl 4
 let _padisahZiyaretiCount = 0;
 
 const PADISAH_ZIYARET_TEXTS = [
@@ -2500,7 +2821,7 @@ function tryPadisahZiyareti() {
   if (isGameOver) return;
   if (cardsPlayed < _padisahZiyaretiNext) return;
   if (year < 3) return; // İlk 3 yıl gelmesin
-  _padisahZiyaretiNext = cardsPlayed + Math.round(45 * (0.75 + Math.random() * 0.5));
+  _padisahZiyaretiNext = cardsPlayed + Math.round(90 * (0.75 + Math.random() * 0.5));
   _padisahZiyaretiCount++;
   showPadisahZiyareti();
 }
@@ -2644,6 +2965,7 @@ function applySultanEffect(positive, c, dir) {
   characterMemory[charKey][dir]++;
   characterMemory[charKey].last = dir;
   seenCharacters.add(charKey);
+  applyProvinceEffect(c, dir); // Eyalet etkisi
 
   cardsPlayed++;
   advanceHicriMonth();
@@ -2856,6 +3178,33 @@ function updatePortraitExpression() {
   else                img.classList.add("state-normal");
 }
 
+function updateHealthUI() {
+  const hfill = document.getElementById("health-fill-h");
+  const hval  = document.getElementById("health-val");
+  const hicon = document.getElementById("health-icon-svg");
+  if (!hfill) return;
+  const h = Math.max(0, Math.min(100, sadrazamHealth));
+  hfill.style.width = h + "%";
+  let cls = "";
+  let iconColor = "rgba(39,174,96,0.7)";
+  if (h <= 20)      { cls = "danger"; iconColor = "rgba(192,57,43,0.9)"; }
+  else if (h <= 40) { cls = "warn";   iconColor = "rgba(230,126,34,0.85)"; }
+  hfill.className = cls;
+  if (hicon) hicon.style.color = iconColor;
+  if (hval) hval.textContent = h;
+}
+
+function changeHealth(delta) {
+  sadrazamHealth = Math.max(0, Math.min(100, sadrazamHealth + delta));
+  updateHealthUI();
+  if (sadrazamHealth <= 0 && !isGameOver) {
+    const isEN = window.LANG === 'en';
+    triggerGameOver(isEN
+      ? "Your body could bear no more. You died of exhaustion."
+      : "Bedeniniz artık dayanamadı. Yorgunluktan hayatını kaybettiniz.");
+  }
+}
+
 function updateStatUI() {
   const map = { saray: "saray", "yeniçeri": "yeniceri", ulema: "ulema", hazine: "hazine" };
   let anyDanger = false;
@@ -2870,6 +3219,7 @@ function updateStatUI() {
     else                 fill.className = "stat-fill";
     if (val <= 15 || val >= 80) anyDanger = true;
   }
+  updateHealthUI();
 
   // Danger pulse
   if (anyDanger && !dangerPulseActive) {
@@ -3454,7 +3804,10 @@ function decide(dir) {
   }
 
   // Flag'ler
-  for (const f of (currentCard[dir + "_flags_set"] || [])) activeFlags[f] = true;
+  const newFlags = currentCard[dir + "_flags_set"] || [];
+  for (const f of newFlags) activeFlags[f] = true;
+  // Zincir tetikleyici kontrolü
+  if (newFlags.length) checkChainTriggers(newFlags);
 
   // Item grant — koşul kontrolü
   const grantKey = "grants_item_on_" + dir;
@@ -3598,6 +3951,12 @@ function decide(dir) {
 
     // Padişah ziyareti: her ~45 kartta 1, yıl 3+
     tryPadisahZiyareti();
+  tryHekimDinlenme();
+  if (isChallengeMode) updateChallengeUI();
+  // Şehzade her yıl sonu güçlenir
+  if (sultanSabir < 40) updateSehzadePower(8);
+  else updateSehzadePower(3);
+  trySehzadeMeydanOkuma();
   }
 
   if (!isGameOver) {
@@ -3869,6 +4228,8 @@ function advanceYear() {
   }
 
   stats.hazine = Math.max(0, stats.hazine - PASSIVE_HAZINE_DRAIN);
+  // Yıl sonu doğal sağlık düşüşü
+  changeHealth(-3);
   updateStatUI();
   if (checkGameOver()) return;
 
@@ -3909,6 +4270,21 @@ function advanceYear() {
   if (year % 5 === 0) {
     const vergiEvent = allCards.find(c => c.id === 'event_vergi_reformu');
     if (vergiEvent) forcedQueue.unshift(vergiEvent);
+  }
+
+  // Divan Sahnesi — yıl 5, 10, 15, 20
+  if ([5, 10, 15, 20].includes(year)) {
+    forcedQueue.push({
+      id: 'divan_sahnesi_' + year,
+      type: 'easter',
+      easter_type: 'divan_sahnesi',
+      character: 'divan-toplantisi',
+      character_name: '',
+      text: '',
+      button: null,
+      stat_effect: null,
+      _divan_year: year,
+    });
   }
 
   // 5 yılda bir yıl özeti kartı (vergi event'inden sonra sıraya girer)
@@ -4491,6 +4867,11 @@ function restartGame() {
   selectedSultan = null;
   selectedAdvisors = [];
   hideNegotiationPanel();
+  // Challenge panelini temizle, modu sıfırla
+  document.getElementById('challenge-panel')?.remove();
+  isChallengeMode   = false;
+  challengeGoals    = [];
+  challengeComplete = false;
 
   // Clean up extra elements
   ["new-record-banner","death-archive-section","achievements-section"].forEach(id => {
@@ -4505,6 +4886,120 @@ function restartGame() {
 }
 
 // ── Oyun İçi Menü ────────────────────────────────────────────────
+// ── Harita Overlay ────────────────────────────────────────────────
+// ── Ayarlar Overlay ───────────────────────────────────────────────
+function showSettingsOverlay() {
+  document.getElementById('settings-overlay')?.remove();
+  const isEN = window.LANG === 'en';
+  const ov = document.createElement('div');
+  ov.id = 'settings-overlay';
+  ov.innerHTML = `
+    <div id="settings-box">
+      <div class="sett-title">⚙ ${window.t('sett.title')}</div>
+      <div class="sett-divider"></div>
+      <div class="sett-row">
+        <span class="sett-label">${window.t('sett.music')}</span>
+        <div class="sett-toggle">
+          <button class="sett-opt ${window.musicEnabled ? 'active' : ''}" id="sett-mus-on">${window.t('sett.on')}</button>
+          <button class="sett-opt ${!window.musicEnabled ? 'active' : ''}" id="sett-mus-off">${window.t('sett.off')}</button>
+        </div>
+      </div>
+      <div class="sett-row">
+        <span class="sett-label">${window.t('sett.effects')}</span>
+        <div class="sett-toggle">
+          <button class="sett-opt ${window.sfxEnabled ? 'active' : ''}" id="sett-sfx-on">${window.t('sett.on')}</button>
+          <button class="sett-opt ${!window.sfxEnabled ? 'active' : ''}" id="sett-sfx-off">${window.t('sett.off')}</button>
+        </div>
+      </div>
+      <div class="sett-divider"></div>
+      <div class="sett-label" style="text-align:center;margin-bottom:8px">${window.t('sett.language')}</div>
+      <div class="sett-lang-row">
+        <button class="sett-lang-btn ${window.LANG === 'tr' ? 'active' : ''}" id="sett-lang-tr">Türkçe</button>
+        <button class="sett-lang-btn ${window.LANG === 'en' ? 'active' : ''}" id="sett-lang-en">English</button>
+      </div>
+      <button class="sett-close" id="sett-close">${window.t('sett.close')}</button>
+    </div>`;
+  document.body.appendChild(ov);
+  // Overlay kapatıp açmak yerine in-place güncelle (flash olmaz)
+  function updateSettingsUI() {
+    document.getElementById('sett-mus-on').classList.toggle('active', window.musicEnabled !== false);
+    document.getElementById('sett-mus-off').classList.toggle('active', window.musicEnabled === false);
+    document.getElementById('sett-sfx-on').classList.toggle('active', window.sfxEnabled !== false);
+    document.getElementById('sett-sfx-off').classList.toggle('active', window.sfxEnabled === false);
+    document.getElementById('sett-lang-tr').classList.toggle('active', window.LANG === 'tr');
+    document.getElementById('sett-lang-en').classList.toggle('active', window.LANG === 'en');
+  }
+  document.getElementById('sett-mus-on').onclick  = () => { window.musicEnabled = true;  localStorage.setItem('sadrazam_music','on');  playMenuMusic(); updateSettingsUI(); };
+  document.getElementById('sett-mus-off').onclick = () => { window.musicEnabled = false; localStorage.setItem('sadrazam_music','off'); stopAllMusic();  updateSettingsUI(); };
+  document.getElementById('sett-sfx-on').onclick  = () => { window.sfxEnabled = true;  localStorage.setItem('sadrazam_sfx','on');  updateSettingsUI(); };
+  document.getElementById('sett-sfx-off').onclick = () => { window.sfxEnabled = false; localStorage.setItem('sadrazam_sfx','off'); updateSettingsUI(); };
+  document.getElementById('sett-lang-tr').onclick = () => { setLang('tr'); updateSettingsUI(); window.applyI18nHTML && window.applyI18nHTML(); };
+  document.getElementById('sett-lang-en').onclick = () => { setLang('en'); updateSettingsUI(); window.applyI18nHTML && window.applyI18nHTML(); };
+  document.getElementById('sett-close').onclick = () => ov.remove();
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+}
+
+function showHaritaOverlay() {
+  document.getElementById('harita-overlay')?.remove();
+  const isEN = window.LANG === 'en';
+
+  const PROV_ICONS = { rumeli:'⚔', anadolu:'🌾', misir:'💰', dogu:'🛡', akdeniz:'⚓' };
+  const rows = PROVINCES.map(p => {
+    const loy = Math.round(provinceLoyalty[p.id] || 50);
+    const cls = loy <= 25 ? 'prov-danger' : loy >= 70 ? 'prov-ok' : 'prov-warn';
+    const badge = loy <= 25 ? '⚠' : loy >= 70 ? '✦' : '';
+    return `<div class="prov-row ${cls}">
+      <span class="prov-icon">${PROV_ICONS[p.id] || '✦'}</span>
+      <div class="prov-info">
+        <div class="prov-header">
+          <span class="prov-name">${getProvinceLabel(p)}</span>
+          <span class="prov-badge">${badge}</span>
+          <span class="prov-val">${loy}</span>
+        </div>
+        <div class="prov-track"><div class="prov-fill" style="width:${loy}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const overallLoy = Math.round(Object.values(provinceLoyalty).reduce((a,b)=>a+b,0)/5);
+  const statusLabel = overallLoy >= 70
+    ? (isEN ? 'STABLE' : 'KARARLI')
+    : overallLoy >= 40
+    ? (isEN ? 'TENSE' : 'GERGİN')
+    : (isEN ? 'CRITICAL' : 'KRİTİK');
+  const statusCls = overallLoy >= 70 ? 'hs-stable' : overallLoy >= 40 ? 'hs-tense' : 'hs-critical';
+
+  const ov = document.createElement('div');
+  ov.id = 'harita-overlay';
+  ov.innerHTML = `
+    <div id="harita-box">
+      <div id="harita-bg" style="background-image:url(assets/characters/harita-overlay.jpg)"></div>
+      <div id="harita-glass">
+        <div id="harita-header">
+          <div id="harita-ornament">✦</div>
+          <div id="harita-title">${isEN ? 'IMPERIAL MAP' : 'İMPARATORLUK HARİTASI'}</div>
+          <div id="harita-status" class="${statusCls}">
+            ${isEN ? 'Empire Status' : 'İmparatorluk Durumu'}: <strong>${statusLabel}</strong>
+          </div>
+        </div>
+        <div id="harita-divider-top"></div>
+        <div id="harita-provinces">${rows}</div>
+        <div id="harita-divider-bot"></div>
+        <div id="harita-footer">
+          <div id="harita-avg">
+            <span class="ha-label">${isEN ? 'Average Loyalty' : 'Ort. Sadakat'}</span>
+            <div class="ha-bar-wrap"><div class="ha-bar" style="width:${overallLoy}%"></div></div>
+            <span class="ha-val">${overallLoy}</span>
+          </div>
+          <button id="harita-close-btn">${isEN ? '× Close' : '× Kapat'}</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  document.getElementById('harita-close-btn').onclick = () => ov.remove();
+}
+
 function showGameMenu() {
   if (isGameOver) return;
   const overlay = document.createElement("div");
