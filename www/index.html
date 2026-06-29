@@ -67,6 +67,7 @@
         <button id="btn-achievements" class="intro-btn secondary">
           <span class="btn-icon">🏆</span> <span data-i18n="btn.achievements">BAŞARIMLARIM</span> <span id="ach-count-badge"></span>
         </button>
+        <button id="btn-challenge" class="intro-btn challenge-btn" onclick="startChallengeMod()">⚔ CHALLENGE MODU</button>
         <button id="btn-akcesystem" class="intro-btn ghost" data-i18n="btn.buy_coins">🪙 AKÇE AL</button>
         <button id="btn-howto" class="intro-btn ghost" data-i18n="btn.howto">NASIL OYNANIR?</button>
       </div>
@@ -214,6 +215,14 @@
         <span class="stat-label" data-i18n="stat.hazine">Hazine</span>
         <div class="stat-track"><div class="stat-fill" id="fill-hazine"></div></div>
       </div>
+      <!-- Sağlık barı (dikey kavuk) -->
+      <div id="health-bar-wrap">
+        <div id="health-kavuk">🪖</div>
+        <div id="health-track">
+          <div id="health-fill"></div>
+        </div>
+        <div id="health-val">90</div>
+      </div>
     </div>
 
 
@@ -225,7 +234,8 @@
       <div id="year-label">Muharrem 927</div>
       <div id="dynamic-subtitle"></div>
     </div>
-    <button id="game-menu-btn" onclick="showGameMenu()">☰</button>
+    <button id="harita-btn" onclick="showHaritaOverlay()">🗺</button>
+<button id="game-menu-btn" onclick="showGameMenu()">☰</button>
 
     <div id="card-area">
       <div id="swipe-hint-left" class="swipe-hint" data-i18n="hint.left">← Hayır</div>

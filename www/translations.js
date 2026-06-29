@@ -220,7 +220,15 @@ window.EN_FELAKET_TEXTS = [
   "Palace fire, treasury losses, Janissary unrest. God is testing this state.",
   "An earthquake shook Constantinople. Everything changed in an instant.",
   "Enemy attack, epidemic, and flood came together. The Divan scattered.",
-  "The treasury was looted, the walls cracked, the clergy declared crisis. There is no escape."
+  "The treasury was looted, the walls cracked, the clergy declared crisis. There is no escape.",
+  // New 7
+  "The great Istanbul earthquake. Hundreds of buildings collapsed; the people poured into the streets. Everything changed in an instant.",
+  "The bazaar fire began in the darkness of night and could not be stopped until morning. Hundreds of merchants were ruined.",
+  "News of drought spreading from the Nile threatens to consume Egypt. The treasury flow is in danger.",
+  "A great wave of migration is coming from the eastern border. Cities overflow, the people are restless.",
+  "Half the Ottoman fleet was lost in a storm. Control of the Mediterranean has been shaken.",
+  "An assassination attempt in the palace was foiled — but the perpetrator is unknown. Everyone suspects everyone.",
+  "Plague and famine struck two provinces simultaneously. Nothing was left to flee to."
 ];
 
 window.EN_MUCIZE_TEXTS = [
