@@ -2991,3 +2991,37 @@ html, body {
   max-height: 100vh;
   object-fit: contain;
 }
+
+/* ── Dil Toggle ──────────────────────────────────────────────── */
+#lang-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.lang-btn {
+  background: none;
+  border: 1px solid rgba(201,162,39,0.3);
+  color: rgba(201,162,39,0.5);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.lang-btn.lang-active {
+  border-color: rgba(201,162,39,0.8);
+  color: rgb(201,162,39);
+  background: rgba(201,162,39,0.08);
+}
+.lang-btn:hover {
+  border-color: rgba(201,162,39,0.6);
+  color: rgba(201,162,39,0.8);
+}
+.lang-sep {
+  color: rgba(201,162,39,0.3);
+  font-size: 12px;
+}

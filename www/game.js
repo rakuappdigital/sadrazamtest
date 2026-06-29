@@ -113,13 +113,16 @@ const DEATH_TEXTS = {
 
 function getRichDeathText(reason, statKey, statVal) {
   const key = statKey === "yeniçeri" ? "yeniceri" : statKey;
-  const pool = DEATH_TEXTS[key + "_" + (statVal <= 0 ? "0" : "100")];
+  const poolKey = key + "_" + (statVal <= 0 ? "0" : "100");
+  const isEN = window.LANG === 'en';
+  const enPools = window.EN_DEATH_TEXTS;
+  const pool = (isEN && enPools && enPools[poolKey]) ? enPools[poolKey] : DEATH_TEXTS[poolKey];
   let base = pool ? pool[Math.floor(Math.random() * pool.length)] : reason;
 
   // Yıl bazlı ek bağlam
-  if (year >= 15) base += " On beş yılı aşmıştın — az değil.";
-  else if (year >= 10) base += " On yılı gördün. Çok az kişi bu kadar dayanır.";
-  else if (year <= 2) base += " Divan seni henüz tanıyamamıştı.";
+  if (year >= 15)     base += isEN ? " You had surpassed fifteen years — that is no small feat." : " On beş yılı aşmıştın — az değil.";
+  else if (year >= 10) base += isEN ? " You saw ten years. Very few endure that long." : " On yılı gördün. Çok az kişi bu kadar dayanır.";
+  else if (year <= 2)  base += isEN ? " The Divan had barely come to know you." : " Divan seni henüz tanıyamamıştı.";
 
   return base;
 }
@@ -265,8 +268,16 @@ const RAKIP_ZAYIF = [
 
 function getRakipSuffix() {
   const avg = Object.values(stats).reduce((a,b)=>a+b,0)/4;
-  if (avg >= 58) return " — Rakip vezir " + RAKIP_GUCLU[Math.floor(Math.random()*RAKIP_GUCLU.length)];
-  if (avg <= 42) return " — Rakip vezir " + RAKIP_ZAYIF[Math.floor(Math.random()*RAKIP_ZAYIF.length)];
+  const isEN = window.LANG === 'en';
+  const prefix = isEN ? " — The Rival Vizier " : " — Rakip vezir ";
+  if (avg >= 58) {
+    const pool = (isEN && window.EN_RAKIP_GUCLU) ? window.EN_RAKIP_GUCLU : RAKIP_GUCLU;
+    return prefix + pool[Math.floor(Math.random()*pool.length)];
+  }
+  if (avg <= 42) {
+    const pool = (isEN && window.EN_RAKIP_ZAYIF) ? window.EN_RAKIP_ZAYIF : RAKIP_ZAYIF;
+    return prefix + pool[Math.floor(Math.random()*pool.length)];
+  }
   return "";
 }
 
@@ -282,13 +293,16 @@ let _donumNextCard = 42;
 let _donumShownThisGame = false;
 
 function getDonumCard() {
+  const isEN = window.LANG === 'en';
   return {
     id: "donum_noktasi_" + cardsPlayed,
     type: "easter",
     easter_type: "donum",
     character: "donum-noktasi",
-    character_name: "Dönüm Noktası",
-    text: "Yıllar geçti. Divan sizi dinliyor. Bu dönemde ne üzerine yoğunlaştığınız tarihçilerin dilinde yaşayacak.",
+    character_name: isEN ? "Turning Point" : "Dönüm Noktası",
+    text: isEN
+      ? "Years have passed. The Divan is listening. What you focused on in this era will live on in the words of historians."
+      : "Yıllar geçti. Divan sizi dinliyor. Bu dönemde ne üzerine yoğunlaştığınız tarihçilerin dilinde yaşayacak.",
     button: null,
     stat_effect: null
   };
@@ -298,14 +312,25 @@ function getMirasCard() {
   const bar = localStorage.getItem("sadrazam_miras_bar");
   const label = localStorage.getItem("sadrazam_miras_label");
   if (!bar || !label) return null;
+  const isEN = window.LANG === 'en';
+  // EN label: ters çeviri tablosu (donum seçimindeki label → EN karşılığı)
+  const EN_DONUM_LABEL_MAP = {
+    "Sarayı pekiştirdim":          "I strengthened the Palace",
+    "Orduyu güçlendirdim":         "I strengthened the Army",
+    "Dini otoriteyi destekledim":  "I supported religious authority",
+    "Hazineyi büyüttüm":           "I grew the Treasury"
+  };
+  const displayLabel = (isEN && EN_DONUM_LABEL_MAP[label]) ? EN_DONUM_LABEL_MAP[label] : label;
   return {
     id: "miras_kart",
     type: "easter",
     easter_type: "miras",
     character: "miras-habercisi",
-    character_name: "Miras Habercisi",
-    text: `Bıraktığın miras yerini buldu. "${label}" — bu karar bugün hâlâ yankılanıyor.`,
-    button: "MİNNETTARIZ",
+    character_name: isEN ? "Legacy Herald" : "Miras Habercisi",
+    text: isEN
+      ? `Your legacy has found its place. "${displayLabel}" — that decision still echoes today.`
+      : `Bıraktığın miras yerini buldu. "${displayLabel}" — bu karar bugün hâlâ yankılanıyor.`,
+    button: isEN ? "WE ARE GRATEFUL" : "MİNNETTARIZ",
     stat_effect: () => {
       const delta = 15;
       stats[bar] = Math.min(95, (stats[bar] || 50) + delta);
@@ -339,16 +364,18 @@ const KEHANET_TEXTS = [
 ];
 let _kehanetIdx = 0;
 function getKehanetCard() {
-  const text = KEHANET_TEXTS[_kehanetIdx % KEHANET_TEXTS.length];
+  const isEN = window.LANG === 'en';
+  const pool = (isEN && window.EN_KEHANET_TEXTS) ? window.EN_KEHANET_TEXTS : KEHANET_TEXTS;
+  const text = pool[_kehanetIdx % pool.length];
   _kehanetIdx++;
   return {
     id: "easter_kehanet_" + _kehanetIdx,
     type: "easter",
     easter_type: "kehanet",
     character: "25-deli_dervis",
-    character_name: "Deli Derviş",
+    character_name: isEN ? "Mad Dervish" : "Deli Derviş",
     text,
-    button: "YIKIL ZINNIK!",
+    button: isEN ? "BEGONE, MADMAN!" : "YIKIL ZINNIK!",
     stat_effect: null
   };
 }
@@ -366,11 +393,14 @@ const BARBAROS_TEXTS = [
 ];
 let _barbarosIdx = 0;
 function getBarbarosCard() {
-  const text = BARBAROS_TEXTS[_barbarosIdx % BARBAROS_TEXTS.length];
+  const isEN = window.LANG === 'en';
+  const pool = (isEN && window.EN_BARBAROS_TEXTS) ? window.EN_BARBAROS_TEXTS : BARBAROS_TEXTS;
+  const text = pool[_barbarosIdx % pool.length];
   _barbarosIdx++;
   return { id:"easter_barbaros_"+_barbarosIdx, type:"easter", easter_type:"tarihsel",
-    character:"barbaros-hayreddin", character_name:"Barbaros Hayreddin Paşa",
-    text, button:"EYVALLAH REİS", stat_effect:null };
+    character:"barbaros-hayreddin",
+    character_name: isEN ? "Barbarossa Hayreddin Pasha" : "Barbaros Hayreddin Paşa",
+    text, button: isEN ? "WELL SAID, ADMIRAL!" : "EYVALLAH REİS", stat_effect:null };
 }
 
 const LEONARDO_TEXTS = [
@@ -385,11 +415,13 @@ const LEONARDO_TEXTS = [
 ];
 let _leonardoIdx = 0;
 function getLeonardoCard() {
-  const text = LEONARDO_TEXTS[_leonardoIdx % LEONARDO_TEXTS.length];
+  const isEN = window.LANG === 'en';
+  const pool = (isEN && window.EN_LEONARDO_TEXTS) ? window.EN_LEONARDO_TEXTS : LEONARDO_TEXTS;
+  const text = pool[_leonardoIdx % pool.length];
   _leonardoIdx++;
   return { id:"easter_leonardo_"+_leonardoIdx, type:"easter", easter_type:"tarihsel",
     character:"leonardo-davinci", character_name:"Leonardo da Vinci",
-    text, button:"ALA LEO!", stat_effect:null };
+    text, button: isEN ? "WELL DONE, LEO!" : "ALA LEO!", stat_effect:null };
 }
 
 // Mahidevran kaldırıldı
@@ -406,11 +438,13 @@ const HALIT_TEXTS = [
 ];
 let _halitIdx = 0;
 function getHalitCard() {
-  const text = HALIT_TEXTS[_halitIdx % HALIT_TEXTS.length];
+  const isEN = window.LANG === 'en';
+  const pool = (isEN && window.EN_HALIT_TEXTS) ? window.EN_HALIT_TEXTS : HALIT_TEXTS;
+  const text = pool[_halitIdx % pool.length];
   _halitIdx++;
   return { id:"easter_halit_"+_halitIdx, type:"easter", easter_type:"tarihsel",
     character:"halit-ergenc", character_name:"Kanuni Sultan Süleyman",
-    text, button:"MUHTEŞEM!", stat_effect:null };
+    text, button: isEN ? "MAGNIFICENT!" : "MUHTEŞEM!", stat_effect:null };
 }
 
 // ── Felaket / Mucize Kartları ─────────────────────────────────────
@@ -430,10 +464,12 @@ const MUCIZE_TEXTS = [
 ];
 let _felaketIdx = 0, _mucizeIdx = 0;
 function getFelaketCard() {
-  const text = FELAKET_TEXTS[_felaketIdx % FELAKET_TEXTS.length]; _felaketIdx++;
+  const isEN = window.LANG === 'en';
+  const pool = (isEN && window.EN_FELAKET_TEXTS) ? window.EN_FELAKET_TEXTS : FELAKET_TEXTS;
+  const text = pool[_felaketIdx % pool.length]; _felaketIdx++;
   return { id:"felaket_"+_felaketIdx, type:"easter", easter_type:"felaket",
-    character:"kader-felaket", character_name:"Kader",
-    text, button:"PEKÂLÂ", stat_effect: () => {
+    character:"kader-felaket", character_name: isEN ? "Fate" : "Kader",
+    text, button: isEN ? "SO BE IT" : "PEKÂLÂ", stat_effect: () => {
       for (const s of Object.keys(stats)) {
         const delta = -Math.round(stats[s] * 0.30);
         stats[s] = Math.max(5, stats[s] + delta);
@@ -444,10 +480,12 @@ function getFelaketCard() {
   };
 }
 function getMucizeCard() {
-  const text = MUCIZE_TEXTS[_mucizeIdx % MUCIZE_TEXTS.length]; _mucizeIdx++;
+  const isEN = window.LANG === 'en';
+  const pool = (isEN && window.EN_MUCIZE_TEXTS) ? window.EN_MUCIZE_TEXTS : MUCIZE_TEXTS;
+  const text = pool[_mucizeIdx % pool.length]; _mucizeIdx++;
   return { id:"mucize_"+_mucizeIdx, type:"easter", easter_type:"mucize",
-    character:"kader-mucize", character_name:"Kader",
-    text, button:"PEKÂLÂ", stat_effect: () => {
+    character:"kader-mucize", character_name: isEN ? "Fate" : "Kader",
+    text, button: isEN ? "SO BE IT" : "PEKÂLÂ", stat_effect: () => {
       for (const s of Object.keys(stats)) {
         const delta = Math.round(stats[s] * 0.30);
         stats[s] = Math.min(95, stats[s] + delta);
@@ -473,7 +511,9 @@ let _fisildayanIdx = 0;
 let _easterFisildayanNext = 110;
 
 function getFisildayanCard() {
-  const text = FISILDAYAN_TEXTS[_fisildayanIdx % FISILDAYAN_TEXTS.length];
+  const isEN = window.LANG === 'en';
+  const pool = (isEN && window.EN_FISILDAYAN_TEXTS) ? window.EN_FISILDAYAN_TEXTS : FISILDAYAN_TEXTS;
+  const text = pool[_fisildayanIdx % pool.length];
   _fisildayanIdx++;
   return { id:"fisildayan_"+_fisildayanIdx, type:"easter", easter_type:"fisildayan",
     character:"fisildayan", character_name:"???",
@@ -522,17 +562,20 @@ function _initZamanShuffle() {
 }
 
 function getZamanCard() {
+  const isEN = window.LANG === 'en';
+  const srcTexts = (isEN && window.EN_ZAMAN_TEXTS) ? window.EN_ZAMAN_TEXTS : ZAMAN_TEXTS;
   if (_zamanIdx >= _zamanShuffled.length) {
     // Tüm cümleler bitti — yeniden karıştır (ilk eleman son kullanılandan farklı olsun)
     const last = _zamanShuffled[_zamanShuffled.length - 1];
-    _zamanShuffled = _shuffleArray(ZAMAN_TEXTS);
+    _zamanShuffled = _shuffleArray(srcTexts);
     if (_zamanShuffled[0] === last) _zamanShuffled.push(_zamanShuffled.shift());
     _zamanIdx = 0;
   }
   const text = _zamanShuffled[_zamanIdx++];
   return { id:"zaman_"+_zamanIdx, type:"easter", easter_type:"zaman",
-    character:"zaman-yolcusu", character_name:"Zaman Yolcusu",
-    text, button:"NE DERSİN ZINNIK?", stat_effect: null };
+    character:"zaman-yolcusu",
+    character_name: isEN ? "Time Traveler" : "Zaman Yolcusu",
+    text, button: isEN ? "WHAT DO YOU THINK, MADMAN?" : "NE DERSİN ZINNIK?", stat_effect: null };
 }
 
 const _HIST_GETTERS = [getBarbarosCard, getLeonardoCard, getHalitCard];
@@ -608,7 +651,9 @@ const EASTER_CARDS = {
 // Evliya'yı her 30 kartta bir tetikle
 let _evliyaTextIdx = 0;
 function getEvliyaCard() {
-  const text = EVLIYA_TEXTS[_evliyaTextIdx % EVLIYA_TEXTS.length];
+  const isEN = window.LANG === 'en';
+  const pool = (isEN && window.EN_EVLIYA_TEXTS) ? window.EN_EVLIYA_TEXTS : EVLIYA_TEXTS;
+  const text = pool[_evliyaTextIdx % pool.length];
   _evliyaTextIdx++;
   return {
     id: "easter_evliya_" + _evliyaTextIdx,
@@ -617,7 +662,7 @@ function getEvliyaCard() {
     character: "evliya-celebi",
     character_name: "Evliya Çelebi",
     text,
-    button: "Eyvallah",
+    button: isEN ? "My Regards" : "Eyvallah",
     stat_effect: null
   };
 }
@@ -915,9 +960,12 @@ function showSultanScreen() {
   SULTANS.forEach(s => {
     const btn = document.createElement("div");
     btn.className = "sultan-card";
+    const enS = (window.LANG === 'en' && window.EN_SULTANS && window.EN_SULTANS[s.id]) || {};
+    const sName = enS.name || s.name;
+    const sDesc = enS.desc || s.desc;
     btn.innerHTML = `
-      <div class="sc-name">${s.name}</div>
-      <div class="sc-desc">${s.desc}</div>
+      <div class="sc-name">${sName}</div>
+      <div class="sc-desc">${sDesc}</div>
       <div class="sc-stats">
         <span>👑 ${s.stats.saray}</span>
         <span>⚔️ ${s.stats["yeniçeri"]}</span>
@@ -943,12 +991,16 @@ function showAdvisorScreen() {
   ADVISORS.forEach(a => {
     const btn = document.createElement("div");
     btn.className = "advisor-card";
+    const enA = (window.LANG === 'en' && window.EN_ADVISORS && window.EN_ADVISORS[a.id]) || {};
+    const aName  = enA.name  || a.name;
+    const aTitle = enA.title || a.title;
+    const aDesc  = enA.desc  || a.desc;
     btn.innerHTML = `
       <div class="ac-icon">${a.icon}</div>
       <div>
-        <div class="ac-name">${a.name}</div>
-        <div class="ac-title">${a.title}</div>
-        <div class="ac-desc">${a.desc}</div>
+        <div class="ac-name">${aName}</div>
+        <div class="ac-title">${aTitle}</div>
+        <div class="ac-desc">${aDesc}</div>
       </div>
     `;
     btn.onclick = () => {
@@ -956,11 +1008,14 @@ function showAdvisorScreen() {
         btn.classList.remove("selected");
         selectedAdvisors = selectedAdvisors.filter(x => x.id !== a.id);
       } else {
-        if (selectedAdvisors.length >= 2) { alert("En fazla 2 danışman seçebilirsiniz."); return; }
+        if (selectedAdvisors.length >= 2) { alert(window.t('advisor.max_alert')); return; }
         btn.classList.add("selected");
         selectedAdvisors.push(a);
       }
-      document.getElementById("advisor-count").textContent = selectedAdvisors.length + "/2 seçildi";
+      const countEl = document.getElementById("advisor-count");
+      if (countEl) countEl.textContent = window.LANG === 'en'
+        ? (selectedAdvisors.length + "/2 selected")
+        : (selectedAdvisors.length + "/2 seçildi");
     };
     grid.appendChild(btn);
   });
@@ -1557,7 +1612,8 @@ function loadGameState(s) {
 // ── Osmanlı Takvimi ───────────────────────────────────────────────
 function updateYearLabel() {
   if (!yearLabel) return;
-  const monthName = HICRI_MONTHS[hicriMonth % 12];
+  const months = (window.LANG === 'en' && window.EN_HICRI_MONTHS) ? window.EN_HICRI_MONTHS : HICRI_MONTHS;
+  const monthName = months[hicriMonth % 12];
   yearLabel.textContent = `${monthName} ${hicriYear}`;
 }
 
@@ -1573,15 +1629,18 @@ function advanceHicriMonth() {
 // ── Dinamik Subtitle ──────────────────────────────────────────────
 function updateDynamicSubtitle() {
   let subtitle = "";
+  const isEN = window.LANG === 'en';
+  const ctx = isEN ? window.EN_CONTEXT_SUBTITLES : {};
+  const arr = isEN ? window.EN_DYNAMIC_SUBTITLES : DYNAMIC_SUBTITLES;
 
-  if (stats.hazine < 25)      subtitle = "Hazinenin Dibini Gördüğümüz Yıl";
-  else if (stats["yeniçeri"] > 75) subtitle = "Orduların Gözde Sadrazamı";
-  else if (stats.saray < 25)  subtitle = "Gözden Düştüğümüz Günler";
-  else if (stats.ulema > 75)  subtitle = "Dinin Gölgesinde Saltanat";
-  else if (stats.hazine > 75) subtitle = "Bereketin Yılı";
+  if (stats.hazine < 25)           subtitle = isEN ? ctx.hazine_low    : "Hazinenin Dibini Gördüğümüz Yıl";
+  else if (stats["yeniçeri"] > 75) subtitle = isEN ? ctx.yeniceri_high : "Orduların Gözde Sadrazamı";
+  else if (stats.saray < 25)       subtitle = isEN ? ctx.saray_low     : "Gözden Düştüğümüz Günler";
+  else if (stats.ulema > 75)       subtitle = isEN ? ctx.ulema_high    : "Dinin Gölgesinde Saltanat";
+  else if (stats.hazine > 75)      subtitle = isEN ? ctx.hazine_high   : "Bereketin Yılı";
   else {
-    const idx = (year + cardsPlayed) % DYNAMIC_SUBTITLES.length;
-    subtitle = DYNAMIC_SUBTITLES[idx];
+    const idx = (year + cardsPlayed) % (arr ? arr.length : DYNAMIC_SUBTITLES.length);
+    subtitle = arr ? arr[idx] : DYNAMIC_SUBTITLES[idx];
   }
 
   let el = document.getElementById("dynamic-subtitle");
@@ -1900,8 +1959,8 @@ function dealNext() {
 
   charName.textContent = c.character_name || "";
   cardText.textContent = displayText;
-  choiceLeft.textContent  = c.left_text  || "Hayır";
-  choiceRight.textContent = c.right_text || "Evet";
+  choiceLeft.textContent  = c.left_text  || (window.LANG === 'en' ? "No"  : "Hayır");
+  choiceRight.textContent = c.right_text || (window.LANG === 'en' ? "Yes" : "Evet");
 
   choiceLeft.style.opacity  = "0";
   choiceRight.style.opacity = "0";
@@ -2191,14 +2250,16 @@ function showDonumEkrani() {
   _donumShownThisGame = true;
   const overlay = document.createElement("div");
   overlay.id = "donum-overlay";
+  const isEN = window.LANG === 'en';
+  const donumChoices = (isEN && window.EN_DONUM_CHOICES) ? window.EN_DONUM_CHOICES : DONUM_CHOICES;
   overlay.innerHTML = `
     <div id="donum-box">
       <div id="donum-ornament">✦</div>
-      <div id="donum-title">DÖNÜM NOKTASI</div>
+      <div id="donum-title">${isEN ? "TURNING POINT" : "DÖNÜM NOKTASI"}</div>
       <div id="donum-divider"></div>
-      <div id="donum-text">Yıllar geçti, divan sizi izledi. Bu dönemin mirası ne olacak?</div>
+      <div id="donum-text">${isEN ? "Years have passed, the Divan has been watching. What will be the legacy of this era?" : "Yıllar geçti, divan sizi izledi. Bu dönemin mirası ne olacak?"}</div>
       <div id="donum-choices">
-        ${DONUM_CHOICES.map((ch, i) => `
+        ${donumChoices.map((ch, i) => `
           <button class="donum-btn" data-idx="${i}">
             <div class="donum-btn-top">
               <span class="donum-label">${ch.label}</span>
@@ -2213,10 +2274,13 @@ function showDonumEkrani() {
   overlay.querySelectorAll(".donum-btn").forEach(btn => {
     btn.onclick = () => {
       if (window.playSelectConfirm) playSelectConfirm();
-      const ch = DONUM_CHOICES[parseInt(btn.dataset.idx)];
-      localStorage.setItem("sadrazam_miras_bar", ch.bar);
-      localStorage.setItem("sadrazam_miras_label", ch.label);
-      showItemToast("✦ Mirasın kaydedildi: " + ch.label);
+      // Her zaman orijinal (TR) DONUM_CHOICES'dan bar ve label al (localStorage tutarlılığı için)
+      const chOrig = DONUM_CHOICES[parseInt(btn.dataset.idx)];
+      localStorage.setItem("sadrazam_miras_bar", chOrig.bar);
+      localStorage.setItem("sadrazam_miras_label", chOrig.label);
+      const isENDonum = window.LANG === 'en';
+      const displayLbl = (isENDonum && window.EN_DONUM_CHOICES) ? window.EN_DONUM_CHOICES[parseInt(btn.dataset.idx)].label : chOrig.label;
+      showItemToast(isENDonum ? ("✦ Your legacy has been recorded: " + displayLbl) : ("✦ Mirasın kaydedildi: " + displayLbl));
       overlay.style.opacity = "0";
       overlay.style.transition = "opacity 0.3s ease";
       setTimeout(() => {
@@ -3745,7 +3809,11 @@ function showGameOver(reason) {
 
   gameoverReason.textContent = reason;
 
-  let yearText = `${year} yıl, ${HICRI_MONTHS[hicriMonth % 12]} ${hicriYear}`;
+  const months = (window.LANG === 'en' && window.EN_HICRI_MONTHS) ? window.EN_HICRI_MONTHS : HICRI_MONTHS;
+  const isEN = window.LANG === 'en';
+  let yearText = isEN
+    ? `${year} years, ${months[hicriMonth % 12]} ${hicriYear}`
+    : `${year} yıl, ${months[hicriMonth % 12]} ${hicriYear}`;
   document.getElementById("gameover-year").textContent = yearText;
 
   // Yeni rekor banner
@@ -3757,12 +3825,12 @@ function showGameOver(reason) {
     if (divider) divider.parentNode.insertBefore(recBanner, divider.nextSibling);
   }
   if (isNewRecord) {
-    recBanner.textContent = "🏆 YENİ REKOR!";
+    recBanner.textContent = isEN ? "🏆 NEW RECORD!" : "🏆 YENİ REKOR!";
     recBanner.style.display = "block";
   } else {
     recBanner.style.display = "none";
     const oldBest = document.getElementById("gameover-year");
-    if (oldBest) oldBest.textContent += ` · Rekor: ${best} yıl`;
+    if (oldBest) oldBest.textContent += isEN ? ` · Record: ${best} years` : ` · Rekor: ${best} yıl`;
   }
 
   // Achievement badge'ler
@@ -3783,16 +3851,17 @@ function showGameOver(reason) {
 }
 
 function getDynamicDeathTitle(reason) {
-  if (reason.includes("idam")) return "İDAM FERMANI GELDİ";
-  if (reason.includes("cellat")) return "GECE YARISI SONU";
-  if (reason.includes("isyan") || reason.includes("Yeniçeri")) return "TAHT DEVRILDI";
-  if (reason.includes("linç") || reason.includes("dinsizlik")) return "HALK AYAKTA";
-  if (reason.includes("düşman") || reason.includes("surlarına")) return "İSTANBUL DÜŞTÜ";
-  if (reason.includes("iflas")) return "HAZİNE BOŞALDI";
-  if (reason.includes("zimmet")) return "SUÇLAMA GELDİ";
-  if (reason.includes("ihanet") || reason.includes("şikâyet")) return "İHANET AÇIĞA ÇIKTI";
-  if (reason.includes("sürgün") || reason.includes("azletti")) return "AZIL FERMANI";
-  return "SADRAZAMLIK SONA ERDİ";
+  const isEN = window.LANG === 'en';
+  if (reason.includes("idam"))                                    return isEN ? "EXECUTION ORDER ARRIVED"              : "İDAM FERMANI GELDİ";
+  if (reason.includes("cellat"))                                  return isEN ? "MIDNIGHT'S END"                       : "GECE YARISI SONU";
+  if (reason.includes("isyan") || reason.includes("Yeniçeri"))    return isEN ? "THE THRONE HAS FALLEN"                : "TAHT DEVRİLDİ";
+  if (reason.includes("linç") || reason.includes("dinsizlik"))    return isEN ? "THE PEOPLE RISE"                      : "HALK AYAKTA";
+  if (reason.includes("düşman") || reason.includes("surlarına"))  return isEN ? "ISTANBUL HAS FALLEN"                  : "İSTANBUL DÜŞTÜ";
+  if (reason.includes("iflas"))                                   return isEN ? "THE TREASURY IS EMPTY"                : "HAZİNE BOŞALDI";
+  if (reason.includes("zimmet"))                                  return isEN ? "THE ACCUSATION ARRIVED"               : "SUÇLAMA GELDİ";
+  if (reason.includes("ihanet") || reason.includes("şikâyet"))    return isEN ? "BETRAYAL EXPOSED"                     : "İHANET AÇIĞA ÇIKTI";
+  if (reason.includes("sürgün") || reason.includes("azletti"))    return isEN ? "THE DISMISSAL ORDER"                  : "AZIL FERMANI";
+  return isEN ? "YOUR TENURE AS GRAND VIZIER HAS ENDED" : "SADRAZAMLIK SONA ERDİ";
 }
 
 // ── Başarımlar ────────────────────────────────────────────────────
@@ -4148,12 +4217,13 @@ function showGameMenu() {
   if (isGameOver) return;
   const overlay = document.createElement("div");
   overlay.id = "game-menu-overlay";
+  const isENMenu = window.LANG === 'en';
   overlay.innerHTML = `
     <div id="game-menu-box">
-      <div id="game-menu-title">DURAKLAT</div>
+      <div id="game-menu-title">${isENMenu ? "PAUSED" : "DURAKLAT"}</div>
       <div id="game-menu-divider"></div>
-      <button class="game-menu-option danger" id="gm-quit">OYUNU BİTİR</button>
-      <button class="game-menu-option secondary" id="gm-resume">DEVAM ET</button>
+      <button class="game-menu-option danger" id="gm-quit">${isENMenu ? "END GAME" : "OYUNU BİTİR"}</button>
+      <button class="game-menu-option secondary" id="gm-resume">${isENMenu ? "CONTINUE" : "DEVAM ET"}</button>
     </div>`;
   document.body.appendChild(overlay);
 
@@ -4204,7 +4274,9 @@ function renderAchievementsScreen(filterTier) {
   // Progress
   const progText = document.getElementById("ach-progress-text");
   const progFill = document.getElementById("ach-progress-fill");
-  if (progText) progText.textContent = `${count} / ${total} Başarım · %${pct}`;
+  if (progText) progText.textContent = window.LANG === 'en'
+    ? `${count} / ${total} Achievements · ${pct}%`
+    : `${count} / ${total} Başarım · %${pct}`;
   if (progFill) progFill.style.width = pct + "%";
 
   // Intro badge
@@ -4223,7 +4295,10 @@ function renderAchievementsScreen(filterTier) {
   grid.innerHTML = "";
 
   const TIER_ORDER = ["bronze","silver","gold","platinum","secret"];
-  const tierLabels = { bronze:"Bronz", silver:"Gümüş", gold:"Altın", platinum:"Platin", secret:"Gizli" };
+  const isEN = window.LANG === 'en';
+  const tierLabels = isEN
+    ? { bronze:"Bronze", silver:"Silver", gold:"Gold", platinum:"Platinum", secret:"Secret" }
+    : { bronze:"Bronz",  silver:"Gümüş",  gold:"Altın", platinum:"Platin",   secret:"Gizli"  };
 
   const toShow = filterTier === "all"
     ? [...ACHIEVEMENTS].sort((a,b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier))
@@ -4236,8 +4311,11 @@ function renderAchievementsScreen(filterTier) {
     card.className = `ach-card ${a.tier} ${isUnlocked ? "unlocked" : "locked"} ${isSecret ? "secret" : ""}`;
 
     const icon = isUnlocked ? a.icon : (isSecret ? "🔒" : "🔒");
-    const name = (isSecret && !isUnlocked) ? "???" : a.name;
-    const desc = (isSecret && !isUnlocked) ? "Gizemli bir başarım…" : a.desc;
+    const enA = (window.LANG === 'en' && window.EN_ACHIEVEMENTS && window.EN_ACHIEVEMENTS[a.id]) || {};
+    const name = (isSecret && !isUnlocked) ? "???" : (enA.name || a.name);
+    const desc = (isSecret && !isUnlocked)
+      ? (window.LANG === 'en' ? "A mysterious achievement…" : "Gizemli bir başarım…")
+      : (enA.desc || a.desc);
 
     card.innerHTML = `
       <div class="ach-icon ${isUnlocked ? "" : "locked-icon"}">${icon}</div>

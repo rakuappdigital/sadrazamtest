@@ -45,34 +45,39 @@
           <span class="tdot">✦</span>
           <span class="tline"></span>
         </div>
-        <p id="intro-subtitle">Osmanlı İmparatorluğu'nda<br/>denge peşindeki bir vezirin hikâyesi</p>
+        <p id="intro-subtitle" data-i18n="intro.subtitle">Osmanlı İmparatorluğu'nda<br/>denge peşindeki bir vezirin hikâyesi</p>
       </div>
 
       <!-- Stat önizleme -->
       <div id="intro-stats-preview">
-        <div class="isp"><img src="assets/icons/icon-saray.png" alt="Saray"><span>Saray</span></div>
-        <div class="isp"><img src="assets/icons/icon-ordu.png" alt="Ordu"><span>Ordu</span></div>
-        <div class="isp"><img src="assets/icons/icon-ulema.png" alt="Ulema"><span>Ulema</span></div>
-        <div class="isp"><img src="assets/icons/icon-hazine.png" alt="Hazine"><span>Hazine</span></div>
+        <div class="isp"><img src="assets/icons/icon-saray.png" alt="Saray"><span data-i18n="stat.saray">Saray</span></div>
+        <div class="isp"><img src="assets/icons/icon-ordu.png" alt="Ordu"><span data-i18n="stat.ordu">Ordu</span></div>
+        <div class="isp"><img src="assets/icons/icon-ulema.png" alt="Ulema"><span data-i18n="stat.ulema">Ulema</span></div>
+        <div class="isp"><img src="assets/icons/icon-hazine.png" alt="Hazine"><span data-i18n="stat.hazine">Hazine</span></div>
       </div>
 
       <!-- Butonlar -->
       <div id="intro-buttons">
         <button id="btn-start" class="intro-btn primary">
-          <span class="btn-icon">⚜</span> SADRAZAM MODU
+          <span class="btn-icon">⚜</span> <span data-i18n="btn.sadrazam_mode">SADRAZAM MODU</span>
         </button>
         <button id="btn-pasa-mode" class="intro-btn secondary">
-          <span class="btn-icon">📜</span> PAŞALIK MODU
+          <span class="btn-icon">📜</span> <span data-i18n="btn.pasa_mode">PAŞALIK MODU</span>
         </button>
         <button id="btn-achievements" class="intro-btn secondary">
-          <span class="btn-icon">🏆</span> BAŞARIMLARIM <span id="ach-count-badge"></span>
+          <span class="btn-icon">🏆</span> <span data-i18n="btn.achievements">BAŞARIMLARIM</span> <span id="ach-count-badge"></span>
         </button>
-        <button id="btn-akcesystem" class="intro-btn ghost">🪙 AKÇE AL</button>
-        <button id="btn-howto" class="intro-btn ghost">NASIL OYNANIR?</button>
+        <button id="btn-akcesystem" class="intro-btn ghost" data-i18n="btn.buy_coins">🪙 AKÇE AL</button>
+        <button id="btn-howto" class="intro-btn ghost" data-i18n="btn.howto">NASIL OYNANIR?</button>
       </div>
 
     </div>
 
+    <div id="lang-toggle">
+      <button data-lang-btn="tr" onclick="setLang('tr')" class="lang-btn lang-active">TR</button>
+      <span class="lang-sep">|</span>
+      <button data-lang-btn="en" onclick="setLang('en')" class="lang-btn">EN</button>
+    </div>
     <div id="intro-footer">v1.1.2 · rakuappdigital · 2025</div>
   </div>
 
@@ -80,11 +85,11 @@
   <div id="howto-screen">
     <div id="howto-content">
       <div id="howto-ornament">✦</div>
-      <h2 id="howto-title">NASIL OYNANIR?</h2>
+      <h2 id="howto-title" data-i18n="howto.title">NASIL OYNANIR?</h2>
       <div id="howto-divider"></div>
 
       <div class="howto-section">
-        <p class="howto-body">
+        <p class="howto-body" data-i18n="howto.body1">
           Osmanlı İmparatorluğu'nun en güçlü makamı Sadrazamlık'ta oturuyorsun.
           Her gün saraydan, halktan, ordundan ve dinden temsilciler huzuruna çıkar.
           Kararların dört gücün dengesini belirler — ve dengeyi bozarsan başın gider.
@@ -95,43 +100,43 @@
         <div class="howto-stat">
           <span class="hstat-icon">👑</span>
           <div>
-            <strong>Saray</strong>
-            <span>Sultanın sana güveni. Sıfıra düşerse idam, yüze çıkarsa tehdit.</span>
+            <strong data-i18n="stat.saray">Saray</strong>
+            <span data-i18n="howto.saray_desc">Sultanın sana güveni. Sıfıra düşerse idam, yüze çıkarsa tehdit.</span>
           </div>
         </div>
         <div class="howto-stat">
           <span class="hstat-icon">⚔️</span>
           <div>
-            <strong>Ordu</strong>
-            <span>Yeniçerilerin sadakati. Zayıflarsa düşman gelir, güçlenirse isyan.</span>
+            <strong data-i18n="stat.ordu">Ordu</strong>
+            <span data-i18n="howto.ordu_desc">Yeniçerilerin sadakati. Zayıflarsa düşman gelir, güçlenirse isyan.</span>
           </div>
         </div>
         <div class="howto-stat">
           <span class="hstat-icon">🕌</span>
           <div>
-            <strong>Ulema</strong>
-            <span>Dini otoritenin desteği. Kaybedersen halk seni linç eder.</span>
+            <strong data-i18n="stat.ulema">Ulema</strong>
+            <span data-i18n="howto.ulema_desc">Dini otoritenin desteği. Kaybedersen halk seni linç eder.</span>
           </div>
         </div>
         <div class="howto-stat">
           <span class="hstat-icon">💰</span>
           <div>
-            <strong>Hazine</strong>
-            <span>Devletin parası. Biter dağılır, taşarsa zimmetçilik suçlanırsın.</span>
+            <strong data-i18n="stat.hazine">Hazine</strong>
+            <span data-i18n="howto.hazine_desc">Devletin parası. Biter dağılır, taşarsa zimmetçilik suçlanırsın.</span>
           </div>
         </div>
       </div>
 
       <div class="howto-section">
-        <p class="howto-body">
+        <p class="howto-body" data-i18n="howto.body2">
           Kartı <strong>sola kaydır</strong> ya da ← tuşuna bas → <em>Hayır</em><br/>
           Kartı <strong>sağa kaydır</strong> ya da → tuşuna bas → <em>Evet</em><br/>
           Her 10 kartta bir yıl geçer. Hazine her yıl azalır.
         </p>
       </div>
 
-      <button id="btn-play-now" class="intro-btn">ANLADIM, BAŞLAYALIM</button>
-      <button id="btn-howto-back" class="intro-btn ghost">← GERİ</button>
+      <button id="btn-play-now" class="intro-btn" data-i18n="btn.play_now">ANLADIM, BAŞLAYALIM</button>
+      <button id="btn-howto-back" class="intro-btn ghost" data-i18n="btn.back">← GERİ</button>
     </div>
   </div>
 
@@ -139,22 +144,22 @@
   <div id="achievements-screen" class="hidden selection-screen">
     <div class="selection-content" style="padding-bottom:60px">
       <div class="sel-ornament">🏆</div>
-      <h2 class="sel-title">BAŞARIMLARIM</h2>
+      <h2 class="sel-title" data-i18n="ach.title">BAŞARIMLARIM</h2>
       <div id="ach-progress-bar-wrap">
         <div id="ach-progress-text"></div>
         <div id="ach-progress-track"><div id="ach-progress-fill"></div></div>
       </div>
       <div class="sel-divider"></div>
       <div id="ach-filter-tabs">
-        <button class="ach-tab active" data-tier="all">Tümü</button>
-        <button class="ach-tab" data-tier="bronze">Bronz</button>
-        <button class="ach-tab" data-tier="silver">Gümüş</button>
-        <button class="ach-tab" data-tier="gold">Altın</button>
-        <button class="ach-tab" data-tier="platinum">Platin</button>
-        <button class="ach-tab" data-tier="secret">Gizli</button>
+        <button class="ach-tab active" data-tier="all" data-i18n="ach.tab.all">Tümü</button>
+        <button class="ach-tab" data-tier="bronze" data-i18n="ach.tab.bronze">Bronz</button>
+        <button class="ach-tab" data-tier="silver" data-i18n="ach.tab.silver">Gümüş</button>
+        <button class="ach-tab" data-tier="gold" data-i18n="ach.tab.gold">Altın</button>
+        <button class="ach-tab" data-tier="platinum" data-i18n="ach.tab.platinum">Platin</button>
+        <button class="ach-tab" data-tier="secret" data-i18n="ach.tab.secret">Gizli</button>
       </div>
       <div id="ach-grid"></div>
-      <button id="btn-ach-back" class="intro-btn secondary" style="margin-top:16px">← GERİ</button>
+      <button id="btn-ach-back" class="intro-btn secondary" style="margin-top:16px" data-i18n="ach.btn_back">← GERİ</button>
     </div>
   </div>
 
@@ -162,14 +167,14 @@
   <div id="sultan-screen" class="hidden selection-screen">
     <div class="selection-content">
       <div class="sel-ornament">✦</div>
-      <h2 class="sel-title">SULTAN SEÇ</h2>
-      <p class="sel-subtitle">Hangi sultan döneminde görev yapıyorsunuz?</p>
+      <h2 class="sel-title" data-i18n="sultan.title">SULTAN SEÇ</h2>
+      <p class="sel-subtitle" data-i18n="sultan.subtitle">Hangi sultan döneminde görev yapıyorsunuz?</p>
       <div class="sel-divider"></div>
       <div id="sultan-grid" class="sultan-grid"></div>
     </div>
     <div class="sel-confirm-btn">
-      <button class="intro-btn primary" onclick="confirmSultan()">DEVAM ET →</button>
-      <button class="intro-btn ghost" onclick="backToIntro()">← GERİ</button>
+      <button class="intro-btn primary" onclick="confirmSultan()" data-i18n="btn.continue">DEVAM ET →</button>
+      <button class="intro-btn ghost" onclick="backToIntro()" data-i18n="btn.back">← GERİ</button>
     </div>
   </div>
 
@@ -177,15 +182,15 @@
   <div id="advisor-screen" class="hidden selection-screen">
     <div class="selection-content">
       <div class="sel-ornament">✦</div>
-      <h2 class="sel-title">DANIŞMANLARINI SEÇ</h2>
-      <p class="sel-subtitle">İki danışman seç. Her birinin farklı pasif etkisi var.</p>
+      <h2 class="sel-title" data-i18n="advisor.title">DANIŞMANLARINI SEÇ</h2>
+      <p class="sel-subtitle" data-i18n="advisor.subtitle">İki danışman seç. Her birinin farklı pasif etkisi var.</p>
       <div class="sel-divider"></div>
-      <div id="advisor-count" class="advisor-count">0/2 seçildi</div>
+      <div id="advisor-count" class="advisor-count" data-i18n="advisor.count_init">0/2 seçildi</div>
       <div id="advisor-grid" class="advisor-grid"></div>
     </div>
     <div class="sel-confirm-btn">
-      <button class="intro-btn primary" onclick="confirmAdvisor()">OYUNA BAŞLA →</button>
-      <button class="intro-btn ghost" onclick="backToSultan()">← GERİ</button>
+      <button class="intro-btn primary" onclick="confirmAdvisor()" data-i18n="btn.start_game">OYUNA BAŞLA →</button>
+      <button class="intro-btn ghost" onclick="backToSultan()" data-i18n="btn.back">← GERİ</button>
     </div>
   </div>
 
@@ -194,19 +199,19 @@
     <div id="ios-safe-top"></div>
     <div id="stats-bar">
       <div class="stat" data-stat="saray">
-        <span class="stat-label">Saray</span>
+        <span class="stat-label" data-i18n="stat.saray">Saray</span>
         <div class="stat-track"><div class="stat-fill" id="fill-saray"></div></div>
       </div>
       <div class="stat" data-stat="yeniceri">
-        <span class="stat-label">Ordu</span>
+        <span class="stat-label" data-i18n="stat.ordu">Ordu</span>
         <div class="stat-track"><div class="stat-fill" id="fill-yeniceri"></div></div>
       </div>
       <div class="stat" data-stat="ulema">
-        <span class="stat-label">Ulema</span>
+        <span class="stat-label" data-i18n="stat.ulema">Ulema</span>
         <div class="stat-track"><div class="stat-fill" id="fill-ulema"></div></div>
       </div>
       <div class="stat" data-stat="hazine">
-        <span class="stat-label">Hazine</span>
+        <span class="stat-label" data-i18n="stat.hazine">Hazine</span>
         <div class="stat-track"><div class="stat-fill" id="fill-hazine"></div></div>
       </div>
     </div>
@@ -223,7 +228,7 @@
     <button id="game-menu-btn" onclick="showGameMenu()">☰</button>
 
     <div id="card-area">
-      <div id="swipe-hint-left" class="swipe-hint">← Hayır</div>
+      <div id="swipe-hint-left" class="swipe-hint" data-i18n="hint.left">← Hayır</div>
       <button id="letter-devam-btn" class="hidden" onclick="handleLetterDevam()">DEVAM →</button>
       <div id="card">
         <div id="card-overlay-left"></div>
@@ -253,7 +258,7 @@
           </div>
         </div>
       </div>
-      <div id="swipe-hint-right" class="swipe-hint">Evet →</div>
+      <div id="swipe-hint-right" class="swipe-hint" data-i18n="hint.right">Evet →</div>
     </div>
     <div id="item-bar">
       <div class="item-slot" id="item-slot-0" onclick="activateItem(0)">
@@ -275,12 +280,12 @@
   <!-- ── GAME OVER ── -->
   <div id="gameover-screen">
     <div id="gameover-panel">
-      <div id="gameover-title">SADRAZAMLIK SONA ERDİ</div>
+      <div id="gameover-title" data-i18n="gameover.title_init">SADRAZAMLIK SONA ERDİ</div>
       <div id="gameover-divider"></div>
       <div id="gameover-reason"></div>
       <div id="gameover-year"></div>
-      <button id="share-btn" class="intro-btn secondary" style="margin-top:4px;">PAYLAŞ</button>
-      <button id="restart-btn">YENİDEN BAŞLA</button>
+      <button id="share-btn" class="intro-btn secondary" style="margin-top:4px;" data-i18n="btn.share">PAYLAŞ</button>
+      <button id="restart-btn" data-i18n="btn.restart">YENİDEN BAŞLA</button>
     </div>
   </div>
 
@@ -292,6 +297,7 @@
 
   <script src="sounds.js"></script>
   <script src="haptics.js"></script>
+  <script src="translations.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
