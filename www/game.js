@@ -1571,175 +1571,20 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // ── AMBIENT MÜZİK (Web Audio — efekt sesleri için korundu) ───────
+// Ambient Web Audio kaldırıldı — sadece MP3 müzik kullanılıyor
 let ambientCtx = null;
 let ambientNodes = [];
 let ambientRunning = false;
 
 function startAmbientMusic() {
-  playGameMusic(); // MP3 oyun müziğine geç
-  if (ambientRunning) return;
-  try {
-    ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
-    ambientRunning = true;
-    // iOS/Chrome: context suspend'den çık
-    const resumeAndPlay = () => {
-      ambientCtx.resume().then(() => playAmbientLayer());
-    };
-    if (ambientCtx.state === 'suspended') {
-      resumeAndPlay();
-    } else {
-      playAmbientLayer();
-    }
-  } catch(e) {}
+  playGameMusic(); // MP3 oyun müziğine geç — başka ses üretilmez
 }
 
-function playAmbientLayer() {
-  if (!ambientCtx || !ambientRunning) return;
-  if (ambientCtx.state === 'suspended') { ambientCtx.resume(); return; }
-
-  const c = ambientCtx;
-  const now = c.currentTime;
-  const DUR = 14; // saniye
-  const nodes = [];
-
-  // Reverb (window.createReverb sounds.js'de global olarak tanımlı)
-  const rev = (window.createReverb ? window.createReverb(c, 2.5, 2.5) : null) || c.createGain();
-  rev.connect(c.destination);
-
-  // ── 1. NEY DRONE ──────────────────────────────────────────────────
-  // Hicaz makamı: gündüz D3 (146.83), gece C3 (130.81) temel
-  const neyBase = isNight ? 130.81 : 146.83;
-
-  const neyOsc = c.createOscillator();
-  neyOsc.type = 'triangle';
-  neyOsc.frequency.value = neyBase;
-
-  // Vibrato (ney titreşimi)
-  const vibOsc = c.createOscillator();
-  vibOsc.frequency.value = 5.5;
-  const vibGain = c.createGain();
-  vibGain.gain.value = 2.5;
-  vibOsc.connect(vibGain);
-  vibGain.connect(neyOsc.frequency);
-
-  // Nefes sesi (ney'in hava sesi)
-  const noiseBuf = c.createBuffer(1, c.sampleRate, c.sampleRate);
-  const nd = noiseBuf.getChannelData(0);
-  for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
-  const noiseSrc = c.createBufferSource();
-  noiseSrc.buffer = noiseBuf; noiseSrc.loop = true;
-  const noiseBp = c.createBiquadFilter();
-  noiseBp.type = 'bandpass'; noiseBp.frequency.value = neyBase * 3; noiseBp.Q.value = 10;
-  const noiseGain = c.createGain();
-  noiseGain.gain.value = 0.008;
-  noiseSrc.connect(noiseBp); noiseBp.connect(noiseGain);
-
-  const neyMaster = c.createGain();
-  neyMaster.gain.setValueAtTime(0, now);
-  neyMaster.gain.linearRampToValueAtTime(0.07, now + 2);
-  neyMaster.gain.setValueAtTime(0.1, now + DUR - 2);
-  neyMaster.gain.linearRampToValueAtTime(0, now + DUR);
-
-  neyOsc.connect(neyMaster); noiseGain.connect(neyMaster);
-  neyMaster.connect(rev); neyMaster.connect(c.destination);
-  neyOsc.start(now); vibOsc.start(now); noiseSrc.start(now);
-  nodes.push(neyOsc, vibOsc, noiseSrc);
-
-  // ── 2. HİCAZ MAKAM MELODİSİ ─────────────────────────────────────
-  // D Hicaz: D Eb F# G A Bb C D
-  const HICAZ = [
-    neyBase,            // D
-    neyBase * 1.0595,   // Eb (minor second)
-    neyBase * 1.2599,   // F# (augmented second — karakteristik Hicaz aralığı)
-    neyBase * 1.3348,   // G
-    neyBase * 1.4983,   // A
-    neyBase * 1.5874,   // Bb
-    neyBase * 1.7818,   // C
-    neyBase * 2         // D (üst oktav)
-  ];
-
-  const noteCount = 3 + Math.floor(Math.random() * 3);
-  for (let i = 0; i < noteCount; i++) {
-    const t = now + 2.5 + Math.random() * (DUR - 5);
-    const freq = HICAZ[Math.floor(Math.random() * HICAZ.length)];
-    const useHighOct = Math.random() < 0.25;
-
-    const mOsc = c.createOscillator();
-    mOsc.type = 'triangle';
-    mOsc.frequency.value = freq * (useHighOct ? 2 : 1);
-
-    const mVib = c.createOscillator();
-    mVib.frequency.value = 5 + Math.random() * 1.2;
-    const mVibG = c.createGain();
-    mVibG.gain.value = 3;
-    mVib.connect(mVibG); mVibG.connect(mOsc.frequency);
-
-    const mGain = c.createGain();
-    const noteDur = 0.6 + Math.random() * 0.8;
-    mGain.gain.setValueAtTime(0, t);
-    mGain.gain.linearRampToValueAtTime(0.055, t + 0.12);
-    mGain.gain.exponentialRampToValueAtTime(0.001, t + noteDur);
-
-    mOsc.connect(mGain); mGain.connect(rev); mGain.connect(c.destination);
-    mOsc.start(t); mVib.start(t);
-    mOsc.stop(t + noteDur + 0.1); mVib.stop(t + noteDur + 0.1);
-    nodes.push(mOsc, mVib);
-  }
-
-  // ── 3. DEF (Çerçeve davulu) — gündüz, %60 olasılık ──────────────
-  if (!isNight && Math.random() < 0.6) {
-    // Basit usul: düm tek tek düm tek
-    const defPattern = [0, 0.75, 1.1, 1.5, 2.25, 2.6, 3.0, 3.75, 4.1];
-    const defStart = now + 3;
-    defPattern.forEach(offset => {
-      const t = defStart + offset;
-      const isDum = offset % 1.5 < 0.2; // güçlü vuruş
-      const dOsc = c.createOscillator();
-      dOsc.type = 'sine';
-      dOsc.frequency.setValueAtTime(isDum ? 170 : 120, t);
-      dOsc.frequency.exponentialRampToValueAtTime(isDum ? 55 : 70, t + 0.09);
-      const dGain = c.createGain();
-      dGain.gain.setValueAtTime(isDum ? 0.04 : 0.025, t);
-      dGain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-      dOsc.connect(dGain); dGain.connect(c.destination);
-      dOsc.start(t); dOsc.stop(t + 0.15);
-      nodes.push(dOsc);
-    });
-  }
-
-  // ── 4. TAMBUR TELI — yumuşak, sporadic ───────────────────────────
-  if (Math.random() < 0.4) {
-    const tamburFreqs = [HICAZ[0], HICAZ[2], HICAZ[4], HICAZ[7]];
-    const t = now + 5 + Math.random() * 4;
-    const freq = tamburFreqs[Math.floor(Math.random() * tamburFreqs.length)];
-    const tOsc = c.createOscillator();
-    tOsc.type = 'sawtooth';
-    tOsc.frequency.value = freq;
-    const tFilter = c.createBiquadFilter();
-    tFilter.type = 'lowpass'; tFilter.frequency.value = 800;
-    const tGain = c.createGain();
-    tGain.gain.setValueAtTime(0.06, t);
-    tGain.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
-    tOsc.connect(tFilter); tFilter.connect(tGain);
-    tGain.connect(rev); tGain.connect(c.destination);
-    tOsc.start(t); tOsc.stop(t + 1.3);
-    nodes.push(tOsc);
-  }
-
-  ambientNodes = nodes;
-
-  setTimeout(() => {
-    nodes.forEach(n => { try { n.stop(); } catch(e) {} });
-    ambientNodes = [];
-    if (ambientRunning && !isGameOver) setTimeout(playAmbientLayer, 400);
-  }, DUR * 1000);
-}
+function playAmbientLayer() { /* Kaldırıldı — sadece MP3 müzik kullanılıyor */ }
 
 function stopAmbientMusic() {
-  playMenuMusic(); // Game Over / Restart → menü müziğine geri dön
+  playMenuMusic(); // Game Over / Restart → MP3 menü müziğine geri dön
   ambientRunning = false;
-  ambientNodes.forEach(n => { try { n.stop(); } catch(e) {} });
-  ambientNodes = [];
 }
 
 // ── Boot ──────────────────────────────────────────────────────────
