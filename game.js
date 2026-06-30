@@ -1081,23 +1081,20 @@ function _tryStartMenuMusic() {
   else _menuMusicRequested = true;
 }
 
-// Sayfa yüklenince hemen dene (Capacitor/iOS native'de çalışır)
+// Sayfa yüklenince otomatik başlat — Capacitor/iOS native'de etkileşim gerekmez
 setTimeout(() => {
   _menuMusicReady = true;
-  if (window.musicEnabled) playMenuMusic(); // Etkileşim beklemeden başlat
-}, 500);
+  if (window.musicEnabled) playMenuMusic();
+}, 300);
 
-// Web browser fallback — ilk dokunuşta başlat
-document.addEventListener('touchstart', function _firstTouch() {
-  _menuMusicRequested = true;
-  if (_menuMusicReady && window.musicEnabled) playMenuMusic();
-  document.removeEventListener('touchstart', _firstTouch);
-}, { once: true, passive: true });
-document.addEventListener('mousedown', function _firstClick() {
-  _menuMusicRequested = true;
-  if (_menuMusicReady && window.musicEnabled) playMenuMusic();
-  document.removeEventListener('mousedown', _firstClick);
-}, { once: true });
+// Web browser fallback — autoplay policy nedeniyle ilk dokunuş/tık gerekir
+function _startMusicOnInteraction() {
+  if (window.musicEnabled && _menuMusicReady) playMenuMusic();
+  document.removeEventListener('touchend', _startMusicOnInteraction);
+  document.removeEventListener('mousedown', _startMusicOnInteraction);
+}
+document.addEventListener('touchend',  _startMusicOnInteraction, { once: true, passive: true });
+document.addEventListener('mousedown', _startMusicOnInteraction, { once: true });
 
 document.getElementById("btn-start").addEventListener("click", () => {
   if (window.playSelectConfirm) playSelectConfirm();

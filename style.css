@@ -3226,12 +3226,13 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 0;
+  font-family: 'Cinzel', serif;
 }
 .sett-label {
-  font-family: 'IM Fell English', serif;
-  font-size: 14px;
-  color: rgba(240,230,208,0.75);
-  font-style: italic;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: rgba(201,162,39,0.6);
 }
 .sett-toggle {
   display: flex;
