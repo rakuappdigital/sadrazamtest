@@ -1253,6 +1253,7 @@ function startGame() {
   year = 1;
   cardsPlayed = 0;
   sadrazamHealth = 90;
+  _hekimDinlenme20Shown = false;
   sehzadePower   = 0;
   _sehzadeChecked = false;
   activeFlags = {};
@@ -2027,8 +2028,11 @@ function dealNext() {
   if (c.type === "chance") {
     hideNegotiationPanel();
     const key = c.character || "";
-    cardImage.src = "assets/characters/" + encodeURIComponent(key + ".jpg");
-    cardImage.onerror = () => { cardImage.src = ""; };
+    cardImage.style.visibility = "hidden";
+    const _cpLoad = new Image();
+    _cpLoad.onload  = () => { cardImage.src = _cpLoad.src; cardImage.style.visibility = ""; };
+    _cpLoad.onerror = () => { cardImage.style.visibility = "hidden"; };
+    _cpLoad.src = "assets/characters/" + encodeURIComponent(key + ".jpg");
     charName.textContent = c.character_name || "";
     cardText.textContent = c.text || "";
     choiceLeft.style.opacity = "0";
@@ -2675,8 +2679,28 @@ function showSehzadeMeydan(c) {
 
 // ── Hekimbaşı Dinlenme Kartı ──────────────────────────────────────
 let _hekimDinlenmeShown = false;
+let _hekimDinlenme20Shown = false;
 
 function tryHekimDinlenme() {
+  if (isGameOver) return;
+
+  // %20 altı: acil hekim (bir kez daha tetiklenebilir)
+  if (!_hekimDinlenme20Shown && sadrazamHealth <= 20) {
+    _hekimDinlenme20Shown = true;
+    _hekimDinlenmeShown = true;
+    forcedQueue.unshift({
+      id: 'hekim_dinlenme_acil_' + cardsPlayed,
+      type: 'easter',
+      easter_type: 'hekim_dinlenme',
+      character: '10-hekimbasi',
+      character_name: window.LANG === 'en' ? 'Chief Physician' : 'Hekimbaşı',
+      text: window.LANG === 'en'
+        ? "Grand Vizier, you are in critical condition. You must rest immediately or you will not survive."
+        : "Paşam, durumunuz kritik. Hemen dinlenmezseniz sabahı göremeyebilirsiniz.",
+    });
+    return;
+  }
+
   if (_hekimDinlenmeShown || sadrazamHealth > 40 || isGameOver) return;
   _hekimDinlenmeShown = true;
   forcedQueue.push({
@@ -3839,8 +3863,8 @@ function decide(dir) {
   applyEffects(currentCard[dir + "_effects"] || {});
   if (isGameOver) return;
 
-  // Her kart seçimi sağlığı -2 düşürür
-  changeHealth(-2);
+  // Her kart seçimi sağlığı -1 düşürür
+  changeHealth(-1);
   if (isGameOver) return;
 
   // ── Achievement tracking ──────────────────────────────────────

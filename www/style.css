@@ -1404,6 +1404,59 @@ html, body {
 }
 
 /* ════════════════════════════════════════
+   ŞEHZADE MEYDAN OKUMA OVERLAY
+════════════════════════════════════════ */
+#sehzade-meydan-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(5,3,16,0.95);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 1; transition: opacity 0.3s;
+}
+#sm-box {
+  width: min(90%, 380px);
+  background: linear-gradient(160deg, rgba(20,12,4,0.98), rgba(10,6,2,0.99));
+  border: 1px solid rgba(201,162,39,0.35);
+  border-radius: 16px;
+  padding: 28px 22px 22px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  position: relative; overflow: hidden;
+}
+.sm-threat-bar {
+  position: absolute; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, rgba(192,57,43,0.5), rgba(192,57,43,0.9));
+  border-radius: 3px 0 0 0;
+  transition: width 0.4s ease;
+}
+.sm-char-wrap { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid rgba(201,162,39,0.3); flex-shrink: 0; }
+.sm-img { width: 100%; height: 100%; object-fit: cover; }
+.sm-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 15px; color: rgba(192,57,43,0.9);
+  letter-spacing: 3px;
+}
+.sm-text {
+  font-family: 'IM Fell English', serif;
+  font-size: 13px; color: rgba(240,230,208,0.8);
+  text-align: center; line-height: 1.6; font-style: italic;
+}
+.sm-choices { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.sm-btn {
+  width: 100%; padding: 10px 14px;
+  background: rgba(201,162,39,0.06);
+  border: 1px solid rgba(201,162,39,0.25);
+  border-radius: 10px;
+  font-family: 'Cinzel', serif; font-size: 11px;
+  color: rgba(240,230,208,0.85);
+  cursor: pointer; text-align: left;
+  display: flex; flex-direction: column; gap: 3px;
+  transition: background 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.sm-btn:active { background: rgba(201,162,39,0.15); border-color: rgba(201,162,39,0.5); }
+.sm-hint { font-size: 9px; color: rgba(201,162,39,0.45); letter-spacing: 0.5px; font-family: 'Cinzel', serif; }
+
+/* ════════════════════════════════════════
    SADRAZAM SAĞLIK BARI
 ════════════════════════════════════════ */
 #health-bar-row {
