@@ -1404,6 +1404,41 @@ html, body {
 }
 
 /* ════════════════════════════════════════
+   SADRAZAM SAĞLIK BARI
+════════════════════════════════════════ */
+#health-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 16px 4px;
+  width: 100%;
+}
+#health-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: rgba(201,162,39,0.45);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+#health-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 2px;
+  overflow: hidden;
+}
+#health-fill-h {
+  height: 100%;
+  width: 90%;
+  background: rgba(80,185,100,0.6);
+  border-radius: 2px;
+  transition: width 0.5s ease, background 0.5s ease;
+}
+#health-fill-h.warn   { background: rgba(230,126,34,0.75); }
+#health-fill-h.danger { background: rgba(192,57,43,0.9); }
+
+/* ════════════════════════════════════════
    FEATURE 4: ITEM SYSTEM
 ════════════════════════════════════════ */
 #item-bar {
