@@ -2407,6 +2407,12 @@ function showEasterCard(c) {
     // Efekt
     if (c.stat_effect) c.stat_effect();
 
+    // Dinlenme turu stat düşüşü (-5 tüm güç barları)
+    if (c._restStatDrain) {
+      for (const k of Object.keys(stats)) stats[k] = Math.max(5, stats[k] - 5);
+      updateStatUI();
+    }
+
     // Yanlış Adam idam: kan ekranı + game over
     if (c.easter_type === "yanlis_idam") {
       easterBtn.classList.add("hidden");
@@ -2707,26 +2713,28 @@ function showHekimDinlenme(c) {
   document.getElementById('hd-yes').onclick = () => {
     overlay.remove();
     changeHealth(+20);
-    for (const k of Object.keys(stats)) stats[k] = Math.max(5, stats[k] - 5);
-    updateStatUI();
-    // 1 tur boş geç
-    forcedQueue.unshift({
-      id: 'hekim_dinlenme_bos',
+    // 2 tur dinlenme — her biri stat -5 uygular
+    const restCard = (turNo) => ({
+      id: 'hekim_dinlenme_bos_' + turNo,
       type: 'easter',
       easter_type: 'hekim_dinlenme_bos',
       character: '10-hekimbasi',
       character_name: isEN ? 'Chief Physician' : 'Hekimbaşı',
-      text: isEN ? 'Rest well, Grand Vizier. The empire can wait one day.' : 'Dinlenin Sadrazamım... İmparatorluk bir gün bekleyebilir.',
-      button: isEN ? 'I feel better' : 'Dinlendim',
-      stat_effect: null,
+      text: isEN
+        ? 'Rest well, Grand Vizier. The empire can wait.'
+        : 'Dinlenin Sadrazamım... İmparatorluk bekleyebilir.',
+      button: isEN ? 'Very well' : 'Pekâlâ',
+      _restStatDrain: true,
     });
+    // unshift ile ilk önce tur-1 gelecek şekilde sırala
+    forcedQueue.unshift(restCard(1), restCard(2));
     advanceEasterCard(c);
-    _hekimDinlenmeShown = false; // tekrar tetiklenebilsin 30 kart sonra
+    _hekimDinlenmeShown = false;
     setTimeout(() => { tryHekimDinlenme._cooldown = cardsPlayed + 30; }, 0);
   };
   document.getElementById('hd-no').onclick = () => {
     overlay.remove();
-    changeHealth(-12);
+    changeHealth(-15);
     advanceEasterCard(c);
     _hekimDinlenmeShown = false;
   };
@@ -3829,6 +3837,10 @@ function decide(dir) {
   }
 
   applyEffects(currentCard[dir + "_effects"] || {});
+  if (isGameOver) return;
+
+  // Her kart seçimi sağlığı -2 düşürür
+  changeHealth(-2);
   if (isGameOver) return;
 
   // ── Achievement tracking ──────────────────────────────────────
