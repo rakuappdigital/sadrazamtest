@@ -423,11 +423,11 @@ window.UI_STRINGS = {
     // Ayarlar
     'btn.settings':         '⚙ AYARLAR',
     'sett.title':           'AYARLAR',
-    'sett.music':           '🎵 Müzik',
-    'sett.effects':         '🔔 Efektler',
+    'sett.music':           'Müzik',
+    'sett.effects':         'Efektler',
     'sett.on':              'Açık',
     'sett.off':             'Kapalı',
-    'sett.language':        '🌐 Dil',
+    'sett.language':        'Dil',
     'sett.close':           'KAPAT',
     // Harita
     'harita.title':         'İMPARATORLUK HARİTASI',
@@ -566,11 +566,11 @@ window.UI_STRINGS = {
     // Settings
     'btn.settings':         '⚙ SETTINGS',
     'sett.title':           'SETTINGS',
-    'sett.music':           '🎵 Music',
-    'sett.effects':         '🔔 Effects',
+    'sett.music':           'Music',
+    'sett.effects':         'Effects',
     'sett.on':              'On',
     'sett.off':             'Off',
-    'sett.language':        '🌐 Language',
+    'sett.language':        'Language',
     'sett.close':           'CLOSE',
     // Map
     'harita.title':         'IMPERIAL MAP',
