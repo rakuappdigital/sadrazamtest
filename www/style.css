@@ -834,11 +834,9 @@ html, body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  padding: 4px 28px 8px 16px;
+  padding: 4px 16px 8px;
   position: relative;
   z-index: 1;
-  gap: 40px;
 }
 
 #header-left {
@@ -2213,6 +2211,10 @@ html, body {
    OYUN İÇİ MENÜ BUTONU
 ════════════════════════════════════════ */
 #game-menu-btn {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 36px;
   height: 36px;
   display: flex;
@@ -2226,7 +2228,6 @@ html, body {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: color 0.2s, background 0.2s;
-  flex-shrink: 0;
 }
 #game-menu-btn:active { color: var(--gold); background: rgba(201,162,39,0.12); transform: scale(0.9); }
 
